@@ -1,17 +1,17 @@
 // ============================================================
-// tools/updater.js, Modulare Update-Bibliothek
+// tools/updater.js, modular update library
 // ------------------------------------------------------------
-// Datenquelle: GitHub-Repository (Raw-Zugriff)
+// Data source: GitHub repository (raw access)
 //   https://github.com/5etools-mirror-3/5etools-src/tree/main/data
 //
-// Aufbau: DATA_TYPES ist ein Konfigurations-Array, jeder Eintrag
-// beschreibt einen Datentyp (Quelle, Normalisierer, Zieldatei).
-// Neue Inhalte (z. B. Monster) lassen sich durch einen weiteren
-// Eintrag ergänzen, ohne Update-Logik anzufassen.
+// Structure: DATA_TYPES is a configuration array, each entry
+// describes one data type (source, normalizer, target file).
+// New content (e.g. monsters) can be added via another entry
+// without touching the update logic.
 //
-// Genutzt von:
+// Used by:
 //   • tools/update.js  (CLI:  npm run update)
-//   • server.js        (HTTP: GET /api/update, Knopf in der App)
+//   • server.js        (HTTP: GET /api/update, button in the app)
 // ============================================================
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -29,9 +29,9 @@ async function fetchJson(path) {
   return res.json();
 }
 
-// == Gemeinsame Normalisierungs-Helfer ========================
+// == Shared normalization helpers =============================
 
-/** 5e.tools-Entry-Bäume in Klartext wandeln, Tags wie {@damage 2d6} entpacken */
+/** Convert 5e.tools entry trees to plain text, unpack tags like {@damage 2d6} */
 function flattenEntries(entries, limit = 400) {
   if (!entries) return '';
   const walk = e => typeof e === 'string' ? e
@@ -39,7 +39,7 @@ function flattenEntries(entries, limit = 400) {
     : e?.entries ? walk(e.entries)
     : e?.items ? walk(e.items) : '';
   return walk(entries)
-    // Kampf-Tags mit fester Bedeutung zuerst auflösen
+    // resolve combat tags with fixed meaning first
     .replace(/\{@atk mw,rw\}/g, 'Melee or Ranged Weapon Attack:')
     .replace(/\{@atk mw\}/g, 'Melee Weapon Attack:')
     .replace(/\{@atk rw\}/g, 'Ranged Weapon Attack:')
@@ -53,9 +53,9 @@ function flattenEntries(entries, limit = 400) {
     .replace(/\{@actSave (\w+)\}/g, (m, a) => a.toUpperCase() + ' Saving Throw:')
     .replace(/\{@actSaveFail\}/g, 'Failure:')
     .replace(/\{@actSaveSuccess\}/g, 'Success:')
-    // Generisch: {@tag Inhalt|…} → Inhalt
+    // generic: {@tag content|…} → content
     .replace(/\{@\w+ ([^}|]+)[^}]*\}/g, '$1')
-    // Übrig gebliebene leere Tags entfernen
+    // remove leftover empty tags
     .replace(/\{@\w+\}/g, '')
     .slice(0, limit);
 }
@@ -63,20 +63,20 @@ function flattenEntries(entries, limit = 400) {
 const SAVE_MAP = { strength:'str', dexterity:'dex', constitution:'con',
                    intelligence:'int', wisdom:'wis', charisma:'cha' };
 
-// == Normalisierer pro Datentyp ===============================
+// == Normalizers per data type ================================
 
 function normSpell(sp, ctx) {
   const raw = JSON.stringify(sp.entries ?? '');
   const save = raw.match(/(strength|dexterity|constitution|intelligence|wisdom|charisma) saving throw/i);
   const dmg  = raw.match(/\{@damage ([0-9]+d[0-9]+(?:\s*[+-]\s*[0-9]+)?)\}/);
-  // Heilung: "regains … {@dice 1d8}" ODER "{@dice 1d8} … hit points" (beide Wortstellungen)
+  // Healing: "regains … {@dice 1d8}" OR "{@dice 1d8} … hit points" (both word orders)
   const heal = raw.match(/regains?[^.]{0,80}?\{@dice ([0-9]+d[0-9]+)/i)?.[1]
             ?? raw.match(/\{@dice ([0-9]+d[0-9]+)[^}]*\}[^.]{0,40}hit points/i)?.[1]
             ?? null;
 
-  // Klassen-Zuordnung: liegt im Repo nicht mehr am Zauber selbst,
-  // sondern zentral in generated/gendata-spell-source-lookup.json
-  // Struktur: lookup[quelle_klein][name_klein].class[klassenQuelle][KlassenName] = true
+  // Class mapping: no longer stored on the spell itself in the repo,
+  // but centrally in generated/gendata-spell-source-lookup.json
+  // Structure: lookup[source_lc][name_lc].class[classSource][ClassName] = true
   let classes = (sp.classes?.fromClassList ?? []).map(c => c.name);
   const entry = ctx?.lookup?.[sp.source?.toLowerCase()]?.[sp.name?.toLowerCase()];
   if (entry?.class) {
@@ -106,7 +106,7 @@ function normSpell(sp, ctx) {
   };
 }
 
-// "+1" / "-2" → Zahl (für flache Boni magischer Items)
+// "+1" / "-2" → number (for flat bonuses of magic items)
 function parseBonus(v) {
   if (v == null) return null;
   const n = parseInt(String(v).replace(/[^0-9+-]/g, ''), 10);
@@ -115,9 +115,9 @@ function parseBonus(v) {
 
 function normItem(it) {
   const rarity = it.rarity ?? 'none';
-  // Attributs-Effekte: { static: { str: 29 } } → Wert wird GESETZT,
-  //                    { con: 2 }             → Wert wird ADDIERT
-  // Auswahl-Effekte ("choose"/"from") werden ignoriert (nicht automatisierbar).
+  // Ability effects: { static: { str: 29 } } → value is SET,
+  //                   { con: 2 }             → value is ADDED
+  // Choice effects ("choose"/"from") are ignored (not automatable).
   let ability = null;
   if (it.ability) {
     const stat = it.ability.static ?? null;
@@ -129,14 +129,14 @@ function normItem(it) {
   }
   return {
     name: it.name, source: it.source,
-    // Typ/Eigenschaften: Quellen-Suffixe wie "M|XPHB" entfernen
+    // type/properties: strip source suffixes like "M|XPHB"
     type: (it.type ?? '?').split('|')[0],
     property: (it.property ?? []).map(p => String(p.uid ?? p).split('|')[0]),
     rarity,
     magic: (rarity !== 'none' && rarity !== 'unknown') || !!it.wondrous || !!it.reqAttune,
     reqAttune: !!it.reqAttune,
     ability,
-    // Flache Boni magischer Gegenstände (z. B. Cloak of Protection +1)
+    // flat bonuses of magic items (e.g. Cloak of Protection +1)
     bonusSave:   parseBonus(it.bonusSavingThrow),
     bonusAc:     parseBonus(it.bonusAc),
     bonusSpellDc: parseBonus(it.bonusSpellSaveDc),
@@ -147,13 +147,13 @@ function normItem(it) {
   };
 }
 
-// Ability-Auswahl ("choose") in einheitliche Varianten wandeln.
-// Zwei Formate in den Rohdaten:
-//  • klassisch: {choose:{from:[...], count:2, amount:1}} → eine Variante
-//  • 2024er "weighted": [{choose:{weighted:{from:[...],weights:[2,1]}}},
-//    {choose:{weighted:{from:[...],weights:[1,1,1]}}}] → mehrere Varianten
-// Ergebnis: [{from:[...], weights:[2,1]}, ...], jede Variante ist eine
-// Liste von Boni (weights), die der Nutzer auf Attribute aus "from" verteilt.
+// Convert ability choices ("choose") into uniform variants.
+// Two formats in the raw data:
+//  • classic: {choose:{from:[...], count:2, amount:1}} → one variant
+//  • 2024 "weighted": [{choose:{weighted:{from:[...],weights:[2,1]}}},
+//    {choose:{weighted:{from:[...],weights:[1,1,1]}}}] → multiple variants
+// Result: [{from:[...], weights:[2,1]}, ...], each variant is a list
+// of bonuses (weights) the user distributes across abilities from "from".
 function parseAbilityChoose(abilityArr) {
   const variants = [];
   for (const entry of abilityArr ?? []) {
@@ -170,7 +170,7 @@ function parseAbilityChoose(abilityArr) {
 }
 
 function normRace(r) {
-  // Ability-Boni: nur feste Zahlenwerte; "choose" separat halten
+  // ability bonuses: fixed numeric values only; keep "choose" separate
   const ab = r.ability?.[0] ?? {};
   const fixed = {};
   for (const k of ['str','dex','con','int','wis','cha']) {
@@ -186,19 +186,19 @@ function normRace(r) {
   };
 }
 
-// 5e.tools-Fertigkeitsnamen → App-IDs
+// 5e.tools skill names → app IDs
 const SKILL_ID_MAP = {
   'animal handling': 'animal', 'sleight of hand': 'sleight',
 };
 const toSkillId = n => SKILL_ID_MAP[n] ?? n;
 
-// Unterklassen-Zauber (additionalSpells) normalisieren.
-// Drei Formate in den Rohdaten:
-//  • prepared/known: {Klassenstufe: [Namen]} → automatisch gelernt/vorbereitet
-//  • expanded: {s<Zaubergrad>: [Namen]} → erweitert nur die wählbare Liste (Warlock)
-//  • mehrere BENANNTE Varianten (z. B. Land-Zirkel: Arid/Polar/…) → der
-//    Spieler wählt eine, daher KEINE Auto-Vergabe, aber alle wählbar.
-// Ergebnis: { auto: {stufe:[namen]}|null, extra: [namen] }
+// Normalize subclass spells (additionalSpells).
+// Three formats in the raw data:
+//  • prepared/known: {classLevel: [names]} → automatically learned/prepared
+//  • expanded: {s<spellLevel>: [names]} → only extends the selectable list (Warlock)
+//  • multiple NAMED variants (e.g. Circle of the Land: Arid/Polar/…) → the
+//    player picks one, therefore NO auto-assignment, but all selectable.
+// Result: { auto: {level:[names]}|null, extra: [names] }
 function normAdditionalSpells(addl) {
   if (!Array.isArray(addl) || !addl.length) return null;
   const clean = n => String(n).split('|')[0].toLowerCase().trim();
@@ -215,13 +215,13 @@ function normAdditionalSpells(addl) {
     collect(variant.known);
     collect(variant.expanded);
   }
-  // Auto-Vergabe nur bei genau EINER unbenannten Variante (eindeutig)
+  // auto-assignment only with exactly ONE unnamed variant (unambiguous)
   let auto = null;
   if (addl.length === 1 && !addl[0].name) {
     auto = {};
     for (const key of ['prepared', 'known']) {
       for (const [lvl, list] of Object.entries(addl[0][key] ?? {})) {
-        if (!/^\d+$/.test(lvl)) continue; // nur Klassenstufen-Schlüssel
+        if (!/^\d+$/.test(lvl)) continue; // class-level keys only
         const names = (Array.isArray(list) ? list : [])
           .filter(e => typeof e === 'string').map(clean);
         if (names.length) auto[lvl] = [...(auto[lvl] ?? []), ...names];
@@ -233,7 +233,7 @@ function normAdditionalSpells(addl) {
 }
 
 function normClass(c, subclasses) {
-  // Fertigkeits-Auswahl der Klasse ("wähle 2 aus: …")
+  // the class's skill choice ("choose 2 from: …")
   const skillEntry = (c.startingProficiencies?.skills ?? []).find(s => s.choose);
   const skillChoices = skillEntry
     ? { count: skillEntry.choose.count ?? 2,
@@ -245,16 +245,16 @@ function normClass(c, subclasses) {
     name: c.name, source: c.source,
     sidekick: isSidekick,
     hitDie: `d${c.hd?.faces ?? 8}`,
-    saves: c.proficiency ?? [],   // Rettungswurf-Übungen, z. B. ['str','con']
-    skillChoices,                 // { count, from } oder null
+    saves: c.proficiency ?? [],   // saving throw proficiencies, e.g. ['str','con']
+    skillChoices,                 // { count, from } or null
     spellcasting: !!c.spellcastingAbility,
     spellAbility: c.spellcastingAbility ?? null,
     casterProgression: c.casterProgression ?? null,
     subclassTitle: c.subclassTitle ?? 'Subclass',
-    // Dedupe je (Name, Quelle): Unterklassen stehen je Klassen-Version
-    // (PHB/XPHB) doppelt in der Datei; die Kopie MIT additionalSpells
-    // wird bevorzugt. BEIDE Editionen bleiben im Pack, welche der
-    // Nutzer sieht, entscheidet zur Laufzeit die Regelwerk-Dedupe.
+    // Dedupe by (name, source): subclasses appear twice in the file,
+    // once per class version (PHB/XPHB); the copy WITH additionalSpells
+    // is preferred. BOTH editions stay in the pack; which one the user
+    // sees is decided at runtime by the ruleset dedupe.
     subclasses: (() => {
       const map = new Map();
       for (const sc of subclasses.filter(x => x.className === c.name)) {
@@ -286,61 +286,61 @@ function normBackground(b) {
   };
 }
 
-// Mechanische Feat-Effekte aus dem Fließtext ableiten.
-// Die Effekte stehen im Original nur als Text und unterscheiden sich
-// zwischen PHB (2014) und XPHB (2024), z. B. Alert: +5 Initiative (2014)
-// vs. Übungsbonus auf Initiative (2024). Wir erkennen die häufigsten.
+// Derive mechanical feat effects from the prose text.
+// The effects exist only as text in the original and differ between
+// PHB (2014) and XPHB (2024), e.g. Alert: +5 initiative (2014)
+// vs. proficiency bonus to initiative (2024). We detect the most common ones.
 function parseFeatEffects(f) {
   const text = flattenEntries(f.entries, 4000).toLowerCase();
   const fixed = {};   // { speed, initiative, carry, hpPerLevel }
   const flags = {};   // { initiativeProf }
 
-  // Attributs-Boni (feste Zahlen, kein "choose")
+  // ability bonuses (fixed numbers, no "choose")
   const ab = f.ability?.[0] ?? {};
   const abilityBonuses = {};
   for (const k of ['str','dex','con','int','wis','cha']) {
     if (typeof ab[k] === 'number') abilityBonuses[k] = ab[k];
   }
 
-  // Geschwindigkeit: nur PERMANENTE Erhöhungen, "Your speed increases …"
-  // muss einen Satz/Abschnitt BEGINNEN (nach ., : oder ;). Bedingte Boni
-  // wie Charger/2024 ("When you take the Dash action, your Speed
-  // increases … for that action") stehen nach einem Komma mitten im
-  // Satz und werden bewusst ausgelassen.
+  // Speed: only PERMANENT increases, "Your speed increases …" must
+  // START a sentence/section (after ., : or ;). Conditional bonuses
+  // like Charger/2024 ("When you take the Dash action, your Speed
+  // increases … for that action") appear after a comma mid-sentence
+  // and are deliberately skipped.
   let m = text.match(/(?:^|[.:;]\s*)your speed increases by ([0-9]+)\s*fe?e?t/);
   if (m) fixed.speed = +m[1];
 
-  // Initiative: fester Bonus (2014) ODER Übungsbonus (2024)
+  // initiative: fixed bonus (2014) OR proficiency bonus (2024)
   m = text.match(/\+([0-9]+) bonus to initiative/);
   if (m) fixed.initiative = +m[1];
-  // 2024er Alert: "when you roll initiative, you can add your proficiency (bonus) to the roll"
+  // 2024 Alert: "when you roll initiative, you can add your proficiency (bonus) to the roll"
   if (/initiative[^.]*add your proficiency/.test(text)) flags.initiativeProf = true;
 
-  // TP-Maximum, fester Wert: "Your Hit Points maximum increases by 40"
-  // (Boon of Fortitude; Singular UND Plural abdecken)
+  // HP maximum, fixed value: "Your Hit Points maximum increases by 40"
+  // (Boon of Fortitude; cover singular AND plural)
   m = text.match(/hit points? maximum increases by ([0-9]+)\b/);
   if (m) fixed.hpFlat = +m[1];
 
-  // TP-Maximum pro Stufe (Tough, beide Editionen)
+  // HP maximum per level (Tough, both editions)
   if (/hit points? maximum increases by an amount equal to twice your/.test(text)) {
     fixed.hpPerLevel = 2;
   }
 
-  // Traglast (z. B. Powerful Build-artige Feats, selten)
+  // carrying capacity (e.g. Powerful Build-style feats, rare)
   m = text.match(/carrying capacity[^.]*?(doubl|two times)/);
   if (m) fixed.carryFactor = 2;
 
   return { abilityBonuses, fixed, flags };
 }
 
-// Feat-gewährte Zauber (additionalSpells an Talenten) normalisieren.
-// Zwei Arten von Einträgen:
-//  • konkrete Namen ("fear") → direkt lernbar
-//  • Auswahl-Ausdrücke ({choose: "level=2|school=E;N"}) → KRITERIEN,
-//    nach denen der Spieler einen Zauber frei wählen darf, auch
-//    außerhalb der eigenen Klassenliste (z. B. Adept of the Black
-//    Robes: ein Grad-2-Zauber aus Verzauberung oder Nekromantie).
-// Ergebnis: { names: [...], filters: [{levels, schools, classNames}] }
+// Normalize feat-granted spells (additionalSpells on feats).
+// Two kinds of entries:
+//  • concrete names ("fear") → directly learnable
+//  • choice expressions ({choose: "level=2|school=E;N"}) → CRITERIA
+//    by which the player may freely pick a spell, even outside
+//    their own class list (e.g. Adept of the Black Robes: one
+//    level-2 spell from enchantment or necromancy).
+// Result: { names: [...], filters: [{levels, schools, classNames}] }
 function parseFeatSpells(addl) {
   if (!Array.isArray(addl) || !addl.length) return null;
   const clean = n => String(n).split('|')[0].toLowerCase().trim();
@@ -359,7 +359,7 @@ function parseFeatSpells(addl) {
       Object.values(v).forEach(walk);
     }
   };
-  // NUR Zauber-Schlüssel durchlaufen ("ability" enthält Attributsnamen!)
+  // walk ONLY spell keys ("ability" contains ability names!)
   for (const variant of addl) {
     for (const key of ['prepared', 'known', 'expanded', 'innate']) walk(variant[key]);
   }
@@ -385,22 +385,22 @@ function normFeat(f) {
   const eff = parseFeatEffects(f);
   return {
     name: f.name, source: f.source,
-    repeatable: !!f.repeatable, // z. B. Attributsverbesserung (2024): mehrfach wählbar
+    repeatable: !!f.repeatable, // e.g. Ability Score Improvement (2024): can be taken multiple times
     spells: parseFeatSpells(f.additionalSpells),
     prerequisite: f.prerequisite ? flattenEntries(f.prerequisite, 120) : null,
-    abilityBonuses: eff.abilityBonuses,   // feste Attributs-Boni
+    abilityBonuses: eff.abilityBonuses,   // fixed ability bonuses
     effects: eff.fixed,                    // { speed, initiative, hpPerLevel, carryFactor }
     flags: eff.flags,                      // { initiativeProf }
     description: flattenEntries(f.entries, 4000),
   };
 }
 
-// == Wildtiere (Beasts) für Druiden-Wildgestalt ===============
-// Aus dem Bestiarium werden nur Kreaturen vom Typ "beast" mit
-// vollständigem Statblock übernommen (keine _copy-Verweise).
+// == Beasts for druid wild shape ==============================
+// From the bestiary only creatures of type "beast" with a
+// complete stat block are taken (no _copy references).
 
-// Die vier Elementare des Mond-Zirkels (Elemental Wild Shape, St. 10):
-// Typ "elemental" statt "beast", gezielt mit aufnehmen.
+// The four elementals of the Circle of the Moon (Elemental Wild Shape, lvl 10):
+// type "elemental" instead of "beast", included explicitly.
 const MOON_ELEMENTALS = new Set([
   'Air Elemental', 'Earth Elemental', 'Fire Elemental', 'Water Elemental',
 ]);
@@ -443,7 +443,7 @@ function normBeast(m) {
     ? (typeof m.ac[0] === 'object' ? m.ac[0].ac : m.ac[0]) : m.ac;
   return {
     name: m.name, source: m.source,
-    elemental: creatureType(m) === 'elemental', // Mond-Zirkel: Elemental Wild Shape
+    elemental: creatureType(m) === 'elemental', // Circle of the Moon: Elemental Wild Shape
     size: (m.size ?? ['M'])[0],
     cr: String(crRaw ?? '0'),
     ac: acRaw ?? 10,
@@ -458,11 +458,11 @@ function normBeast(m) {
   };
 }
 
-// == Modulare Datentyp-Konfiguration ==========================
-// mode 'single'  → eine JSON-Datei, Schlüssel `key` enthält das Array
-// mode 'indexed' → index.json verweist auf Teildateien pro Quelle
-// mode 'multi'   → mehrere Einzeldateien zusammenführen
-// mode 'class'   → Sonderfall: Klassen + Unterklassen je Datei
+// == Modular data type configuration ==========================
+// mode 'single'  → one JSON file, key `key` holds the array
+// mode 'indexed' → index.json points to partial files per source
+// mode 'multi'   → merge several individual files
+// mode 'class'   → special case: classes + subclasses per file
 
 export const DATA_TYPES = [
   { id: 'books',       mode: 'single',  path: 'books.json',       key: 'book',
@@ -470,7 +470,7 @@ export const DATA_TYPES = [
   { id: 'classes',     mode: 'class',   path: 'class/index.json' },
   { id: 'races',       mode: 'single',  path: 'races.json',       key: 'race',       norm: normRace },
   { id: 'spells',      mode: 'indexed', path: 'spells/index.json', dir: 'spells', key: 'spell', norm: normSpell,
-    version: 4, // Cache-Version: bei Normalisierer-Änderungen erhöhen → alte Teil-Caches werden verworfen
+    version: 4, // cache version: bump on normalizer changes → old partial caches are discarded
     pre: async () => ({ lookup: await fetchJson('generated/gendata-spell-source-lookup.json') }) },
   { id: 'items',       mode: 'multi',   paths: ['items-base.json', 'items.json'],
     keys: ['baseitem', 'item'], norm: normItem },
@@ -486,12 +486,12 @@ async function loadManifest() {
   catch { return { updatedAt: null, origin: RAW_BASE, sources: {}, files: {} }; }
 }
 
-// == Haupt-Update =============================================
+// == Main update ==============================================
 /**
- * Führt das komplette Update aus.
+ * Runs the complete update.
  * @param {object} opts
- * @param {boolean}  [opts.force]  Alles neu laden, Cache ignorieren
- * @param {function} [opts.log]    Fortschritts-Callback (Zeile für Zeile)
+ * @param {boolean}  [opts.force]  Reload everything, ignore cache
+ * @param {function} [opts.log]    Progress callback (line by line)
  * @returns {Promise<{ok:boolean, newBooks:string[], counts:object, errors:string[]}>}
  */
 export async function runUpdate({ force = false, log = () => {} } = {}) {
@@ -509,7 +509,7 @@ export async function runUpdate({ force = false, log = () => {} } = {}) {
         const data = await fetchJson(type.path);
         entries = (data[type.key] ?? []).map(type.norm);
 
-        // Neue Regelwerke erkennen und melden (nur bei books)
+        // detect and report new rulebooks (books only)
         if (type.id === 'books') {
           const known = new Set(Object.keys(manifest.sources));
           for (const b of entries) {
@@ -520,11 +520,11 @@ export async function runUpdate({ force = false, log = () => {} } = {}) {
         }
 
       } else if (type.mode === 'indexed') {
-        // Optionale Zusatzdaten laden (z. B. Zauber↔Klassen-Lookup)
+        // load optional extra data (e.g. spell↔class lookup)
         const ctx = type.pre ? await type.pre() : null;
         const ver = type.version ? `@v${type.version}` : '';
 
-        // index.json → Teildateien pro Quelle, mit versioniertem Datei-Cache
+        // index.json → partial files per source, with versioned file cache
         const index = await fetchJson(type.path);
         for (const [src, file] of Object.entries(index)) {
           const cacheKey = `${type.dir}/${file}${ver}`;
@@ -535,7 +535,7 @@ export async function runUpdate({ force = false, log = () => {} } = {}) {
           try {
             const data = await fetchJson(`${type.dir}/${file}`);
             let list = data[type.key] ?? [];
-            if (type.filter) list = list.filter(type.filter); // z. B. nur Beasts
+            if (type.filter) list = list.filter(type.filter); // e.g. beasts only
             const norm = list.map(e => type.norm(e, ctx));
             entries.push(...norm);
             await writeCache(type.id + ver, src, norm);
@@ -552,9 +552,9 @@ export async function runUpdate({ force = false, log = () => {} } = {}) {
 
       } else if (type.mode === 'class') {
         const index = await fetchJson('class/index.json');
-        // Dedupe je (Name, Quelle): BEIDE Editionen (PHB + XPHB) bleiben
-        // im Pack, welche der Nutzer sieht, entscheidet zur Laufzeit
-        // die Regelwerk-Dedupe (phb14 ↔ phb24).
+        // Dedupe by (name, source): BOTH editions (PHB + XPHB) stay
+        // in the pack; which one the user sees is decided at runtime
+        // by the ruleset dedupe (phb14 ↔ phb24).
         const seenClasses = new Set();
         for (const [name, file] of Object.entries(index)) {
           try {
@@ -588,7 +588,7 @@ export async function runUpdate({ force = false, log = () => {} } = {}) {
   return result;
 }
 
-// == Teil-Cache pro Quelle (spart erneute Downloads) =========
+// == Partial cache per source (saves repeat downloads) ========
 async function readCache(kind, src) {
   try { return JSON.parse(await readFile(join(PACK_DIR, `.${kind}-${src}.json`), 'utf8')); }
   catch { return null; }

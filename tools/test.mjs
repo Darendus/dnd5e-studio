@@ -1,15 +1,15 @@
 // ============================================================
-// D&D 5e Studio: umfassender Funktionstest (Node-Harness)
-// Testet jede exportierte Funktion der Logik-Module gegen die
-// echten Datenpacks. Browser-Globals werden gestubbt, fetch wird
-// auf das Dateisystem umgeleitet.
+// D&D 5e Studio: comprehensive functional test (Node harness)
+// Tests every exported function of the logic modules against the
+// real data packs. Browser globals are stubbed, fetch is
+// redirected to the file system.
 // ============================================================
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = new URL('../public/', import.meta.url).pathname;
 
-// -- Browser-Stubs ------------------------------------------
+// -- Browser stubs ------------------------------------------
 const storage = new Map();
 globalThis.localStorage = {
   getItem: k => storage.has(k) ? storage.get(k) : null,
@@ -31,7 +31,7 @@ globalThis.document = {
   body: { appendChild(){} },
 };
 
-// -- Test-Helfer --------------------------------------------
+// -- Test helpers -------------------------------------------
 let pass = 0, fail = 0;
 const failures = [];
 function check(name, cond, detail = '') {
@@ -43,7 +43,7 @@ function eq(name, got, want) {
         'got=' + JSON.stringify(got) + ' want=' + JSON.stringify(want));
 }
 
-// -- Module laden -------------------------------------------
+// -- Load modules -------------------------------------------
 const { bus, EV } = await import(ROOT + 'src/core/EventBus.js');
 const { t, setLang, getLang, LANGS } = await import(ROOT + 'src/core/i18n.js');
 const { store, blankCharacter } = await import(ROOT + 'src/core/Store.js');
@@ -71,7 +71,7 @@ console.log('Packs: ' + repo.classes.length + ' Klassen, ' + repo.spells.length 
 }
 
 // ============================================================
-// 2) calculations: Grundfunktionen
+// 2) calculations: basic functions
 // ============================================================
 eq('calcMod(10)', calc.calcMod(10), 0);
 eq('calcMod(8)', calc.calcMod(8), -1);
@@ -88,13 +88,13 @@ check('ABILITY_IDS', JSON.stringify(calc.ABILITY_IDS) === JSON.stringify(['str',
 check('SKILL_DEFS 18 Fertigkeiten', calc.SKILL_DEFS.length === 18);
 check('SKILL_DEFS Attribute gueltig', calc.SKILL_DEFS.every(s => calc.ABILITY_IDS.includes(s.attr)));
 
-// calcSkillBonus: Basis / geuebt / Expertise
+// calcSkillBonus: base / proficient / expertise
 eq('skill ungeuebt', calc.calcSkillBonus(3, false, false, 2), 3);
 eq('skill geuebt', calc.calcSkillBonus(3, true, false, 2), 5);
 eq('skill Expertise', calc.calcSkillBonus(3, true, true, 2), 7);
 
 // ============================================================
-// 3) effectiveAbilities: Boni, Items, Wildgestalt
+// 3) effectiveAbilities: bonuses, items, wild shape
 // ============================================================
 {
   const c = { ...blankCharacter(), str: 10, dex: 14, raceBonus: { str: 2 }, bgBonus: { str: 1 }, featBonus: { dex: 1 } };
@@ -102,7 +102,7 @@ eq('skill Expertise', calc.calcSkillBonus(3, true, true, 2), 7);
   eq('effAbilities Summierung', [eff.scores.str, eff.scores.dex], [13, 15]);
   check('effAbilities sources', eff.sources?.str?.length >= 2);
 
-  // Item mit festem Attributswert (z. B. Guertel) via Items-Pack pruefen wir generisch:
+  // Items with a fixed ability score (e.g. belts) are checked generically via the items pack:
   const wolf = repo.getBeasts().find(b => /^Wolf$/i.test(b.name));
   if (wolf) {
     const shifted = { ...c, wildshape: { active: true, form: wolf.name } };
@@ -113,7 +113,7 @@ eq('skill Expertise', calc.calcSkillBonus(3, true, true, 2), 7);
 }
 
 // ============================================================
-// 4) calcMaxHP: Durchschnittsregel + Feat-Effekte
+// 4) calcMaxHP: average rule + feat effects
 // ============================================================
 {
   const base = { ...blankCharacter(), con: 14, classes: [{ name: 'Fighter', level: 5 }] };
@@ -127,7 +127,7 @@ eq('skill Expertise', calc.calcSkillBonus(3, true, true, 2), 7);
 }
 
 // ============================================================
-// 5) calcAC: Ruestungstypen, Schild, magische Ruestung
+// 5) calcAC: armor types, shield, magic armor
 // ============================================================
 {
   const st = items => ({ ...blankCharacter(), dex: 16, items });
@@ -149,7 +149,7 @@ eq('skill Expertise', calc.calcSkillBonus(3, true, true, 2), 7);
 }
 
 // ============================================================
-// 6) itemBonuses und featEffects
+// 6) itemBonuses and featEffects
 // ============================================================
 {
   const ring = repo.findItem('Ring of Protection');
@@ -166,7 +166,7 @@ eq('skill Expertise', calc.calcSkillBonus(3, true, true, 2), 7);
   check('featEffects Speed +10 (Mobile)', fx.speed === 10);
   check('featEffects hpPerLevel 2 (Tough)', fx.hpPerLevel === 2);
   check('featEffects hpFlat 40 (Boon)', fx.hpFlat === 40);
-  repo.setRuleset('phb24'); // App synchronisiert das Regelwerk beim Laden
+  repo.setRuleset('phb24'); // the app synchronizes the ruleset on load
   const fx24 = calc.featEffects({ ...blankCharacter(), ruleset: 'phb24', feats: ['Alert'] });
   check('featEffects initiativeProf (Alert 2024)', fx24.initiativeProf === true, JSON.stringify(fx24));
   repo.setRuleset('phb14');
@@ -176,7 +176,7 @@ eq('skill Expertise', calc.calcSkillBonus(3, true, true, 2), 7);
 }
 
 // ============================================================
-// 7) calcSpellSlots: alle Progressionen + Multiclass + Arkanum
+// 7) calcSpellSlots: all progressions + multiclass + arcanum
 // ============================================================
 {
   const s = cs => calc.calcSpellSlots(cs);
@@ -187,10 +187,10 @@ eq('skill Expertise', calc.calcSkillBonus(3, true, true, 2), 7);
   eq('Warlock 11 Arkanum [6]', wl.pact.arcanum, [6]);
   eq('Warlock 17 Arkana', s([{ name: 'Warlock', level: 17 }]).pact.arcanum, [6, 7, 8, 9]);
   check('Warlock hat keine Standard-Slots', wl.slots.every(n => n === 0));
-  // Multiclass: Wizard 3 + Paladin 2 -> Casterlevel 4 -> [4,3]
+  // multiclass: Wizard 3 + Paladin 2 -> caster level 4 -> [4,3]
   const mc = s([{ name: 'Wizard', level: 3 }, { name: 'Paladin', level: 2 }]);
   eq('Multiclass W3/P2 Casterlevel 4', mc.slots.slice(0, 2), [4, 3]);
-  // Eldritch Knight (Drittel-Caster ueber Unterklasse)
+  // Eldritch Knight (third caster via subclass)
   const ek = s([{ name: 'Fighter', level: 6, subclass: 'Eldritch Knight' }]);
   check('Eldritch Knight 6 hat Slots', ek.slots[0] > 0, JSON.stringify(ek.slots));
 }
@@ -226,11 +226,11 @@ eq('skill Expertise', calc.calcSkillBonus(3, true, true, 2), 7);
 
   const fb = bon.featBonusFor(['Resilient']);
   check('featBonusFor liefert Objekt', typeof fb === 'object');
-  // Wiederholbares Talent zaehlt doppelt
+  // repeatable feat counts twice
   const asi2 = bon.featBonusFor(['Ability Score Improvement', 'Ability Score Improvement']);
   check('featBonusFor Duplikate ok', typeof asi2 === 'object');
 
-  // combinedBonus: picks ist Index-zu-Attribut (je Gewicht eine Wahl)
+  // combinedBonus: picks is index-to-ability (one choice per weight)
   const bg24 = repo.getBackgrounds().find(b => b.source === 'XPHB' && b.abilityChoose?.length);
   if (bg24) {
     const variant = bg24.abilityChoose[0];
@@ -240,14 +240,14 @@ eq('skill Expertise', calc.calcSkillBonus(3, true, true, 2), 7);
     const sum = Object.values(cb).reduce((a, x) => a + x, 0);
     const want = variant.weights.reduce((a, w) => a + w, 0);
     check('combinedBonus 2024-BG summiert Gewichte', sum === want, sum + ' vs ' + want + ' ' + JSON.stringify(cb));
-    // Dublettensperre: zweimal dasselbe Attribut -> nur erstes zaehlt
+    // duplicate lock: same ability twice -> only the first counts
     const dup = bon.combinedBonus(bg24, { variant: 0, picks: { 0: variant.from[0], 1: variant.from[0] } });
     check('combinedBonus Dublettensperre', (dup[variant.from[0]] ?? 0) === variant.weights[0], JSON.stringify(dup));
   } else check('2024-Hintergrund mit choose', false);
 }
 
 // ============================================================
-// 10) dice: Wuerfe in Grenzen, Vorteil/Nachteil, Formeln
+// 10) dice: rolls within bounds, advantage/disadvantage, formulas
 // ============================================================
 {
   let ok = true;
@@ -311,7 +311,7 @@ check('ALIGNMENTS 9 Eintraege', prog.ALIGNMENTS.length === 9);
 }
 
 // ============================================================
-// 13) Store: Schema, Rasten, Migration, Roster
+// 13) Store: schema, rests, migration, roster
 // ============================================================
 {
   const blank = blankCharacter();
@@ -333,7 +333,7 @@ check('ALIGNMENTS 9 Eintraege', prog.ALIGNMENTS.length === 9);
   eq('longRest setzt Arkana zurueck', store.field('arcanumUsed'), []);
   eq('longRest setzt Slots zurueck', store.field('spellSlotsUsed'), [0,0,0,0,0,0,0,0,0]);
 
-  // Wildgestalt-Rast je Regelwerk
+  // wild shape rest per ruleset
   store.update({ classes: [{ name: 'Druid', level: 4, subclass: null }], wildshapeUses: 0, ruleset: 'phb14' });
   store.shortRest();
   eq('shortRest 2014: Wildgestalt voll (2)', store.field('wildshapeUses'), 2);
@@ -341,7 +341,7 @@ check('ALIGNMENTS 9 Eintraege', prog.ALIGNMENTS.length === 9);
   store.shortRest();
   eq('shortRest 2024: Wildgestalt +1', store.field('wildshapeUses'), 1);
 
-  // Migration: Alt-Charakter ohne neue Felder
+  // migration: legacy character without the new fields
   store.replace({ name: 'Alt', classes: [{ name: 'Fighter', level: 1 }] });
   check('replace migriert featLevels', Array.isArray(store.field('featLevels')));
   check('replace migriert arcanumUsed', Array.isArray(store.field('arcanumUsed')));
@@ -350,7 +350,7 @@ check('ALIGNMENTS 9 Eintraege', prog.ALIGNMENTS.length === 9);
   const prevId = store.activeId();
   store.newCharacter('phb14');
   check('newCharacter wechselt aktive ID', store.activeId() !== prevId);
-  store.update({ name: 'Testheld' }); // erst jetzt wird das Roster gespeichert (by design)
+  store.update({ name: 'Testheld' }); // only now is the roster saved (by design)
   check('Roster enthaelt neuen Charakter nach Aenderung',
         store.listCharacters().some(c => c.id === store.activeId()));
   const json = store.exportJson();
@@ -360,7 +360,7 @@ check('ALIGNMENTS 9 Eintraege', prog.ALIGNMENTS.length === 9);
 }
 
 // ============================================================
-// 14) DataRepository: Dedupe, Bibliothek, Homebrew
+// 14) DataRepository: dedupe, library, homebrew
 // ============================================================
 {
   repo.setRuleset('phb14');
@@ -380,7 +380,7 @@ check('ALIGNMENTS 9 Eintraege', prog.ALIGNMENTS.length === 9);
   const auto = repo.subclassAutoSpells('Cleric', repo.getClass('Cleric').subclasses.find(sc => /Life/.test(sc.name))?.name);
   check('subclassAutoSpells Life Domain', auto && Object.keys(auto).length >= 4, JSON.stringify(auto)?.slice(0, 60));
 
-  // Bibliothek: Klassenliste + Unterklassen-extra + Feat-Kriterien
+  // library: class list + subclass extras + feat criteria
   const baseLib = repo.getSpellsForClasses(['Fighter']);
   const featLib = repo.getSpellsForClasses(['Fighter'], ['Adept of the Black Robes']);
   check('Feat-Kriterien erweitern Bibliothek', featLib.length > baseLib.length,
@@ -388,7 +388,7 @@ check('ALIGNMENTS 9 Eintraege', prog.ALIGNMENTS.length === 9);
   const fiendLib = repo.getSpellsForClasses([{ name: 'Warlock', subclass: 'The Fiend' }]);
   check('Unterklassen-extra: Fireball beim Unhold', fiendLib.some(sp => sp.name === 'Fireball'));
 
-  // Homebrew: Charakter-Bindung
+  // homebrew: character binding
   storage.set('dnd5e_studio_roster', JSON.stringify({ activeId: 'charA', characters: [] }));
   repo.addHomebrew('spells', { name: 'Testfunke', level: 1, classes: ['Fighter'] });
   check('Homebrew fuer Ersteller sichtbar', repo.getHomebrew().spells.some(e => e.name === 'Testfunke'));
@@ -399,7 +399,7 @@ check('ALIGNMENTS 9 Eintraege', prog.ALIGNMENTS.length === 9);
   repo.removeHomebrew('spells', 'Testfunke');
   check('Homebrew entfernt', !repo.getHomebrew().spells.some(e => e.name === 'Testfunke'));
 
-  // Quellen-Schalter
+  // source toggles
   repo.setSourceEnabled('PHB', false);
   check('Quelle deaktivierbar', repo.isSourceEnabled('PHB') === false);
   check('Dedupe faellt auf XPHB zurueck', repo.getClass('Fighter')?.source === 'XPHB');
@@ -407,7 +407,7 @@ check('ALIGNMENTS 9 Eintraege', prog.ALIGNMENTS.length === 9);
 }
 
 // ============================================================
-// 15) i18n: beide Sprachen + Key-Abdeckung aller Komponenten
+// 15) i18n: both languages + key coverage of all components
 // ============================================================
 {
   setLang('de');
@@ -416,7 +416,7 @@ check('ALIGNMENTS 9 Eintraege', prog.ALIGNMENTS.length === 9);
   check('t() englisch', t('app.save')?.length > 0);
   check('LANGS de+en', LANGS.some(l => l.id === 'de') && LANGS.some(l => l.id === 'en'));
 
-  // Alle t('x.y')-Literale der Komponenten gegen beide Sprachen pruefen
+  // check all t('x.y') literals of the components against both languages
   const { readdirSync } = await import('node:fs');
   const keys = new Set();
   const dirs = ['src/components/', 'src/rules/', 'src/utils/'];

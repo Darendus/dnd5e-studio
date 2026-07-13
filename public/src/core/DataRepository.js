@@ -1,11 +1,11 @@
 // ============================================================
-// core/DataRepository.js, Zentraler Datenzugriff
+// core/DataRepository.js, central data access
 // ------------------------------------------------------------
-// Lädt in dieser Reihenfolge:
-//   1. data/packs/*  (von tools/update.js aus 5e.tools erzeugt)
-//   2. data/seed/*   (mitgelieferte SRD-Basisdaten als Fallback)
-//   3. Homebrew      (localStorage, Quelle "HB")
-// Bietet Quellen-Filterung: Nur aktivierte Regelwerke erscheinen.
+// Loads in this order:
+//   1. data/packs/*  (generated from 5e.tools by tools/update.js)
+//   2. data/seed/*   (bundled SRD base data as fallback)
+//   3. homebrew      (localStorage, source "HB")
+// Provides source filtering: only enabled rulebooks appear.
 // ============================================================
 import { bus, EV } from './EventBus.js';
 
@@ -16,11 +16,11 @@ class DataRepository {
   classes = []; races = []; spells = []; items = []; books = [];
   backgrounds = []; feats = []; beasts = [];
   manifest = null;
-  #enabledSources = null; // null = alle aktiv
+  #enabledSources = null; // null = all enabled
 
-  // == Initial-Ladung =========================================
+  // == Initial load ===========================================
   async load() {
-    // Packs (GitHub-Repo-Daten) bevorzugen, sonst Seed
+    // prefer packs (GitHub repo data), otherwise seed
     this.classes     = await this.#loadFirst(['data/packs/classes.json',     'data/seed/classes.json']);
     this.races       = await this.#loadFirst(['data/packs/races.json',       'data/seed/races.json']);
     this.spells      = await this.#loadFirst(['data/packs/spells.json',      'data/seed/spells.json']);
@@ -36,10 +36,10 @@ class DataRepository {
     bus.emit(EV.DATA_READY);
   }
 
-  // == Update per Knopfdruck ==================================
-  // Ruft den Server-Endpunkt auf, der die Daten aus dem GitHub-
-  // Repo lädt. Fortschrittszeilen werden gestreamt an onLine
-  // durchgereicht; danach wird das Repository neu geladen.
+  // == Update at the push of a button =========================
+  // Calls the server endpoint that loads the data from the GitHub
+  // repo. Progress lines are streamed through to onLine; afterwards
+  // the repository is reloaded.
   async triggerUpdate(onLine = () => {}, force = false) {
     const res = await fetch('/api/update' + (force ? '?force=1' : ''));
     if (!res.ok) { onLine(await res.text()); return null; }
@@ -53,7 +53,7 @@ class DataRepository {
       if (done) break;
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split('\n');
-      buffer = lines.pop(); // unvollständige letzte Zeile behalten
+      buffer = lines.pop(); // keep the incomplete last line
       for (const line of lines) {
         if (line.startsWith('RESULT ')) {
           try { result = JSON.parse(line.slice(7)); } catch {}
@@ -63,7 +63,7 @@ class DataRepository {
       }
     }
 
-    await this.load(); // frische Packs einlesen → alle Panels rendern neu
+    await this.load(); // read fresh packs → all panels re-render
     return result;
   }
 
@@ -82,9 +82,9 @@ class DataRepository {
     } catch { return null; }
   }
 
-  // == Quellen-Verwaltung =====================================
+  // == Source management ======================================
   allSources() {
-    // Alle Quellen, die in den Daten tatsächlich vorkommen
+    // all sources that actually occur in the data
     const found = new Set();
     [this.classes, this.races, this.spells, this.items, this.backgrounds, this.feats].forEach(arr =>
       arr.forEach(e => e.source && found.add(e.source)));
@@ -116,14 +116,14 @@ class DataRepository {
     } catch { this.#enabledSources = null; }
   }
 
-  /** Filtert beliebige Einträge nach aktivierten Quellen */
+  /** Filters arbitrary entries by enabled sources */
   bySource(arr) { return arr.filter(e => this.isSourceEnabled(e.source ?? 'HB')); }
 
-  /** Nach Namen deduplizieren, bevorzugt HB, dann die Quellen-Familie
-   *  der gewählten Regelversion (2014: PHB/MM/DMG · 2024: XPHB/XMM/XDMG),
-   *  dann die andere Familie. So erscheinen bei deaktiviertem PHB14 die
-   *  PHB24-Inhalte statt gar keiner, und Wildgestalt-Formen kommen aus
-   *  dem Monsterhandbuch der passenden Edition. */
+  /** Dedupe by name, preferring HB, then the source family of the
+   *  chosen ruleset version (2014: PHB/MM/DMG · 2024: XPHB/XMM/XDMG),
+   *  then the other family. That way, with PHB14 disabled, the PHB24
+   *  content appears instead of none at all, and wild shape forms come
+   *  from the Monster Manual of the matching edition. */
   dedupeByName(arr) {
     const FAM14 = new Set(['PHB', 'MM', 'DMG']);
     const FAM24 = new Set(['XPHB', 'XMM', 'XDMG']);
@@ -141,7 +141,7 @@ class DataRepository {
     return [...map.values()];
   }
 
-  // Regelversion (2014/2024): steuert Quellen-Bevorzugung bei Doppelungen
+  // ruleset version (2014/2024): controls source preference on duplicates
   get ruleset() {
     try { return localStorage.getItem('dnd5e_ruleset') || 'phb14'; } catch { return 'phb14'; }
   }
@@ -150,7 +150,7 @@ class DataRepository {
     bus.emit(EV.SOURCES_CHANGED);
   }
 
-  // Advanced-Modus: blendet Sidekick-Klassen u. Ä. ein
+  // advanced mode: reveals sidekick classes and the like
   get advanced() {
     try { return localStorage.getItem('dnd5e_advanced') === '1'; } catch { return false; }
   }
@@ -159,22 +159,22 @@ class DataRepository {
     bus.emit(EV.SOURCES_CHANGED);
   }
 
-  // == Abfragen (quellen-gefiltert + name-dedupliziert) =======
+  // == Queries (source-filtered + name-deduplicated) ==========
   getClasses() {
     let list = this.dedupeByName(this.bySource(this.classes));
     if (!this.advanced) list = list.filter(c => !c.sidekick);
     return list;
   }
   getClass(name) {
-    // Quellen-Filter anwenden (wie getClasses); Fallback auf die
-    // ungefilterte Liste, damit ein bereits gespeicherter Charakter
-    // seine Klasse auch bei deaktivierter Quelle noch aufloesen kann.
+    // Apply the source filter (like getClasses); fall back to the
+    // unfiltered list so an already saved character can still resolve
+    // its class even when the source is disabled.
     const cls = this.dedupeByName(this.bySource(this.classes)).find(c => c.name === name)
              ?? this.dedupeByName(this.classes).find(c => c.name === name)
              ?? this.classes.find(c => c.name === name);
     if (!cls) return null;
-    // Unterklassen zur Laufzeit nach Regelwerk deduplizieren
-    // (Pack enthält PHB- UND XPHB-Version, z. B. "Oath of Devotion")
+    // dedupe subclasses at runtime by ruleset
+    // (pack contains PHB AND XPHB versions, e.g. "Oath of Devotion")
     return { ...cls, subclasses: this.dedupeByName(cls.subclasses ?? []) };
   }
   getRaces()            { return this.dedupeByName(this.bySource(this.races)); }
@@ -186,15 +186,15 @@ class DataRepository {
   findBeast(name)       { return this.getBeasts().find(b => b.name === name)
                                ?? this.beasts.find(b => b.name === name) ?? null; }
 
-  /** Zauber für bestimmte Klassen (Multiclassing: mehrere Namen).
-   *  classes darf auch [{name, subclass}] sein, dann werden die
-   *  EXKLUSIVEN Unterklassen-Zauber (Domänen, Patron-Listen, Zirkel)
-   *  mit in die wählbare Liste aufgenommen, auch wenn sie nicht auf
-   *  der allgemeinen Klassenliste stehen. */
+  /** Spells for specific classes (multiclassing: multiple names).
+   *  classes may also be [{name, subclass}], in which case the
+   *  EXCLUSIVE subclass spells (domains, patron lists, circles) are
+   *  included in the selectable list even if they are not on the
+   *  general class list. */
   getSpellsForClasses(classes, featNames = []) {
     const names = new Set();
-    const extraNames = new Set(); // lowercase-Namen aus Unterklassen/Feats
-    const featFilters = [];       // Kriterien aus Feats (Grad/Schule/Klasse)
+    const extraNames = new Set(); // lowercase names from subclasses/feats
+    const featFilters = [];       // criteria from feats (level/school/class)
     for (const c of classes) {
       const clsName = typeof c === 'string' ? c : c.name;
       names.add(clsName);
@@ -204,9 +204,9 @@ class DataRepository {
         for (const n of sub?.spells?.extra ?? []) extraNames.add(n);
       }
     }
-    // Feat-gewährte Zauber: konkrete Namen + Auswahl-Kriterien
-    // (z. B. Adept of the Black Robes: Grad 2 aus Verzauberung/Nekromantie
-    // , auch außerhalb der eigenen Klassenliste wählbar)
+    // Feat-granted spells: concrete names + choice criteria
+    // (e.g. Adept of the Black Robes: level 2 from enchantment/necromancy,
+    // selectable even outside the own class list)
     for (const fn of featNames ?? []) {
       const f = this.findFeat(fn);
       for (const n of f?.spells?.names ?? []) extraNames.add(n);
@@ -223,22 +223,22 @@ class DataRepository {
       || matchesFilter(sp));
   }
 
-  /** Zauber case-insensitiv finden (Unterklassen-Daten sind kleingeschrieben) */
+  /** Find a spell case-insensitively (subclass data is lowercase) */
   findSpellCI(name) {
     const lower = String(name).toLowerCase();
     return this.getSpells().find(sp => sp.name.toLowerCase() === lower)
         ?? this.spells.find(sp => sp.name.toLowerCase() === lower) ?? null;
   }
 
-  /** Auto-Zauber einer Unterklasse: {Klassenstufe: [Namen]} oder null */
+  /** Auto spells of a subclass: {classLevel: [names]} or null */
   subclassAutoSpells(className, subclassName) {
     const sub = this.getClass(className)?.subclasses?.find(sc => sc.name === subclassName);
     return sub?.spells?.auto ?? null;
   }
 
-  // Namensaufloesung: zuerst die regelwerk-deduplizierte Sicht (liefert
-  // die Fassung der aktiven Edition), dann Dedupe ohne Quellen-Filter,
-  // zuletzt die Rohliste als Fallback fuer deaktivierte Quellen.
+  // Name resolution: first the ruleset-deduplicated view (returns the
+  // version of the active edition), then dedupe without source filter,
+  // finally the raw list as fallback for disabled sources.
   findSpell(name) { return this.getSpells().find(s => s.name === name)
                         ?? this.dedupeByName(this.spells).find(s => s.name === name)
                         ?? this.spells.find(s => s.name === name) ?? null; }
@@ -252,9 +252,9 @@ class DataRepository {
   // == Homebrew ===============================================
   #homebrew = { spells: [], items: [], classes: [], races: [], feats: [] };
 
-  /** ID des aktiven Charakters (für Charakter-gebundenes Homebrew).
-   *  Direkt aus dem Roster gelesen, um einen Zirkular-Import mit dem
-   *  Store zu vermeiden. */
+  /** ID of the active character (for character-bound homebrew).
+   *  Read directly from the roster to avoid a circular import with
+   *  the store. */
   #activeCharId() {
     try { return JSON.parse(localStorage.getItem('dnd5e_studio_roster') ?? '{}').activeId ?? null; }
     catch { return null; }
@@ -263,22 +263,22 @@ class DataRepository {
   #mergeHomebrew() {
     try { this.#homebrew = { spells: [], items: [], classes: [], races: [], feats: [], ...JSON.parse(localStorage.getItem(HB_KEY) ?? '{}') }; }
     catch {}
-    // Homebrew-Einträge mit Quelle "HB" markieren und einmischen.
-    // Charakter-gebundene Einträge (charId) sind nur für den jeweiligen
-    // Charakter sichtbar; Alt-Einträge ohne charId bleiben global.
+    // Mark homebrew entries with source "HB" and merge them in.
+    // Character-bound entries (charId) are only visible for that
+    // character; legacy entries without charId remain global.
     const active = this.#activeCharId();
     for (const kind of ['spells', 'items', 'classes', 'races', 'feats']) {
       const entries = this.#homebrew[kind]
         .filter(e => !e.charId || e.charId === active)
         .map(e => ({ ...e, source: 'HB' }));
-      // Alte HB-Einträge entfernen, neue anhängen (idempotent bei Reload)
+      // remove old HB entries, append new ones (idempotent on reload)
       this[kind] = this[kind].filter(e => e.source !== 'HB').concat(entries);
     }
   }
 
   addHomebrew(kind, entry) {
     if (!this.#homebrew[kind]) return false;
-    // Neue Einträge an den aktiven Charakter binden
+    // bind new entries to the active character
     this.#homebrew[kind].push({ ...entry, charId: this.#activeCharId() });
     localStorage.setItem(HB_KEY, JSON.stringify(this.#homebrew));
     this.#mergeHomebrew();
@@ -287,8 +287,8 @@ class DataRepository {
   }
 
   removeHomebrew(kind, name) {
-    // Nur den Eintrag des aktiven Charakters (bzw. globale Alt-Einträge)
-    // entfernen, Homebrew anderer Charaktere bleibt unangetastet.
+    // Remove only the active character's entry (or global legacy
+    // entries); other characters' homebrew remains untouched.
     const active = this.#activeCharId();
     this.#homebrew[kind] = (this.#homebrew[kind] ?? []).filter(e =>
       e.name !== name || (e.charId && e.charId !== active));
@@ -297,7 +297,7 @@ class DataRepository {
     bus.emit(EV.SOURCES_CHANGED);
   }
 
-  /** Homebrew des AKTIVEN Charakters (plus globale Alt-Einträge) */
+  /** Homebrew of the ACTIVE character (plus global legacy entries) */
   getHomebrew() {
     const active = this.#activeCharId();
     const out = {};
@@ -307,11 +307,11 @@ class DataRepository {
     return out;
   }
 
-  /** Beim Charakterwechsel die HB-Sicht neu aufbauen */
+  /** Rebuild the HB view on character switch */
   refreshHomebrew() { this.#mergeHomebrew(); }
 }
 
 export const repo = new DataRepository();
 
-// Beim Charakterwechsel die Charakter-gebundene Homebrew-Sicht nachziehen
+// on character switch, refresh the character-bound homebrew view
 bus.on(EV.CHAR_LOADED, () => repo.refreshHomebrew());

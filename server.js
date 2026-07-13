@@ -1,13 +1,13 @@
 // ============================================================
-// server.js, Lokaler Webserver + Update-API (keine Dependencies)
+// server.js, local web server + update API (no dependencies)
 // Start:  npm start   →  http://localhost:8420
 //
-// Endpunkte:
-//   GET /api/update[?force=1] , startet das Daten-Update aus dem
-//                                GitHub-Repo und streamt den Fort-
-//                                schritt zeilenweise (für den
-//                                Update-Knopf in der App)
-//   Alles andere              , statische Dateien aus public/
+// Endpoints:
+//   GET /api/update[?force=1] , starts the data update from the
+//                                GitHub repo and streams progress
+//                                line by line (for the update
+//                                button in the app)
+//   Everything else           , static files from public/
 // ============================================================
 import http from 'node:http';
 import { readFile } from 'node:fs/promises';
@@ -24,7 +24,7 @@ const MIME = {
   '.pdf': 'application/pdf', '.webp': 'image/webp',
 };
 
-let updateRunning = false; // Doppelstart verhindern
+let updateRunning = false; // prevent double start
 
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
@@ -37,7 +37,7 @@ const server = http.createServer(async (req, res) => {
     }
     updateRunning = true;
 
-    // Fortschritt zeilenweise streamen (Chunked Transfer)
+    // stream progress line by line (chunked transfer)
     res.writeHead(200, {
       'Content-Type': 'text/plain; charset=utf-8',
       'Cache-Control': 'no-cache',
@@ -59,18 +59,18 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // == Shutdown-API ==========================================
-  // Beim unsichtbaren Start (Start.vbs) gibt es kein Konsolen-
-  // fenster zum Schliessen, die App beendet den Server selbst.
+  // == Shutdown API ==========================================
+  // When started invisibly (Start.vbs) there is no console
+  // window to close, so the app shuts down the server itself.
   if (url.pathname === '/api/shutdown') {
     res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('Server wird beendet.');
     console.log('Shutdown über die App angefordert.');
-    setTimeout(() => process.exit(0), 300); // Antwort noch ausliefern
+    setTimeout(() => process.exit(0), 300); // still deliver the response
     return;
   }
 
-  // == Statische Dateien =====================================
+  // == Static files ==========================================
   try {
     let path = normalize(decodeURIComponent(url.pathname));
     if (path === '/' || path === '\\') path = '/index.html';
@@ -88,8 +88,8 @@ const server = http.createServer(async (req, res) => {
 
 server.on('error', err => {
   if (err.code === 'EADDRINUSE') {
-    // Bereits eine Instanz aktiv (z. B. Doppelklick auf Start.vbs):
-    // still beenden, der Browser zeigt die laufende Instanz.
+    // An instance is already active (e.g. double-click on Start.vbs):
+    // exit quietly, the browser shows the running instance.
     console.log('Server läuft bereits auf Port ' + PORT + ', zweite Instanz beendet sich.');
     process.exit(0);
   }

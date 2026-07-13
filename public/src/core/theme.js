@@ -1,22 +1,22 @@
 // ============================================================
-// core/theme.js, Erscheinungsbild (Themes, Farben, Schriften)
+// core/theme.js, appearance (themes, colors, fonts)
 // ------------------------------------------------------------
-// Drei Ebenen, die sich überlagern:
-//  1. Modus:  auto (System) / hell / dunkel  → data-mode am <html>
-//  2. Preset: fertige Farb-Themes (Akzent + Zweitfarbe)
-//  3. Custom: einzelne CSS-Variablen per Farbwähler übersteuern
-// Plus: Schriftart-Auswahl. Alles wird in localStorage persistiert
-// und beim Start sofort angewendet.
+// Three layers that stack on top of each other:
+//  1. Mode:   auto (system) / light / dark  → data-mode on <html>
+//  2. Preset: ready-made color themes (accent + secondary color)
+//  3. Custom: override individual CSS variables via color picker
+// Plus: font selection. Everything is persisted in localStorage
+// and applied immediately on startup.
 // ============================================================
 
 const THEME_KEY = 'dnd5e_theme';
 
-/** Farb-Presets: warme Paletten mit HOHEM Kontrast.
- *  Jedes Preset trägt getrennte Hell-/Dunkel-Varianten, damit die
- *  Farben in BEIDEN Modi gut lesbar bleiben (alle Werte numerisch
- *  gegen die Hintergründe geprüft: WCAG AA, Kontrast ≥ 4.5:1 -
- *  die meisten liegen über 6:1). Im Dunkelmodus sind die Töne
- *  aufgehellt, im Hellmodus abgedunkelt. */
+/** Color presets: warm palettes with HIGH contrast.
+ *  Each preset carries separate light/dark variants so the colors
+ *  stay well readable in BOTH modes (all values checked numerically
+ *  against the backgrounds: WCAG AA, contrast ≥ 4.5:1 -
+ *  most are above 6:1). In dark mode the tones are lightened,
+ *  in light mode darkened. */
 export const PRESETS = [
   { id: 'standard',   light: { accent: '#8b1a1a', gold: '#755408' }, dark: { accent: '#e8837a', gold: '#dfb763' } },
   { id: 'ember',      light: { accent: '#99330a', gold: '#7c5a00' }, dark: { accent: '#f0925e', gold: '#e3ac4f' } },
@@ -26,7 +26,7 @@ export const PRESETS = [
   { id: 'mahagoni',   light: { accent: '#6e2410', gold: '#6b4a08' }, dark: { accent: '#e88f70', gold: '#d8ab58' } },
 ];
 
-/** Schriftarten (System-Stacks, keine Downloads nötig) */
+/** Fonts (system stacks, no downloads needed) */
 export const FONTS = [
   { id: 'system',  stack: "system-ui, -apple-system, 'Segoe UI', sans-serif" },
   { id: 'serif',   stack: "Georgia, 'Times New Roman', serif" },
@@ -35,21 +35,21 @@ export const FONTS = [
   { id: 'clean',   stack: "'Trebuchet MS', Verdana, 'Segoe UI', sans-serif" },
 ];
 
-/** Frei übersteuerbare Variablen (Farbwähler in den Einstellungen) */
+/** Freely overridable variables (color pickers in the settings) */
 export const CUSTOM_VARS = [
   { id: 'accent', cssVar: '--accent' },
   { id: 'gold',   cssVar: '--gold' },
   { id: 'bg',     cssVar: '--bg' },
   { id: 'panel',  cssVar: '--bg2' },
   { id: 'text',   cssVar: '--ink' },
-  { id: 'boost',  cssVar: '--boost' }, // Farbe für Item-verstärkte Attribute
+  { id: 'boost',  cssVar: '--boost' }, // color for item-boosted abilities
 ];
 
 const DEFAULTS = { mode: 'auto', preset: 'standard', font: 'system', custom: {} };
 
 let current = { ...DEFAULTS };
 
-// == Laden / Speichern ========================================
+// == Load / save ==============================================
 export function getTheme() { return structuredClone(current); }
 
 export function setTheme(patch) {
@@ -65,24 +65,24 @@ export function resetTheme() {
   applyTheme();
 }
 
-// == Anwenden =================================================
+// == Apply ====================================================
 export function applyTheme() {
   const root = document.documentElement;
 
-  // 1) Modus: auto = Attribut entfernen (Media-Query greift)
+  // 1) mode: auto = remove the attribute (media query takes over)
   if (current.mode === 'auto') root.removeAttribute('data-mode');
   else root.setAttribute('data-mode', current.mode);
 
-  // 2) Alle Inline-Variablen zurücksetzen, dann neu setzen
+  // 2) reset all inline variables, then set them anew
   CUSTOM_VARS.forEach(v => root.style.removeProperty(v.cssVar));
   root.style.removeProperty('--font');
   root.style.removeProperty('--accent-bg');
   root.style.removeProperty('--gold-bg');
 
-  // Preset-Farben: Hell-/Dunkel-Variante nach EFFEKTIVEM Modus.
-  // (Inline-Styles überschreiben die CSS-Media-Query, daher muss
-  //  die Modus-Auflösung hier passieren, sonst wären dunkle Akzente
-  //  auf dunklem Grund unlesbar.)
+  // Preset colors: light/dark variant based on the EFFECTIVE mode.
+  // (Inline styles override the CSS media query, so the mode
+  //  resolution has to happen here; otherwise dark accents on a
+  //  dark background would be unreadable.)
   const preset = PRESETS.find(p => p.id === current.preset) ?? PRESETS[0];
   const dark = current.mode === 'dark' ||
     (current.mode === 'auto' && window.matchMedia?.('(prefers-color-scheme: dark)').matches);
@@ -92,7 +92,7 @@ export function applyTheme() {
   root.style.setProperty('--accent-bg', tint(colors.accent, dark));
   root.style.setProperty('--gold-bg',   tint(colors.gold, dark));
 
-  // 3) Custom-Farben übersteuern Preset
+  // 3) custom colors override the preset
   for (const [id, value] of Object.entries(current.custom ?? {})) {
     const def = CUSTOM_VARS.find(v => v.id === id);
     if (def && value) {
@@ -102,12 +102,12 @@ export function applyTheme() {
     }
   }
 
-  // 4) Schriftart
+  // 4) font
   const font = FONTS.find(f => f.id === current.font) ?? FONTS[0];
   root.style.setProperty('--font', font.stack);
 }
 
-/** Zarte Hintergrund-Tönung aus einer Vollfarbe (Modus-abhängig) */
+/** Subtle background tint from a solid color (mode-dependent) */
 function tint(hex, dark = false) {
   const m = hex.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i);
   if (!m) return 'transparent';
@@ -115,14 +115,14 @@ function tint(hex, dark = false) {
   return `rgba(${r}, ${g}, ${b}, ${dark ? 0.16 : 0.12})`;
 }
 
-// Bei Systemwechsel hell↔dunkel (Modus "auto") die passende
-// Preset-Variante nachziehen.
+// On system switch light↔dark (mode "auto"), follow up with the
+// matching preset variant.
 try {
   window.matchMedia('(prefers-color-scheme: dark)')
     .addEventListener('change', () => { if (current.mode === 'auto') applyTheme(); });
-} catch { /* ältere Browser: kein Live-Wechsel */ }
+} catch { /* older browsers: no live switching */ }
 
-// == Initialisierung beim Modul-Import ========================
+// == Initialization on module import ==========================
 try {
   const raw = localStorage.getItem(THEME_KEY);
   if (raw) current = { ...DEFAULTS, ...JSON.parse(raw) };

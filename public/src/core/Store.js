@@ -1,120 +1,120 @@
 // ============================================================
-// core/Store.js, Charakter-Zustand (Single Source of Truth)
+// core/Store.js, character state (single source of truth)
 // ------------------------------------------------------------
-// NEU: Mehrcharakter-Verwaltung ("Roster")
-//  • Alle Charaktere liegen unter EINEM localStorage-Schlüssel:
-//      { characters: { <id>: <charakter> }, activeId }
-//  • Beim Start zeigt die App eine Auswahl (CharacterSelect);
-//    "Neu" erzeugt einen komplett leeren Bogen.
-//  • Ein frisch erzeugter, noch unberührter Charakter wird erst
-//    beim ersten Ändern gespeichert, so entstehen keine leeren
-//    Karteileichen in der Auswahl.
+// NEW: multi-character management ("roster")
+//  • All characters live under ONE localStorage key:
+//      { characters: { <id>: <character> }, activeId }
+//  • On startup the app shows a selection (CharacterSelect);
+//    "New" creates a completely blank sheet.
+//  • A freshly created, still untouched character is only saved
+//    on its first change, so no empty orphan entries appear
+//    in the selection.
 //
-// Schema-Highlights:
-//  • classes: Array für Multiclassing
-//  • sections: frei hinzufügbare Bogen-Abschnitte
-//  • portrait: Charakterbild als DataURL (per DropZone)
-//  • descriptionBlocks: Freitext-Blöcke zur Charakterbeschreibung
+// Schema highlights:
+//  • classes: array for multiclassing
+//  • sections: freely addable sheet sections
+//  • portrait: character image as data URL (via DropZone)
+//  • descriptionBlocks: free-text blocks for the character description
 // ============================================================
 import { bus, EV } from './EventBus.js';
 import { t } from './i18n.js';
 
-/** Leerer / Standard-Charakter (immer mit frischer ID) */
+/** Blank / default character (always with a fresh ID) */
 export function blankCharacter() {
   return {
     schemaVersion: 3,
     id: 'char_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
     updatedAt: null,
-    // Identität
+    // identity
     name: '', race: '', background: '', alignment: '', playerName: '',
     xp: 0,
-    // Multiclassing: mind. ein Eintrag
+    // multiclassing: at least one entry
     classes: [{ name: 'Fighter', level: 1, subclass: null }],
-    // Attribute
+    // abilities
     str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10,
-    // Übungen
+    // proficiencies
     saveProficiencies: [],
     skillProficiencies: [],
     skillExpertise: [],
-    // Kampf
-    // Regelwerk-Version: 'phb14' (2014) oder 'phb24' (2024).
-    // Bestimmt, welche Buchquelle bei Doppelungen bevorzugt wird.
+    // combat
+    // Ruleset version: 'phb14' (2014) or 'phb24' (2024).
+    // Determines which book source is preferred on duplicates.
     ruleset: 'phb14',
     ac: 10, acManual: false, maxHP: 10, currHP: 10, tempHP: 0, speed: 30,
     hitDiceLeft: 1, deathSuccesses: 0, deathFailures: 0, inspiration: false,
     attacks: [],
-    // Zauber
+    // spells
     spells: [],
     spellSlotsUsed: [0,0,0,0,0,0,0,0,0],
     pactSlotsUsed: 0,
-    // Verbrauchte Mystische Arkana (Warlock; Liste der Grade, z. B. [6, 8])
+    // spent Mystic Arcana (Warlock; list of levels, e.g. [6, 8])
     arcanumUsed: [],
-    // Inventar
+    // inventory
     currency: { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
     items: [],
-    // Talente (Feats)
+    // feats
     feats: [],
-    // Wildgestalt (Druide): aktive Form + eigener TP-Pool + Nutzungen
+    // wild shape (druid): active form + own HP pool + uses
     wildshape: null,      // null | { form: 'Wolf', currHP: 11 }
-    wildshapeUses: 2,     // 2 pro Rast (PHB)
-    // Charakterbeschreibung: Bild + Freitext-Blöcke
-    // Die drei Standard-Blöcke sind feste Kategorien (fixed: Titel
-    // nicht editierbar); zusätzliche Blöcke kann der Nutzer frei anlegen.
-    portrait: null, // DataURL (verkleinert), via DropZone
+    wildshapeUses: 2,     // 2 per rest (PHB)
+    // Character description: image + free-text blocks.
+    // The three default blocks are fixed categories (fixed: title
+    // not editable); the user can freely add further blocks.
+    portrait: null, // data URL (downscaled), via DropZone
     descriptionBlocks: [
       { id: 'db_appearance',  key: 'appearance',  fixed: true, content: '' },
       { id: 'db_personality', key: 'personality', fixed: true, content: '' },
       { id: 'db_backstory',   key: 'backstory',   fixed: true, content: '' },
     ],
-    // Freie Abschnitte (dynamisch erweiterbar), "Persönlichkeit"
-    // liegt bereits unter Beschreibung, hier nur noch Merkmale.
+    // Free sections (dynamically extendable); "personality" already
+    // lives under description, only features remain here.
     sections: [
       { id: 'features', title: 'Merkmale & Fähigkeiten', content: '' },
     ],
-    // Attributs-Boni aus Rasse / Hintergrund / Talenten (additiv)
+    // ability bonuses from race / background / feats (additive)
     raceBonus: {}, bgBonus: {}, featBonus: {},
-    // Stufe, auf der das jeweilige Talent gewählt wurde (parallel zu feats;
-    // relevant für stufenbezogene Talente und den Level-Up-Verlauf)
+    // level at which each feat was chosen (parallel to feats;
+    // relevant for level-based feats and the level-up history)
     featLevels: [],
-    // Getroffene Wahl bei frei verteilbaren Boni: { variant, picks: [attr,…] }
+    // chosen distribution of freely assignable bonuses: { variant, picks: [attr,…] }
     raceChoice: null, bgChoice: null,
-    // Freitext für den PDF-Bogen (Seite 1 & 2)
-    languages: '',           // Sprachen (→ Other Proficiencies & Languages)
-    otherProficiencies: '',  // Rüstungen/Waffen/Werkzeuge
-    allies: '',              // Verbündete & Organisationen (Seite 2)
-    treasure: '',            // Schätze (Seite 2)
-    // Physische Details (Seite 2 des WotC-Bogens)
+    // free text for the PDF sheet (pages 1 & 2)
+    languages: '',           // languages (→ Other Proficiencies & Languages)
+    otherProficiencies: '',  // armor/weapons/tools
+    allies: '',              // Allies & Organizations (page 2)
+    treasure: '',            // Treasure (page 2)
+    // physical details (page 2 of the WotC sheet)
     age: '', height: '', weight: '', eyes: '', skin: '', hair: '',
   };
 }
 
 const ROSTER_KEY     = 'dnd5e_studio_roster';
-const LEGACY_KEY     = 'dnd5e_studio_character'; // altes Ein-Charakter-Format
+const LEGACY_KEY     = 'dnd5e_studio_character'; // old single-character format
 
 class Store {
   #state = blankCharacter();
   #roster = { characters: {}, activeId: null };
   #undoStack = [];
-  #dirty = false; // erst nach erster Änderung im Roster speichern
+  #dirty = false; // only save to the roster after the first change
 
   constructor() { this.#loadRoster(); }
 
-  // == Lesen ==
+  // == Reading ==
   get()      { return structuredClone(this.#state); }
-  /** true, solange der Charakter frisch über "Neu" geöffnet und noch
-   *  unverändert ist, nur dann ist der Generator verfügbar. */
+  /** true as long as the character was freshly opened via "New" and is
+   *  still unchanged; only then is the generator available. */
   isNew()    { return !this.#dirty; }
   field(key) { return structuredClone(this.#state[key]); }
   activeId() { return this.#state.id; }
 
-  /** Gesamtstufe = Summe aller Klassenstufen (Multiclassing) */
+  /** Total level = sum of all class levels (multiclassing) */
   totalLevel() {
     return this.#state.classes.reduce((sum, c) => sum + (+c.level || 0), 0) || 1;
   }
 
-  // == Roster-API (Charakterauswahl) ==========================
+  // == Roster API (character selection) =======================
 
-  /** Metadaten aller gespeicherten Charaktere, neueste zuerst */
+  /** Metadata of all saved characters, newest first */
   listCharacters() {
     return Object.values(this.#roster.characters)
       .map(c => ({
@@ -127,16 +127,16 @@ class Store {
       .sort((a, b) => (b.updatedAt ?? '').localeCompare(a.updatedAt ?? ''));
   }
 
-  /** Bestehenden Charakter aus dem Roster laden */
+  /** Load an existing character from the roster */
   loadCharacter(id) {
     const c = this.#roster.characters[id];
     if (!c) return false;
     this.#state = { ...blankCharacter(), ...structuredClone(c), id };
     this.#roster.activeId = id;
-    this.#dirty = true; // existiert bereits im Roster
+    this.#dirty = true; // already exists in the roster
     this.#undoStack = [];
     this.#saveRoster();
-    // Regelversion des geladenen Charakters global wiederherstellen
+    // restore the loaded character's ruleset version globally
     try { localStorage.setItem('dnd5e_ruleset', this.#state.ruleset ?? 'phb14'); } catch {}
     bus.emit(EV.SOURCES_CHANGED);
     bus.emit(EV.CHAR_LOADED);
@@ -144,26 +144,26 @@ class Store {
     return true;
   }
 
-  /** Komplett leeren Bogen öffnen ("Neu"-Knopf) */
+  /** Open a completely blank sheet ("New" button) */
   newCharacter(ruleset = 'phb14') {
     this.#state = blankCharacter();
     this.#state.ruleset = ruleset;
     this.#roster.activeId = this.#state.id;
-    this.#dirty = false; // erst bei erster Änderung speichern
+    this.#dirty = false; // only save on the first change
     this.#undoStack = [];
-    // Regelversion global hinterlegen (Repository liest sie beim Filtern);
-    // Änderung meldet SOURCES_CHANGED, damit Bibliotheken neu laden.
+    // Store the ruleset version globally (the repository reads it when
+    // filtering); the change emits SOURCES_CHANGED so libraries reload.
     try { localStorage.setItem('dnd5e_ruleset', ruleset); } catch {}
     bus.emit(EV.SOURCES_CHANGED);
     bus.emit(EV.CHAR_LOADED);
     bus.emit(EV.CHAR_CHANGED, { changed: ['*'] });
   }
 
-  /** Charakter aus dem Roster löschen */
+  /** Delete a character from the roster */
   deleteCharacter(id) {
     delete this.#roster.characters[id];
     if (this.#state.id === id) {
-      // aktiven Charakter gelöscht → frischer leerer Bogen
+      // active character deleted → fresh blank sheet
       this.#state = blankCharacter();
       this.#roster.activeId = this.#state.id;
       this.#dirty = false;
@@ -172,7 +172,7 @@ class Store {
     this.#saveRoster();
   }
 
-  // == Schreiben ==
+  // == Writing ==
   update(patch) {
     this.#pushUndo();
     Object.assign(this.#state, structuredClone(patch));
@@ -180,16 +180,16 @@ class Store {
     bus.emit(EV.CHAR_CHANGED, { changed: Object.keys(patch) });
   }
 
-  /** Wie update, aber OHNE CHAR_CHANGED-Event (kein Re-Render).
-   *  Für Eingabefelder, deren Fokus/Cursor erhalten bleiben soll;
-   *  die abgeleiteten Anzeigen werden vom Aufrufer beim blur aktualisiert. */
+  /** Like update, but WITHOUT the CHAR_CHANGED event (no re-render).
+   *  For input fields whose focus/cursor should be preserved;
+   *  the derived displays are updated by the caller on blur. */
   quietUpdate(patch) {
     Object.assign(this.#state, structuredClone(patch));
     this.#persist();
   }
 
-  /** Maximale Wildgestalt-Nutzungen: 2014 immer 2; 2024 skaliert
-   *  mit der Druidenstufe (2 ab St. 2, 3 ab St. 6, 4 ab St. 17). */
+  /** Maximum wild shape uses: 2014 always 2; 2024 scales with
+   *  the druid level (2 from lvl 2, 3 from lvl 6, 4 from lvl 17). */
   wildshapeMax() {
     const s = this.#state;
     const lvl = (s.classes ?? [])
@@ -199,12 +199,12 @@ class Store {
     return 2;
   }
 
-  /** Kurze Rast, regelwerk-abhängig:
-   *  • Warlock-Pakt-Slots kommen in BEIDEN Editionen zurück.
-   *  • Wildgestalt: 2014 frischt ALLE Nutzungen auf (PHB S. 66),
-   *    2024 gibt EINE Nutzung zurück (XPHB "regain one expended use").
-   *  Trefferwürfel werden nicht automatisch ausgegeben, das bleibt
-   *  eine Spielerentscheidung über die Trefferwürfel-Anzeige. */
+  /** Short rest, ruleset-dependent:
+   *  • Warlock pact slots come back in BOTH editions.
+   *  • Wild shape: 2014 refreshes ALL uses (PHB p. 66),
+   *    2024 returns ONE use (XPHB "regain one expended use").
+   *  Hit dice are not spent automatically; that remains a player
+   *  decision via the hit dice display. */
   shortRest() {
     const s = this.#state;
     const patch = { pactSlotsUsed: 0 };
@@ -220,9 +220,9 @@ class Store {
     this.update(patch);
   }
 
-  /** Lange Rast: TP voll, Trefferwürfel bis zur Hälfte zurück,
-   *  Zauberslots + Pakt-Slots + Wildgestalt-Nutzungen aufgefrischt,
-   *  Todesrettungswürfe zurückgesetzt. */
+  /** Long rest: full HP, hit dice back up to half,
+   *  spell slots + pact slots + wild shape uses refreshed,
+   *  death saving throws reset. */
   longRest() {
     const s = this.#state;
     const total = (s.classes ?? []).reduce((a, c) => a + (+c.level || 0), 0) || 1;
@@ -239,7 +239,7 @@ class Store {
     });
   }
 
-  /** Klassen-Array gezielt ändern */
+  /** Modify the classes array in a targeted way */
   updateClass(index, patch) {
     const classes = this.field('classes');
     if (!classes[index]) return;
@@ -258,7 +258,7 @@ class Store {
     this.update({ classes });
   }
 
-  /** Abschnitte verwalten */
+  /** Manage sections */
   addSection(title) {
     const sections = this.field('sections');
     sections.push({ id: 'sec_' + Date.now(), title, content: '' });
@@ -272,7 +272,7 @@ class Store {
     this.update({ sections: this.field('sections').filter(s => s.id !== id) });
   }
 
-  /** Beschreibungs-Blöcke verwalten (DescriptionPanel) */
+  /** Manage description blocks (DescriptionPanel) */
   addDescriptionBlock(title) {
     const blocks = this.field('descriptionBlocks') ?? [];
     blocks.push({ id: 'db_' + Date.now(), title, content: '' });
@@ -300,7 +300,7 @@ class Store {
     if (this.#undoStack.length > 30) this.#undoStack.shift();
   }
 
-  // == Persistenz: Roster in localStorage ==
+  // == Persistence: roster in localStorage ==
   #persist() {
     this.#dirty = true;
     this.#state.updatedAt = new Date().toISOString();
@@ -317,7 +317,7 @@ class Store {
       if (raw) this.#roster = JSON.parse(raw);
     } catch {}
 
-    // Migration: altes Ein-Charakter-Format ins Roster übernehmen
+    // migration: carry the old single-character format into the roster
     try {
       const legacy = localStorage.getItem(LEGACY_KEY);
       if (legacy && Object.keys(this.#roster.characters).length === 0) {
@@ -329,7 +329,7 @@ class Store {
       }
     } catch {}
 
-    // Aktiven Charakter in den Zustand laden (falls vorhanden)
+    // load the active character into the state (if present)
     const active = this.#roster.characters[this.#roster.activeId];
     if (active) {
       this.#state = { ...blankCharacter(), ...structuredClone(active) };
@@ -343,16 +343,16 @@ class Store {
   importJson(json) {
     try {
       const parsed = JSON.parse(json);
-      if (!parsed.classes && parsed.class) { // Migration Schema v1
+      if (!parsed.classes && parsed.class) { // migration schema v1
         parsed.classes = [{ name: parsed.class, level: parsed.level ?? 1, subclass: parsed.subclass ?? null }];
       }
-      // Import legt IMMER einen neuen Datensatz an (frische ID),
-      // damit ein bestehender Charakter nicht überschrieben wird.
+      // Import ALWAYS creates a new record (fresh ID) so an
+      // existing character is not overwritten.
       const fresh = blankCharacter();
       this.#pushUndo();
       this.#state = { ...fresh, ...parsed, id: fresh.id, updatedAt: null };
       this.#dirty = false;
-      this.#persist(); // schreibt unter der neuen ID ins Roster
+      this.#persist(); // writes to the roster under the new ID
       bus.emit(EV.CHAR_LOADED);
       bus.emit(EV.CHAR_CHANGED, { changed: ['*'] });
       return true;
@@ -366,7 +366,7 @@ class Store {
     bus.emit(EV.CHAR_CHANGED, { changed: ['*'] });
   }
 
-  /** Aktuellen Bogen auf leer zurücksetzen (behält die ID) */
+  /** Reset the current sheet to blank (keeps the ID) */
   reset() {
     this.#pushUndo();
     const id = this.#state.id;

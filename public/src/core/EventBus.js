@@ -1,26 +1,26 @@
 // ============================================================
-// core/EventBus.js, Zentrales Publish/Subscribe-System
-// Entkoppelt alle Komponenten: Niemand importiert Komponenten
-// direkt, alles läuft über Events.
+// core/EventBus.js, central publish/subscribe system
+// Decouples all components: nobody imports components
+// directly, everything runs through events.
 // ============================================================
 
 class EventBus {
   #handlers = new Map();
 
-  /** Event abonnieren. Gibt Unsubscribe-Funktion zurück. */
+  /** Subscribe to an event. Returns an unsubscribe function. */
   on(event, fn) {
     if (!this.#handlers.has(event)) this.#handlers.set(event, new Set());
     this.#handlers.get(event).add(fn);
     return () => this.#handlers.get(event)?.delete(fn);
   }
 
-  /** Event einmalig abonnieren. */
+  /** Subscribe to an event once. */
   once(event, fn) {
     const off = this.on(event, (...args) => { off(); fn(...args); });
     return off;
   }
 
-  /** Event auslösen. */
+  /** Emit an event. */
   emit(event, payload) {
     this.#handlers.get(event)?.forEach(fn => {
       try { fn(payload); }
@@ -31,7 +31,7 @@ class EventBus {
 
 export const bus = new EventBus();
 
-// Zentrale Event-Namen (vermeidet Tippfehler)
+// central event names (avoids typos)
 export const EV = {
   CHAR_CHANGED:   'character:changed',   // { changed: string[] }
   CHAR_LOADED:    'character:loaded',

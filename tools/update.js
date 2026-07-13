@@ -1,7 +1,7 @@
 // ============================================================
-// tools/update.js - CLI-Wrapper für die Update-Bibliothek
-// Aufruf:  npm run update  [--force]
-// (Die App kann das Update auch per Knopf auslösen → server.js)
+// tools/update.js - CLI wrapper for the update library
+// Usage:  npm run update  [--force]
+// (The app can also trigger the update via button → server.js)
 // ============================================================
 import { runUpdate } from './updater.js';
 
