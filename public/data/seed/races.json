@@ -1,0 +1,11 @@
+[
+  { "name": "Human",       "source": "SRD", "speed": 30, "size": "M", "abilityBonuses": { "str": 1, "dex": 1, "con": 1, "int": 1, "wis": 1, "cha": 1 }, "traits": [] },
+  { "name": "Dwarf",       "source": "SRD", "speed": 25, "size": "M", "abilityBonuses": { "con": 2 }, "traits": ["Darkvision", "Dwarven Resilience"] },
+  { "name": "Elf",         "source": "SRD", "speed": 30, "size": "M", "abilityBonuses": { "dex": 2 }, "traits": ["Darkvision", "Fey Ancestry", "Trance"] },
+  { "name": "Halfling",    "source": "SRD", "speed": 25, "size": "S", "abilityBonuses": { "dex": 2 }, "traits": ["Lucky", "Brave"] },
+  { "name": "Half-Elf",    "source": "SRD", "speed": 30, "size": "M", "abilityBonuses": { "cha": 2 }, "traits": ["Darkvision", "Fey Ancestry", "Skill Versatility"] },
+  { "name": "Half-Orc",    "source": "SRD", "speed": 30, "size": "M", "abilityBonuses": { "str": 2, "con": 1 }, "traits": ["Darkvision", "Relentless Endurance"] },
+  { "name": "Gnome",       "source": "SRD", "speed": 25, "size": "S", "abilityBonuses": { "int": 2 }, "traits": ["Darkvision", "Gnome Cunning"] },
+  { "name": "Dragonborn",  "source": "SRD", "speed": 30, "size": "M", "abilityBonuses": { "str": 2, "cha": 1 }, "traits": ["Breath Weapon", "Damage Resistance"] },
+  { "name": "Tiefling",    "source": "SRD", "speed": 30, "size": "M", "abilityBonuses": { "cha": 2, "int": 1 }, "traits": ["Darkvision", "Hellish Resistance", "Infernal Legacy"] }
+]

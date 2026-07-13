@@ -1,0 +1,5 @@
+[
+  { "id": "PHB",  "name": "Player's Handbook", "group": "core" },
+  { "id": "SRD",  "name": "Systems Reference Document", "group": "core" },
+  { "id": "HB",   "name": "Homebrew", "group": "homebrew" }
+]

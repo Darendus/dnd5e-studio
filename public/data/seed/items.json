@@ -1,0 +1,20 @@
+[
+  { "name": "Longsword",       "source": "SRD", "type": "M", "rarity": "none", "weight": 3,   "value": 1500, "dmg1": "1d8",  "dmgType": "S", "description": "Versatile (1d10)." },
+  { "name": "Shortsword",      "source": "SRD", "type": "M", "rarity": "none", "weight": 2,   "value": 1000, "dmg1": "1d6",  "dmgType": "P", "description": "Finesse, light." },
+  { "name": "Dagger",          "source": "SRD", "type": "M", "rarity": "none", "weight": 1,   "value": 200,  "dmg1": "1d4",  "dmgType": "P", "description": "Finesse, light, thrown (20/60)." },
+  { "name": "Greataxe",        "source": "SRD", "type": "M", "rarity": "none", "weight": 7,   "value": 3000, "dmg1": "1d12", "dmgType": "S", "description": "Heavy, two-handed." },
+  { "name": "Longbow",         "source": "SRD", "type": "R", "rarity": "none", "weight": 2,   "value": 5000, "dmg1": "1d8",  "dmgType": "P", "description": "Ammunition (150/600), heavy, two-handed." },
+  { "name": "Light Crossbow",  "source": "SRD", "type": "R", "rarity": "none", "weight": 5,   "value": 2500, "dmg1": "1d8",  "dmgType": "P", "description": "Ammunition (80/320), loading, two-handed." },
+  { "name": "Quarterstaff",    "source": "SRD", "type": "M", "rarity": "none", "weight": 4,   "value": 20,   "dmg1": "1d6",  "dmgType": "B", "description": "Versatile (1d8)." },
+  { "name": "Leather Armor",   "source": "SRD", "type": "LA", "rarity": "none", "weight": 10, "value": 1000, "ac": 11, "description": "AC 11 + DEX modifier." },
+  { "name": "Chain Mail",      "source": "SRD", "type": "HA", "rarity": "none", "weight": 55, "value": 7500, "ac": 16, "description": "AC 16, STR 13 required, stealth disadvantage." },
+  { "name": "Shield",          "source": "SRD", "type": "S",  "rarity": "none", "weight": 6,  "value": 1000, "ac": 2,  "description": "+2 AC." },
+  { "name": "Backpack",        "source": "SRD", "type": "G",  "rarity": "none", "weight": 5,  "value": 200,  "description": "Holds 30 pounds of gear." },
+  { "name": "Rope (50 ft)",    "source": "SRD", "type": "G",  "rarity": "none", "weight": 10, "value": 100,  "description": "Hemp rope, 50 feet." },
+  { "name": "Rations (1 day)", "source": "SRD", "type": "G",  "rarity": "none", "weight": 2,  "value": 50,   "description": "Dry food for one day of travel." },
+  { "name": "Torch",           "source": "SRD", "type": "G",  "rarity": "none", "weight": 1,  "value": 1,    "description": "Bright light 20 ft, dim 20 ft, burns 1 hour." },
+  { "name": "Healer's Kit",    "source": "SRD", "type": "G",  "rarity": "none", "weight": 3,  "value": 500,  "description": "10 uses; stabilize a creature without a Medicine check." },
+  { "name": "Thieves' Tools",  "source": "SRD", "type": "T",  "rarity": "none", "weight": 1,  "value": 2500, "description": "Pick locks and disarm traps (proficiency applies)." },
+  { "name": "Potion of Healing","source": "SRD","type": "P",  "rarity": "common", "weight": 0.5, "value": 5000, "description": "Regain 2d4+2 hit points when you drink this potion." },
+  { "name": "Spellbook",       "source": "SRD", "type": "G",  "rarity": "none", "weight": 3,  "value": 5000, "description": "Essential for wizards: holds your known spells." }
+]

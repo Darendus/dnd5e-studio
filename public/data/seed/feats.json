@@ -1,0 +1,8 @@
+[
+  { "name": "Alert",            "source": "SRD", "prerequisite": null, "description": "+5 bonus to initiative; you can't be surprised while conscious; hidden attackers gain no advantage against you." },
+  { "name": "Great Weapon Master", "source": "SRD", "prerequisite": null, "description": "On a critical hit or kill with a melee weapon, make one melee attack as a bonus action. You may take -5 to hit for +10 damage with heavy weapons." },
+  { "name": "Lucky",            "source": "SRD", "prerequisite": null, "description": "You have 3 luck points. Spend one to roll an additional d20 for an attack roll, ability check, or saving throw." },
+  { "name": "Sharpshooter",     "source": "SRD", "prerequisite": null, "description": "Attacking at long range doesn't impose disadvantage; ignore half and three-quarters cover; -5 to hit for +10 damage with ranged weapons." },
+  { "name": "Tough",            "source": "SRD", "prerequisite": null, "description": "Your hit point maximum increases by 2 for every level you have." },
+  { "name": "War Caster",       "source": "SRD", "prerequisite": "Ability to cast at least one spell", "description": "Advantage on CON saves for concentration; perform somatic components with weapons in hand; cast a spell as an opportunity attack." }
+]

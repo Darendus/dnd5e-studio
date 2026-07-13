@@ -1,0 +1,532 @@
+[
+ {
+  "name": "Cat",
+  "source": "MM",
+  "size": "T",
+  "cr": "0",
+  "ac": 12,
+  "hp": 2,
+  "hpFormula": "1d4",
+  "speed": {
+   "walk": 40,
+   "climb": 30
+  },
+  "str": 3,
+  "dex": 15,
+  "con": 10,
+  "int": 3,
+  "wis": 12,
+  "cha": 7,
+  "senses": "",
+  "passive": 14,
+  "traits": [
+   {
+    "name": "Keen Smell",
+    "text": "The cat has advantage on Wisdom (Perception) checks that rely on smell."
+   }
+  ],
+  "actions": [
+   {
+    "name": "Claws",
+    "attackBonus": 0,
+    "damage": "1d1",
+    "text": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 slashing damage."
+   }
+  ]
+ },
+ {
+  "name": "Wolf",
+  "source": "MM",
+  "size": "M",
+  "cr": "1/4",
+  "ac": 13,
+  "hp": 11,
+  "hpFormula": "2d8+2",
+  "speed": {
+   "walk": 40
+  },
+  "str": 12,
+  "dex": 15,
+  "con": 12,
+  "int": 3,
+  "wis": 12,
+  "cha": 6,
+  "senses": "",
+  "passive": 13,
+  "traits": [
+   {
+    "name": "Keen Hearing and Smell",
+    "text": "The wolf has advantage on Wisdom (Perception) checks that rely on hearing or smell."
+   },
+   {
+    "name": "Pack Tactics",
+    "text": "The wolf has advantage on attack rolls against a creature if at least one of the wolf's allies is within 5 feet of the creature."
+   }
+  ],
+  "actions": [
+   {
+    "name": "Bite",
+    "attackBonus": 4,
+    "damage": "2d4+2",
+    "text": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (2d4+2) piercing damage. If the target is a creature, it must succeed on a DC 11 Strength saving throw or be knocked prone."
+   }
+  ]
+ },
+ {
+  "name": "Boar",
+  "source": "MM",
+  "size": "M",
+  "cr": "1/4",
+  "ac": 11,
+  "hp": 11,
+  "hpFormula": "2d8+2",
+  "speed": {
+   "walk": 40
+  },
+  "str": 13,
+  "dex": 11,
+  "con": 12,
+  "int": 2,
+  "wis": 9,
+  "cha": 5,
+  "senses": "",
+  "passive": 9,
+  "traits": [
+   {
+    "name": "Charge",
+    "text": "If the boar moves at least 20 feet straight toward a target and then hits it with a tusk attack on the same turn, the target takes an extra 3 (1d6) slashing damage."
+   }
+  ],
+  "actions": [
+   {
+    "name": "Tusk",
+    "attackBonus": 3,
+    "damage": "1d6+1",
+    "text": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6+1) slashing damage."
+   }
+  ]
+ },
+ {
+  "name": "Giant Wolf Spider",
+  "source": "MM",
+  "size": "M",
+  "cr": "1/4",
+  "ac": 13,
+  "hp": 11,
+  "hpFormula": "2d8+2",
+  "speed": {
+   "walk": 40,
+   "climb": 40
+  },
+  "str": 12,
+  "dex": 16,
+  "con": 13,
+  "int": 3,
+  "wis": 12,
+  "cha": 4,
+  "senses": "blindsight 10 ft., darkvision 60 ft.",
+  "passive": 13,
+  "traits": [
+   {
+    "name": "Spider Climb",
+    "text": "The spider can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+   }
+  ],
+  "actions": [
+   {
+    "name": "Bite",
+    "attackBonus": 3,
+    "damage": "1d6+1",
+    "text": "Melee Weapon Attack: +3 to hit, reach 5 ft., one creature. Hit: 4 (1d6+1) piercing damage, and the target must make a DC 11 Constitution saving throw, taking 7 (2d6) poison damage on a failed save."
+   }
+  ]
+ },
+ {
+  "name": "Crocodile",
+  "source": "MM",
+  "size": "L",
+  "cr": "1/2",
+  "ac": 12,
+  "hp": 19,
+  "hpFormula": "3d10+3",
+  "speed": {
+   "walk": 20,
+   "swim": 30
+  },
+  "str": 15,
+  "dex": 10,
+  "con": 13,
+  "int": 2,
+  "wis": 10,
+  "cha": 5,
+  "senses": "",
+  "passive": 10,
+  "traits": [
+   {
+    "name": "Hold Breath",
+    "text": "The crocodile can hold its breath for 15 minutes."
+   }
+  ],
+  "actions": [
+   {
+    "name": "Bite",
+    "attackBonus": 4,
+    "damage": "1d10+2",
+    "text": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 7 (1d10+2) piercing damage, and the target is grappled (escape DC 12)."
+   }
+  ]
+ },
+ {
+  "name": "Black Bear",
+  "source": "MM",
+  "size": "M",
+  "cr": "1/2",
+  "ac": 11,
+  "hp": 19,
+  "hpFormula": "3d8+6",
+  "speed": {
+   "walk": 40,
+   "climb": 30
+  },
+  "str": 15,
+  "dex": 10,
+  "con": 14,
+  "int": 2,
+  "wis": 12,
+  "cha": 7,
+  "senses": "",
+  "passive": 13,
+  "traits": [
+   {
+    "name": "Keen Smell",
+    "text": "The bear has advantage on Wisdom (Perception) checks that rely on smell."
+   }
+  ],
+  "actions": [
+   {
+    "name": "Bite",
+    "attackBonus": 3,
+    "damage": "1d6+2",
+    "text": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 5 (1d6+2) piercing damage."
+   },
+   {
+    "name": "Claws",
+    "attackBonus": 3,
+    "damage": "2d4+2",
+    "text": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 7 (2d4+2) slashing damage."
+   }
+  ]
+ },
+ {
+  "name": "Brown Bear",
+  "source": "MM",
+  "size": "L",
+  "cr": "1",
+  "ac": 11,
+  "hp": 34,
+  "hpFormula": "4d10+12",
+  "speed": {
+   "walk": 40,
+   "climb": 30
+  },
+  "str": 19,
+  "dex": 10,
+  "con": 16,
+  "int": 2,
+  "wis": 13,
+  "cha": 7,
+  "senses": "",
+  "passive": 13,
+  "traits": [
+   {
+    "name": "Keen Smell",
+    "text": "The bear has advantage on Wisdom (Perception) checks that rely on smell."
+   }
+  ],
+  "actions": [
+   {
+    "name": "Bite",
+    "attackBonus": 6,
+    "damage": "1d8+4",
+    "text": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 8 (1d8+4) piercing damage."
+   },
+   {
+    "name": "Claws",
+    "attackBonus": 6,
+    "damage": "2d6+4",
+    "text": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 11 (2d6+4) slashing damage."
+   }
+  ]
+ },
+ {
+  "name": "Dire Wolf",
+  "source": "MM",
+  "size": "L",
+  "cr": "1",
+  "ac": 14,
+  "hp": 37,
+  "hpFormula": "5d10+10",
+  "speed": {
+   "walk": 50
+  },
+  "str": 17,
+  "dex": 15,
+  "con": 15,
+  "int": 3,
+  "wis": 12,
+  "cha": 7,
+  "senses": "",
+  "passive": 13,
+  "traits": [
+   {
+    "name": "Keen Hearing and Smell",
+    "text": "The wolf has advantage on Wisdom (Perception) checks that rely on hearing or smell."
+   },
+   {
+    "name": "Pack Tactics",
+    "text": "The wolf has advantage on attack rolls against a creature if at least one of the wolf's allies is within 5 feet of the creature."
+   }
+  ],
+  "actions": [
+   {
+    "name": "Bite",
+    "attackBonus": 5,
+    "damage": "2d6+3",
+    "text": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6+3) piercing damage. If the target is a creature, it must succeed on a DC 13 Strength saving throw or be knocked prone."
+   }
+  ]
+ },
+ {
+  "name": "Giant Spider",
+  "source": "MM",
+  "size": "L",
+  "cr": "1",
+  "ac": 14,
+  "hp": 26,
+  "hpFormula": "4d10+4",
+  "speed": {
+   "walk": 30,
+   "climb": 30
+  },
+  "str": 14,
+  "dex": 16,
+  "con": 12,
+  "int": 2,
+  "wis": 11,
+  "cha": 4,
+  "senses": "blindsight 10 ft., darkvision 60 ft.",
+  "passive": 10,
+  "traits": [
+   {
+    "name": "Spider Climb",
+    "text": "The spider can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+   },
+   {
+    "name": "Web Walker",
+    "text": "The spider ignores movement restrictions caused by webbing."
+   }
+  ],
+  "actions": [
+   {
+    "name": "Bite",
+    "attackBonus": 5,
+    "damage": "1d8+3",
+    "text": "Melee Weapon Attack: +5 to hit, reach 5 ft., one creature. Hit: 7 (1d8+3) piercing damage, and the target must make a DC 11 Constitution saving throw, taking 9 (2d8) poison damage on a failed save."
+   }
+  ]
+ },
+ {
+  "name": "Air Elemental",
+  "source": "MM",
+  "elemental": true,
+  "size": "L",
+  "cr": "5",
+  "ac": 15,
+  "hp": 90,
+  "hpFormula": "12d10 + 24",
+  "speed": {
+   "fly": 90
+  },
+  "str": 14,
+  "dex": 20,
+  "con": 14,
+  "int": 6,
+  "wis": 10,
+  "cha": 6,
+  "senses": "darkvision 60 ft.",
+  "passive": 10,
+  "traits": [
+   {
+    "name": "Air Form",
+    "text": "The elemental can enter a hostile creature's space and stop there. It can move through a space as narrow as 1 inch wide without squeezing."
+   }
+  ],
+  "actions": [
+   {
+    "name": "Multiattack",
+    "attackBonus": null,
+    "damage": null,
+    "text": "The elemental makes two slam attacks."
+   },
+   {
+    "name": "Slam",
+    "attackBonus": 8,
+    "damage": "2d8+5",
+    "text": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 14 (2d8 + 5) bludgeoning damage."
+   },
+   {
+    "name": "Whirlwind {@recharge 4}",
+    "attackBonus": null,
+    "damage": "3d8+2",
+    "text": "Each creature in the elemental's space must make a DC 13 Strength saving throw. On a failure, a target takes 15 (3d8 + 2) bludgeoning damage and is flung up 20 feet away from the elemental in a random direction and knocked prone. If a thrown target strikes an object, such as a wall or floor, the target takes 3 (1d6) bludgeoning damage for every 10 "
+   }
+  ]
+ },
+ {
+  "name": "Earth Elemental",
+  "source": "MM",
+  "elemental": true,
+  "size": "L",
+  "cr": "5",
+  "ac": 17,
+  "hp": 126,
+  "hpFormula": "12d10 + 60",
+  "speed": {
+   "walk": 30,
+   "burrow": 30
+  },
+  "str": 20,
+  "dex": 8,
+  "con": 20,
+  "int": 5,
+  "wis": 10,
+  "cha": 5,
+  "senses": "darkvision 60 ft., tremorsense 60 ft.",
+  "passive": 10,
+  "traits": [
+   {
+    "name": "Earth Glide",
+    "text": "The elemental can burrow through nonmagical, unworked earth and stone. While doing so, the elemental doesn't disturb the material it moves through."
+   },
+   {
+    "name": "Siege Monster",
+    "text": "The elemental deals double damage to objects and structures."
+   }
+  ],
+  "actions": [
+   {
+    "name": "Multiattack",
+    "attackBonus": null,
+    "damage": null,
+    "text": "The elemental makes two slam attacks."
+   },
+   {
+    "name": "Slam",
+    "attackBonus": 8,
+    "damage": "2d8+5",
+    "text": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 14 (2d8 + 5) bludgeoning damage."
+   }
+  ]
+ },
+ {
+  "name": "Fire Elemental",
+  "source": "MM",
+  "elemental": true,
+  "size": "L",
+  "cr": "5",
+  "ac": 13,
+  "hp": 102,
+  "hpFormula": "12d10 + 36",
+  "speed": {
+   "walk": 50
+  },
+  "str": 10,
+  "dex": 17,
+  "con": 16,
+  "int": 6,
+  "wis": 10,
+  "cha": 7,
+  "senses": "darkvision 60 ft.",
+  "passive": 10,
+  "traits": [
+   {
+    "name": "Fire Form",
+    "text": "The elemental can move through a space as narrow as 1 inch wide without squeezing. A creature that touches the elemental or hits it with a melee attack while within 5 feet of it takes 5 (1d10) fire damage. In addition, the elemental can enter a hostile creature's space and stop there. The first time"
+   },
+   {
+    "name": "Illumination",
+    "text": "The elemental sheds bright light in a 30-foot radius and dim light in an additional 30 feet."
+   },
+   {
+    "name": "Water Susceptibility",
+    "text": "For every 5 feet the elemental moves in water, or for every gallon of water splashed on it, it takes 1 cold damage."
+   }
+  ],
+  "actions": [
+   {
+    "name": "Multiattack",
+    "attackBonus": null,
+    "damage": null,
+    "text": "The elemental makes two touch attacks."
+   },
+   {
+    "name": "Touch",
+    "attackBonus": 6,
+    "damage": "2d6+3",
+    "text": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) fire damage. If the target is a creature or a flammable object, it ignites. Until a creature takes an action to douse the fire, the target takes 5 (1d10) fire damage at the start of each of its turns."
+   }
+  ]
+ },
+ {
+  "name": "Water Elemental",
+  "source": "MM",
+  "elemental": true,
+  "size": "L",
+  "cr": "5",
+  "ac": 14,
+  "hp": 114,
+  "hpFormula": "12d10 + 48",
+  "speed": {
+   "walk": 30,
+   "swim": 90
+  },
+  "str": 18,
+  "dex": 14,
+  "con": 18,
+  "int": 5,
+  "wis": 10,
+  "cha": 8,
+  "senses": "darkvision 60 ft.",
+  "passive": 10,
+  "traits": [
+   {
+    "name": "Water Form",
+    "text": "The elemental can enter a hostile creature's space and stop there. It can move through a space as narrow as 1 inch wide without squeezing."
+   },
+   {
+    "name": "Freeze",
+    "text": "If the elemental takes cold damage, it partially freezes; its speed is reduced by 20 feet until the end of its next turn."
+   }
+  ],
+  "actions": [
+   {
+    "name": "Multiattack",
+    "attackBonus": null,
+    "damage": null,
+    "text": "The elemental makes two slam attacks."
+   },
+   {
+    "name": "Slam",
+    "attackBonus": 7,
+    "damage": "2d8+4",
+    "text": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage."
+   },
+   {
+    "name": "Whelm {@recharge 4}",
+    "attackBonus": null,
+    "damage": "2d8+4",
+    "text": "Each creature in the elemental's space must make a DC 15 Strength saving throw. On a failure, a target takes 13 (2d8 + 4) bludgeoning damage. If it is Large or smaller, it is also grappled (escape DC 14). Until this grapple ends, the target is restrained and unable to breathe unless it can breathe water. If the saving throw is successful, the targe"
+   }
+  ]
+ }
+]

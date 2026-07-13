@@ -1,0 +1,462 @@
+/* ============================================================
+   styles/app.css, Gesamtes Styling (Hell-/Dunkelmodus)
+   ============================================================ */
+
+:root {
+  --bg: #f7f4ee; --bg2: #fffdf9; --ink: #2a2622; --muted: #7a736a;
+  --border: #ddd6cb; --border2: #c9c0b2;
+  --accent: #8b1a1a; --accent-bg: #fdf0f0;
+  --gold: #755408; --gold-bg: #fdf8e1;
+  --green: #1a6e2a; --green-bg: #edfbef;
+  --blue: #1a4e8b; --blue-bg: #eff5fd;
+  --boost: #0e7490; /* Farbe für Item-verstärkte Attribute */
+  --r-sm: 6px; --r-md: 10px; --r-lg: 14px;
+  --font: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: ui-monospace, 'Cascadia Code', monospace;
+}
+/* Dunkel-Werte greifen bei Systemeinstellung (auto) ODER erzwungenem Modus.
+   theme.js setzt data-mode="light"/"dark" am <html>; ohne Attribut gilt "auto".
+   Akzent/Gold werden im Dunkelmodus aufgehellt, damit rote/goldene Schrift
+   auf dunklem Grund gut lesbar bleibt (theme.js kann sie weiterhin überschreiben). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-mode="light"]) {
+    --bg: #1c1a17; --bg2: #26231f; --ink: #ece7de; --muted: #9b948a;
+    --border: #3a362f; --border2: #4c463d;
+    --accent: #e8837a; --accent-bg: rgba(232,131,122,.16);
+    --gold: #dfb763; --gold-bg: rgba(223,183,99,.16);
+    --green-bg: rgba(26,110,42,.15); --blue-bg: rgba(26,78,139,.15);
+  }
+}
+:root[data-mode="dark"] {
+  --bg: #1c1a17; --bg2: #26231f; --ink: #ece7de; --muted: #9b948a;
+  --border: #3a362f; --border2: #4c463d;
+  --accent: #e8837a; --accent-bg: rgba(232,131,122,.16);
+  --gold: #dfb763; --gold-bg: rgba(223,183,99,.16);
+  --green-bg: rgba(26,110,42,.15); --blue-bg: rgba(26,78,139,.15);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--ink); font-size: 14px; }
+#app { max-width: 1100px; margin: 0 auto; padding: 1rem 1.25rem 4rem; }
+
+/* == Topbar == */
+#topbar { display: flex; align-items: center; justify-content: space-between; padding: .5rem 0 1rem; }
+#topbar h1 { font-size: 20px; letter-spacing: -.02em; }
+#toolbar-io { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* == Buttons == */
+.btn { padding: 6px 12px; font-size: 13px; font-family: inherit; border: 1px solid var(--border2);
+       border-radius: var(--r-sm); background: var(--bg2); color: var(--ink); cursor: pointer; }
+.btn:hover { border-color: var(--muted); }
+.btn--sm { padding: 3px 9px; font-size: 12px; }
+.btn--danger { color: var(--accent); border-color: var(--accent); }
+.btn--danger:hover { background: var(--accent-bg); }
+.btn--primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn--gold:hover { background: var(--gold-bg); border-color: var(--gold); color: var(--gold); }
+.btn-icon { background: none; border: none; color: var(--muted); font-size: 16px; cursor: pointer; padding: 0 4px; }
+.btn-icon:hover { color: var(--accent); }
+
+/* == Tabs == */
+#tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border2); margin-bottom: 1.25rem; overflow-x: auto; }
+.tab { padding: 8px 14px; font-size: 13px; background: none; border: none; cursor: pointer;
+       color: var(--muted); border-bottom: 2px solid transparent; white-space: nowrap; font-family: inherit; }
+.tab:hover { color: var(--ink); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fade .15s ease; }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* == Panels == */
+.panel { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-lg);
+         padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.panel__title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em;
+                color: var(--muted); margin-bottom: .75rem; display: flex; align-items: center;
+                justify-content: space-between; gap: 8px; }
+.panel__hint { font-size: 12px; color: var(--muted); }
+.panel-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 720px) { .panel-row { grid-template-columns: 1fr; } }
+
+/* == Formulare == */
+input[type=text], input[type=number], select, textarea {
+  font-family: inherit; font-size: 13px; color: var(--ink);
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 6px 8px;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--border2); }
+textarea { width: 100%; min-height: 90px; resize: vertical; }
+label { font-size: 11px; color: var(--muted); }
+
+/* == Charakterkopf == */
+.char-header { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1rem; }
+.char-name { font-size: 20px; font-weight: 600; border: none; background: none; color: var(--ink);
+             border-bottom: 1px solid var(--border); width: 100%; padding: 2px 0; }
+.char-name:focus { outline: none; border-bottom-color: var(--accent); }
+.meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-top: 8px; }
+.meta-field { display: flex; flex-direction: column; gap: 2px; }
+.badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.badge { font-size: 11px; padding: 2px 9px; border-radius: 99px; border: 1px solid var(--border2);
+         background: var(--bg); color: var(--muted); }
+.badge--gold { border-color: var(--gold); color: var(--gold); background: var(--gold-bg); }
+.badge--red  { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); cursor: pointer; }
+.badge--off  { opacity: .4; }
+
+/* == Attribute == */
+.ability-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 10px; }
+.ability-block { text-align: center; border: 1px solid var(--border); border-radius: var(--r-md);
+                 padding: 10px 6px; background: var(--bg); }
+.ability-block label { text-transform: uppercase; letter-spacing: .1em; font-weight: 600; }
+.ability-block input { width: 56px; text-align: center; font-size: 20px; font-weight: 600; margin: 4px 0; }
+.ability-mod { font-size: 16px; font-weight: 600; color: var(--accent); }
+.stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; }
+.stat-box { text-align: center; border: 1px solid var(--border); border-radius: var(--r-md);
+            padding: 10px 6px; background: var(--bg); }
+.stat-box__val { font-size: 20px; font-weight: 600; display: block; }
+.stat-box__lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
+
+/* == Listen (Skills, Items, Zauber) == */
+.list-row { display: flex; align-items: center; gap: 8px; padding: 6px 0;
+            border-bottom: 1px solid var(--border); font-size: 13px; }
+.list-row:last-child { border-bottom: none; }
+.list-row--click { cursor: pointer; }
+.list-row--click:hover { background: var(--bg); border-radius: var(--r-sm); }
+.row-mod { font-weight: 600; color: var(--accent); min-width: 32px; font-family: var(--mono); }
+.row-grow { flex: 1; min-width: 0; }
+.row-dim { font-size: 11px; color: var(--muted); }
+.indicator { width: 16px; text-align: center; flex-shrink: 0; }
+.indicator--prof { color: var(--accent); }
+.indicator--exp  { color: var(--gold); }
+.indicator--none { color: var(--border2); }
+
+/* == HP-Leiste == */
+.hp-bar { height: 8px; border-radius: 4px; background: var(--bg); border: 1px solid var(--border); overflow: hidden; }
+.hp-fill { height: 100%; background: var(--green); transition: width .3s; }
+.hp-fill--mid { background: var(--gold); }
+.hp-fill--low { background: var(--accent); }
+
+/* == Todesrettungswürfe == */
+.ds-bubble { width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--border2);
+             cursor: pointer; background: var(--bg); }
+.ds-bubble--s.filled { background: var(--green); border-color: var(--green); }
+.ds-bubble--f.filled { background: var(--accent); border-color: var(--accent); }
+
+/* == Zauberplatz-Blasen == */
+.slot-bubble { width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--border2);
+               cursor: pointer; background: var(--gold-bg); }
+.slot-bubble--used { background: var(--border); }
+.slot-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; }
+.slot-level { min-width: 62px; font-size: 12px; color: var(--muted); }
+.slot-bubbles { display: flex; gap: 4px; flex: 1; flex-wrap: wrap; }
+
+/* == Badges für Zauber-Eigenschaften == */
+.tag { font-size: 10px; font-weight: 500; padding: 1px 7px; border-radius: 99px; white-space: nowrap; }
+.tag--atk  { background: var(--gold-bg);   color: var(--gold);   border: 1px solid var(--gold); }
+.tag--save { background: var(--blue-bg);   color: var(--blue);   border: 1px solid var(--blue); }
+.tag--dmg  { background: var(--accent-bg); color: var(--accent); border: 1px solid var(--accent); }
+.tag--heal { background: var(--green-bg);  color: var(--green);  border: 1px solid var(--green); }
+.tag--src  { background: var(--bg);        color: var(--muted);  border: 1px solid var(--border2); }
+
+/* == Würfelbot == */
+.dice-result { text-align: center; padding: 1.25rem; }
+.dice-result__num { font-size: 44px; font-weight: 700; line-height: 1; font-family: var(--mono); }
+.dice-result__num.crit { color: var(--gold); }
+.dice-result__num.fail { color: var(--accent); }
+.dice-result__detail { font-size: 12px; color: var(--muted); margin-top: 6px; font-family: var(--mono); }
+.dice-grid { display: flex; gap: 6px; flex-wrap: wrap; }
+.mode-toggle { display: flex; gap: 0; border: 1px solid var(--border2); border-radius: var(--r-sm); overflow: hidden; }
+.mode-toggle .btn { border: none; border-radius: 0; }
+.mode-toggle .btn.active { background: var(--accent); color: #fff; }
+.history-entry { display: flex; gap: 10px; padding: 4px 0; font-size: 12px;
+                 border-bottom: 1px solid var(--border); font-family: var(--mono); }
+.history-entry .total { font-weight: 700; min-width: 30px; }
+
+/* == Modal (Bibliotheken) == */
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 50;
+           display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--r-lg);
+         width: 100%; max-width: 680px; max-height: 82vh; display: flex; flex-direction: column; overflow: hidden; }
+.modal__head { display: flex; align-items: center; justify-content: space-between;
+               padding: .9rem 1.2rem; border-bottom: 1px solid var(--border); }
+.modal__filters { display: flex; gap: 8px; padding: .7rem 1.2rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.modal__filters input[type=text] { flex: 1; min-width: 140px; }
+.modal__body { overflow-y: auto; padding: .8rem 1.2rem; flex: 1; }
+.lib-entry { border: 1px solid var(--border); border-radius: var(--r-md); padding: 8px 10px; margin-bottom: 7px; }
+.lib-entry--known { background: var(--bg); }
+.lib-entry__top { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
+.lib-entry__name { font-weight: 500; flex: 1; }
+.lib-entry__meta { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+.lib-entry__desc { font-size: 12px; color: var(--muted); line-height: 1.45; }
+.lib-group-head { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em;
+                  color: var(--muted); margin: 12px 0 6px; border-bottom: 1px solid var(--border); padding-bottom: 3px; }
+
+/* == Cast-Ergebnis == */
+.cast-step { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding: 8px 12px;
+             border: 1px solid var(--border); border-radius: var(--r-md); margin-bottom: 6px; background: var(--bg); }
+.cast-step--atk  { border-color: var(--gold);   background: var(--gold-bg); }
+.cast-step--crit { border-color: var(--gold);   background: var(--gold-bg); }
+.cast-step--dmg  { border-color: var(--accent); background: var(--accent-bg); }
+.cast-step--fail { border-color: var(--accent); background: var(--accent-bg); }
+.cast-step--save { border-color: var(--blue);   background: var(--blue-bg); }
+.cast-step--heal { border-color: var(--green);  background: var(--green-bg); }
+.cast-step__label { grid-column: 1/-1; font-size: 10px; text-transform: uppercase;
+                    letter-spacing: .07em; color: var(--muted); font-weight: 600; }
+.cast-step__detail { font-family: var(--mono); font-size: 13px; }
+.cast-step__val { font-size: 20px; font-weight: 700; font-family: var(--mono); }
+
+/* == Toast == */
+.toast { position: fixed; bottom: 20px; left: 50%; transform: translate(-50%, 12px);
+         background: var(--ink); color: var(--bg2); padding: 9px 18px; border-radius: 99px;
+         font-size: 13px; opacity: 0; transition: all .25s; z-index: 100; pointer-events: none; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* == Custom Sections == */
+.section-card { position: relative; }
+.section-card .btn-icon { position: absolute; top: 12px; right: 12px; }
+.section-title-input { font-weight: 600; font-size: 14px; border: none; background: none;
+                       color: var(--ink); border-bottom: 1px dashed var(--border2); width: 60%; }
+
+/* == Klassen-Editor == */
+.class-row { display: grid; grid-template-columns: 1fr 70px 1fr 32px; gap: 8px; align-items: center;
+             padding: 8px 0; border-bottom: 1px solid var(--border); }
+.class-row:last-child { border-bottom: none; }
+@media (max-width: 640px) { .class-row { grid-template-columns: 1fr 60px; } }
+
+/* == Große Bibliotheks-Ansicht (Inventar) == */
+.modal--wide { max-width: 1040px; max-height: 92vh; }
+.modal--wide .modal__body { padding: .8rem 1.4rem; }
+.modal__head .row-dim { flex: 1; text-align: right; margin-right: 10px; font-family: var(--mono); }
+.filter-check { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink);
+                padding: 5px 10px; border: 1px solid var(--border); border-radius: var(--r-sm);
+                background: var(--bg); cursor: pointer; user-select: none; }
+.filter-check:has(input:checked) { border-color: var(--gold); background: var(--gold-bg); color: var(--gold); }
+
+/* == Magie- & Seltenheits-Tags == */
+.tag--magic { background: var(--gold-bg); color: var(--gold); border: 1px solid var(--gold); }
+.tag--rarity { border: 1px solid var(--border2); background: var(--bg); color: var(--muted); }
+.tag--rarity-common     { border-color: #6b7280; color: #6b7280; }
+.tag--rarity-uncommon   { border-color: #1a6e2a; color: #1a6e2a; background: var(--green-bg); }
+.tag--rarity-rare       { border-color: #1a4e8b; color: #1a4e8b; background: var(--blue-bg); }
+.tag--rarity-very-rare  { border-color: #6b21a8; color: #6b21a8; background: rgba(107,33,168,.08); }
+.tag--rarity-legendary  { border-color: #8b6914; color: #8b6914; background: var(--gold-bg); }
+.tag--rarity-artifact   { border-color: #8b1a1a; color: #8b1a1a; background: var(--accent-bg); }
+.tag--rarity-varies     { border-color: var(--border2); color: var(--muted); }
+@media (prefers-color-scheme: dark) {
+  .tag--rarity-common    { border-color: #9ca3af; color: #9ca3af; }
+  .tag--rarity-uncommon  { color: #5abf6e; }
+  .tag--rarity-rare      { color: #6ba3e0; }
+  .tag--rarity-very-rare { color: #c084fc; background: rgba(192,132,252,.1); }
+  .tag--rarity-legendary { color: #d4a826; }
+  .tag--rarity-artifact  { color: #e07070; }
+}
+
+/* == Aufklappbare Einträge (Inventar-Zeilen & Bibliotheken) == */
+.lib-entry--expandable { cursor: pointer; }
+.lib-entry--expandable .lib-entry__desc {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.lib-entry--expandable.open .lib-entry__desc {
+  display: block; -webkit-line-clamp: unset; overflow: visible;
+}
+.expandable__body {
+  display: none; font-size: 12px; color: var(--muted); line-height: 1.5;
+  padding: 4px 8px 10px 28px; border-bottom: 1px solid var(--border);
+}
+.expandable.open .expandable__body { display: block; }
+.expandable.open .list-row { border-bottom: none; }
+
+/* == DropZone (Charakterbild) == */
+.dropzone {
+  border: 2px dashed var(--border2); border-radius: var(--r-lg);
+  min-height: 220px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: border-color .15s, background .15s;
+  background: var(--bg); overflow: hidden; text-align: center;
+}
+.dropzone:hover, .dropzone--over { border-color: var(--gold); background: var(--gold-bg); }
+.dropzone--filled { border-style: solid; padding: 0; }
+.dropzone__hint { color: var(--muted); font-size: 13px; padding: 1rem; }
+.dropzone__icon { font-size: 34px; margin-bottom: 6px; color: var(--border2); }
+.dropzone__img { max-width: 100%; max-height: 320px; display: block; border-radius: var(--r-md); }
+
+/* == Charakterauswahl (Startbildschirm) == */
+.select-screen {
+  position: fixed; inset: 0; z-index: 200; background: var(--bg);
+  display: flex; align-items: flex-start; justify-content: center;
+  overflow-y: auto; padding: 3rem 1.5rem;
+}
+.select-inner { width: 100%; max-width: 860px; }
+.select-title { text-align: center; font-size: 26px; margin-bottom: .5rem; letter-spacing: -.02em; }
+.select-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px;
+}
+.select-card {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-lg);
+  padding: 1.1rem .9rem; cursor: pointer; font-family: inherit; color: var(--ink);
+  transition: border-color .15s, transform .1s; text-align: center;
+}
+.select-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+.select-card--new { border-style: dashed; color: var(--muted); justify-content: center; min-height: 178px; }
+.select-card--new:hover { color: var(--gold); }
+.select-card__plus { font-size: 36px; line-height: 1; }
+.select-card__portrait {
+  width: 72px; height: 72px; border-radius: 50%; overflow: hidden;
+  border: 1px solid var(--border2); background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+}
+.select-card__portrait img { width: 100%; height: 100%; object-fit: cover; }
+.select-card__initial { font-size: 28px; font-weight: 600; color: var(--muted); }
+.select-card__name { font-weight: 600; font-size: 14px; word-break: break-word; }
+.select-card__meta { font-size: 11px; color: var(--muted); }
+.select-card__date { font-family: var(--mono); }
+.select-card__delete { position: absolute; top: 6px; right: 8px; }
+
+/* == Item-verstärkte Attribute (z. B. Gürtel der Riesenstärke) == */
+.ability-block--boosted { border-color: var(--boost); box-shadow: inset 0 0 0 1px var(--boost); }
+.ability-boost { font-size: 12px; font-weight: 700; color: var(--boost); font-family: var(--mono); }
+.ability-mod--boosted { color: var(--boost); }
+
+/* == Erscheinungsbild-Einstellungen == */
+.preset-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.preset-swatch {
+  width: 60px; height: 40px; border-radius: var(--r-md); cursor: pointer;
+  border: 2px solid var(--border); display: flex; overflow: hidden; padding: 0;
+}
+.preset-swatch.active { border-color: var(--ink); }
+.preset-swatch span { flex: 1; }
+.color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.color-field { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink);
+               border: 1px solid var(--border); border-radius: var(--r-sm); padding: 6px 8px; background: var(--bg); }
+.color-field input[type=color] { width: 34px; height: 26px; border: none; background: none; padding: 0; cursor: pointer; }
+.font-sample { font-size: 15px; }
+
+/* == Wurf-Abfrage (Vorteil / Normal / Nachteil) == */
+.roll-prompt { max-width: 380px; }
+.roll-prompt__body { display: flex; gap: 10px; padding: 1.1rem 1.2rem; }
+.roll-prompt__btn { flex: 1; padding: 12px 8px; font-weight: 600; font-size: 13px; }
+.roll-prompt__btn--adv    { border-color: var(--green); color: var(--green); }
+.roll-prompt__btn--adv:hover    { background: var(--green-bg); }
+.roll-prompt__btn--dis    { border-color: var(--accent); color: var(--accent); }
+.roll-prompt__btn--dis:hover    { background: var(--accent-bg); }
+.roll-prompt__btn--normal { border-color: var(--border2); }
+.roll-prompt__btn--normal:hover { background: var(--bg); }
+
+/* == Wildgestalt-Statblöcke == */
+.ws-block .ws-details { display: none; }
+.ws-block.open .ws-details { display: block; padding-top: 8px; }
+.ws-img { float: right; max-width: 130px; max-height: 130px; border-radius: var(--r-md);
+          border: 1px solid var(--border); margin: 0 0 8px 12px; object-fit: cover; }
+.ws-stats-grid { display: grid; grid-template-columns: repeat(6, minmax(60px, 1fr)); gap: 6px;
+                 margin-bottom: 8px; }
+@media (max-width: 640px) { .ws-stats-grid { grid-template-columns: repeat(3, 1fr); } }
+.ws-stat { text-align: center; border: 1px solid var(--border); border-radius: var(--r-sm);
+           padding: 4px 2px; background: var(--bg); }
+.ws-stat__lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.ws-stat__val { font-size: 13px; font-weight: 600; }
+.ws-trait, .ws-action { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 6px; }
+.ws-trait b, .ws-action b { color: var(--ink); }
+
+/* == CR-Sektionen (Wildgestalt, auf-/zuklappbar) == */
+.cr-section { border: 1px solid var(--border); border-radius: var(--r-md);
+              margin-bottom: 8px; overflow: hidden; background: var(--bg2); }
+.cr-section__head {
+  width: 100%; display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; background: var(--bg); border: none; cursor: pointer;
+  color: var(--ink); font-weight: 600; font-size: 13px; font-family: inherit; text-align: left;
+  transition: background .12s;
+}
+.cr-section__head:hover { background: var(--gold-bg); }
+.cr-section__chev { color: var(--muted); font-size: 11px; width: 12px; }
+.cr-section__body { padding: 8px 10px 2px; }
+
+/* == Bild-Überlauf-Fix (Wildgestalt-Statblöcke) ==
+   Das Tier-Bild schwebt rechts (float). Ohne Block Formatting
+   Context ragt es bei kurzem Text unten aus der Karte heraus.
+   flow-root schließt den Float ein → die Karte wächst dynamisch mit. */
+.ws-block.open .ws-details { display: flow-root; }
+.ws-img { max-width: min(140px, 35%); height: auto; max-height: none; }
+
+/* == Generator-Vorschau: Detailzeilen == */
+.gen-detail { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 4px; }
+.gen-detail b { color: var(--ink); }
+
+/* == Vorbereitet-Umschalter (Zauber), deutlich klickbar == */
+.prep-toggle {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--border2); background: var(--bg);
+  color: var(--muted); font-size: 11px; font-weight: 600; font-family: inherit;
+  transition: all .12s; white-space: nowrap;
+}
+.prep-toggle:hover { border-color: var(--gold); color: var(--ink); }
+.prep-toggle__dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--border2); background: transparent; transition: all .12s;
+}
+.prep-toggle--on { border-color: var(--gold); background: var(--gold-bg); color: var(--gold); }
+.prep-toggle--on .prep-toggle__dot { background: var(--gold); border-color: var(--gold); }
+
+/* == Mehrfachauswahl-Leiste (Bibliothek) == */
+.lib-action-bar {
+  display: flex; align-items: center; gap: 12px; justify-content: flex-end;
+  padding: 10px 16px; border-top: 1px solid var(--border);
+  background: var(--bg2); position: sticky; bottom: 0;
+}
+.lib-select { width: 17px; height: 17px; cursor: pointer; accent-color: var(--gold); }
+
+/* == Kritische Würfe hervorheben (NAT 20 / NAT 1) == */
+.cast-step--crit .cast-step__val,
+.dice-result__num.crit { color: var(--gold) !important; font-weight: 800; }
+.roll-nat {
+  display: inline-block; font-weight: 800; padding: 1px 7px; border-radius: 5px;
+  margin-left: 6px; font-size: 11px; letter-spacing: .04em;
+}
+.roll-nat--20 { background: var(--gold); color: #1a1000; }
+.roll-nat--1  { background: var(--accent); color: #fff; }
+.history-entry .nat20 { color: var(--gold); font-weight: 800; }
+.history-entry .nat1  { color: var(--accent); font-weight: 800; }
+
+/* == Wildgestalt-Favoriten (Stern) == */
+.ws-fav {
+  background: none; border: none; cursor: pointer; font-size: 17px;
+  color: var(--border2); padding: 0 2px; line-height: 1; transition: color .12s;
+}
+.ws-fav:hover { color: var(--gold); }
+.ws-fav--on { color: var(--gold); }
+
+/* == Feste Beschreibungs-Kategorien (nicht editierbarer Titel) == */
+.section-title-fixed {
+  font-family: var(--serif, Georgia, serif); font-size: 15px; font-weight: 600;
+  color: var(--gold); padding-bottom: 6px; border-bottom: 1px solid var(--border);
+}
+
+/* == Attributswahl-Picker (Rasse/Hintergrund mit choose-Boni) == */
+.choice-picker {
+  margin: 10px 0; padding: 10px 12px; border: 1px dashed var(--gold);
+  border-radius: var(--r-md); background: var(--gold-bg);
+}
+.choice-picker__head { font-size: 13px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+.choice-picker__todo { color: var(--accent); font-size: 11px; font-weight: 600; }
+.choice-picker__done { color: var(--gold); font-weight: 700; }
+.choice-picker__variants { display: flex; gap: 16px; margin-bottom: 8px; font-size: 13px; }
+.choice-picker__variants label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+.choice-picker__picks { display: flex; gap: 10px; flex-wrap: wrap; }
+.choice-picker__picks .meta-field { min-width: 140px; }
+.choice-picker__picks .meta-field > span { font-weight: 700; color: var(--gold); }
+
+/* == Regelwerk-Auswahl: gut lesbare Karten statt Akzent-Buttons == */
+.ruleset-option {
+  display: block; width: 100%; text-align: left; cursor: pointer;
+  padding: 14px 16px; border-radius: var(--r-md);
+  background: var(--bg2); border: 1px solid var(--border2);
+  color: var(--ink); font-family: inherit; transition: border-color .12s, background .12s;
+}
+.ruleset-option:hover { border-color: var(--gold); background: var(--gold-bg); }
+.ruleset-option b { font-size: 15px; display: block; }
+.ruleset-option span {
+  display: block; margin-top: 4px; font-size: 12.5px;
+  color: var(--muted); line-height: 1.45;
+}
+
+/* == Combobox-Zeile (Freitext + Standard-Auswahl) == */
+.combo-row { display: flex; gap: 8px; }
+.combo-row input { flex: 1; min-width: 0; }
+.combo-row select { max-width: 190px; color: var(--muted); }

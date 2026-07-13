@@ -1,0 +1,10 @@
+[
+  { "name": "Acolyte",       "source": "SRD", "skills": ["insight", "religion"],      "description": "You have spent your life in service to a temple." },
+  { "name": "Criminal",      "source": "SRD", "skills": ["deception", "stealth"],     "description": "You have a history of breaking the law." },
+  { "name": "Folk Hero",     "source": "SRD", "skills": ["animal", "survival"],       "description": "You come from a humble social rank, destined for more." },
+  { "name": "Noble",         "source": "SRD", "skills": ["history", "persuasion"],    "description": "You understand wealth, power, and privilege." },
+  { "name": "Sage",          "source": "SRD", "skills": ["arcana", "history"],        "description": "You spent years learning the lore of the multiverse." },
+  { "name": "Soldier",       "source": "SRD", "skills": ["athletics", "intimidation"],"description": "War has been your life for as long as you care to remember." },
+  { "name": "Entertainer",   "source": "SRD", "skills": ["acrobatics", "performance"],"description": "You thrive in front of an audience." },
+  { "name": "Hermit",        "source": "SRD", "skills": ["medicine", "religion"],     "description": "You lived in seclusion, seeking enlightenment." }
+]

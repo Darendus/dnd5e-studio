@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D&D 5e Studio</title>
+  <link rel="stylesheet" href="styles/app.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Kopfleiste: Titel + IO-Werkzeuge -->
+    <header id="topbar">
+      <h1 id="appTitle">D&D 5e Studio</h1>
+      <div id="toolbar-io"></div>
+    </header>
+
+    <!-- Charakterkopf (Name, Volk, Multiclass-Übersicht) -->
+    <section id="panel-header"></section>
+
+    <!-- Tab-Navigation -->
+    <nav id="tabs"></nav>
+
+    <!-- Tab-Inhalte (werden von Komponenten befüllt) -->
+    <main>
+      <section id="tab-core"      class="tab-panel"></section>
+      <section id="tab-classes"   class="tab-panel"></section>
+      <section id="tab-combat"    class="tab-panel"></section>
+      <section id="tab-wildshape" class="tab-panel"></section>
+      <section id="tab-skills"    class="tab-panel"></section>
+      <section id="tab-spells"    class="tab-panel"></section>
+      <section id="tab-inventory" class="tab-panel"></section>
+      <section id="tab-description" class="tab-panel"></section>
+      <section id="tab-sections"  class="tab-panel"></section>
+      <section id="tab-dice"      class="tab-panel"></section>
+      <section id="tab-generator" class="tab-panel"></section>
+      <section id="tab-settings"  class="tab-panel"></section>
+    </main>
+  </div>
+
+  <script src="vendor/pdf-lib.min.js"></script>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
