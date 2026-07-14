@@ -1,5 +1,5 @@
 // ============================================================
-// components/CorePanel.js, Attribute, Rettungswürfe, Kennwerte
+// components/CorePanel.js, abilities, saving throws, stats
 // ============================================================
 import { store }   from '../core/Store.js';
 import { toggleExpand } from './InventoryPanel.js';
@@ -28,10 +28,10 @@ function render() {
   const el = document.getElementById('tab-core');
   const s  = store.get();
   const pb = calcProfBonus(store.totalLevel());
-  // Effektive Attribute: Basis + angelegte Items (z. B. Gürtel der Riesenstärke)
+  // effective abilities: base + equipped items (e.g. Belt of Giant Strength)
   const { scores: eff, sources } = effectiveAbilities(s);
-  const saveBonus = itemBonuses(s).save; // flache Save-Boni (Cloak/Ring of Protection)
-  const featEff = featEffects(s);        // Speed/Initiative/… aus Talenten
+  const saveBonus = itemBonuses(s).save; // flat save bonuses (Cloak/Ring of Protection)
+  const featEff = featEffects(s);        // speed/initiative/… from feats
 
   el.innerHTML = `
   <div class="panel">
@@ -109,7 +109,7 @@ function render() {
     </div>
   </div>
 
-  <!-- Talente (Feats), Auswahl aus der quellen-gefilterten Bibliothek -->
+  <!-- Feats, selection from the source-filtered library -->
   <div class="panel">
     <div class="panel__title">${t('feats.title')}
       <button class="btn btn--sm btn--gold" id="featLib">${t('feats.library')}</button>
@@ -133,7 +133,7 @@ function render() {
     </div>
   </div>
 
-  <!-- Feat-Bibliothek -->
+  <!-- Feat library -->
   <div class="overlay" id="featOverlay" style="display:none">
     <div class="modal">
       <div class="modal__head"><b>${t('feats.library')}</b>
@@ -146,8 +146,8 @@ function render() {
   </div>`;
 
   // == Events ==
-  // Charakterdetails: Textfelder "leise" speichern (Fokus bleibt),
-  // die Gesinnungs-Auswahl normal (Select verliert keinen Fokus).
+  // character details: save text fields "quietly" (focus stays),
+  // the alignment selector normally (a select never loses focus).
   el.querySelectorAll('[data-core-field]').forEach(inp => {
     const key = inp.dataset.coreField;
     if (inp.tagName === 'SELECT') {
@@ -157,9 +157,9 @@ function render() {
     }
   });
 
-  // Attribute: "leise" speichern (kein Re-Render, damit Fokus & Pfeil-
-  // tasten erhalten bleiben). Ein manuelles Re-Render der abgeleiteten
-  // Anzeigen passiert beim Verlassen des Feldes (blur).
+  // abilities: save "quietly" (no re-render, so focus & arrow keys
+  // are preserved). A manual re-render of the derived displays
+  // happens when the field loses focus (blur).
   el.querySelectorAll('[data-attr]').forEach(inp => {
     inp.oninput = () => {
       const val = Math.max(1, Math.min(30, +inp.value || 10));
@@ -181,11 +181,11 @@ function render() {
   speed.oninput = () => store.quietUpdate({ speed: Math.max(0, +speed.value || 30) });
   speed.onblur  = () => bus.emit(EV.CHAR_CHANGED, { changed: ['speed'] });
 
-  // Ausgewählte Talente per Klick auf-/zuklappen (voller Text)
+  // expand/collapse selected feats by click (full text)
   const featSel = el.querySelector('#featSelList');
   if (featSel) featSel.onclick = toggleExpand;
 
-  // Feats: entfernen + Bibliothek (Feat-Boni neu berechnen)
+  // feats: remove + library (recompute feat bonuses)
   el.querySelectorAll('[data-feat-rm]').forEach(b => {
     b.onclick = () => {
       const i = +b.dataset.featRm;
@@ -204,8 +204,8 @@ function render() {
   el.querySelector('#featSearch').oninput = renderFeatLibrary;
 }
 
-/** Max. TP nach Feat-Änderung anpassen (Tough, Boon of Fortitude …).
- *  War der Charakter auf voller Gesundheit, bleibt er es. */
+/** Adjust max HP after a feat change (Tough, Boon of Fortitude …).
+ *  If the character was at full health, it stays that way. */
 function resyncMaxHP() {
   const newMax = calcMaxHP(store.get());
   if (newMax === store.field('maxHP')) return;
@@ -213,7 +213,7 @@ function resyncMaxHP() {
   store.update({ maxHP: newMax, currHP: wasFull ? newMax : Math.min(store.field('currHP'), newMax) });
 }
 
-// == Feat-Bibliothek (quellen-gefiltert, durchsuchbar) ========
+// == Feat library (source-filtered, searchable) ===============
 function renderFeatLibrary() {
   const list = document.getElementById('featList');
   if (!list) return;
@@ -222,7 +222,7 @@ function renderFeatLibrary() {
 
   let feats = repo.getFeats();
   if (search) feats = feats.filter(f => f.name.toLowerCase().includes(search));
-  feats = feats.slice(0, 150); // Anzeige-Limit
+  feats = feats.slice(0, 150); // display limit
 
   list.innerHTML = feats.map(f => `
     <div class="lib-entry lib-entry--expandable ${known.has(f.name) && !f.repeatable ? 'lib-entry--known' : ''}" data-expand>
@@ -256,7 +256,7 @@ function renderFeatLibrary() {
   });
   list.querySelectorAll('[data-flib-rm]').forEach(b => {
     b.onclick = () => {
-      // Entfernt das LETZTE Vorkommen (bei wiederholbaren Talenten)
+      // removes the LAST occurrence (for repeatable feats)
       const feats = [...(store.field('feats') ?? [])];
       const featLevels = [...(store.field('featLevels') ?? [])];
       const i = feats.lastIndexOf(b.dataset.flibRm);

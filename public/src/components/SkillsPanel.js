@@ -1,9 +1,9 @@
 // ============================================================
-// components/SkillsPanel.js, Fertigkeiten
+// components/SkillsPanel.js, skills
 // ------------------------------------------------------------
-// • Kreis anklicken: keine Übung → geübt → Expertise → keine
-// • Zeile anklicken: Würfelbot würfelt den Fertigkeitswurf
-//   automatisch mit dem korrekten Modifikator.
+// • click the circle: no proficiency → proficient → expertise → none
+// • click the row: the dice bot rolls the skill check
+//   automatically with the correct modifier.
 // ============================================================
 import { store }   from '../core/Store.js';
 import { bus, EV } from '../core/EventBus.js';
@@ -30,7 +30,7 @@ function render() {
   const eff = effectiveAbilities(s).scores;
   const pb = calcProfBonus(store.totalLevel());
 
-  // Lokales Wurfergebnis oben im Tab (zusätzlich zum Würfelbot-Tab)
+  // local roll result at the top of the tab (in addition to the dice bot tab)
   el.innerHTML = `
   <div id="skillRollResult"></div>
 
@@ -54,15 +54,15 @@ function render() {
   </div>`;
 
   // == Events ==
-  // Übungszustand durchschalten (Klick auf den Kreis)
+  // cycle the proficiency state (click on the circle)
   el.querySelectorAll('[data-skill-cycle]').forEach(ind => {
     ind.onclick = e => {
-      e.stopPropagation(); // nicht gleichzeitig würfeln
+      e.stopPropagation(); // don't roll at the same time
       cycleProficiency(ind.dataset.skillCycle);
     };
   });
 
-  // Fertigkeitswurf (Klick auf die Zeile), Ergebnis lokal + im Würfelbot
+  // skill check (click on the row), result shown locally + in the dice bot
   el.querySelectorAll('[data-skill-roll]').forEach(row => {
     row.onclick = async () => {
       const mode = await askRollMode(t('skills.' + row.dataset.skillRoll));
@@ -73,7 +73,7 @@ function render() {
   });
 }
 
-/** none → prof → expertise → none */
+/** none → proficient → expertise → none */
 function cycleProficiency(id) {
   const profs   = store.field('skillProficiencies');
   const experts = store.field('skillExpertise');

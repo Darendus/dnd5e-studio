@@ -1,16 +1,16 @@
 ' ============================================================
-' Start.vbs - D&D 5e Studio (UNSICHTBARER Start)
+' Start.vbs - D&D 5e Studio (INVISIBLE start)
 ' ------------------------------------------------------------
-' Doppelklick genuegt. Im Gegensatz zu Start.bat erscheint KEIN
-' Konsolenfenster - weder auf dem Desktop noch in der Taskleiste.
-'   1. Prueft, ob Node.js installiert ist
-'   2. Fordert Administratorrechte an (UAC-Dialog)
-'   3. Startet den Server komplett versteckt
-'   4. Wartet, bis der Server antwortet, und oeffnet den Browser
+' A double-click is enough. Unlike Start.bat, NO console window
+' appears - neither on the desktop nor in the taskbar.
+'   1. Checks whether Node.js is installed
+'   2. Requests administrator rights (UAC dialog)
+'   3. Starts the server completely hidden
+'   4. Waits until the server responds, then opens the browser
 '
-' Beenden: Knopf "App beenden" in den Einstellungen der App
-'          oder Doppelklick auf Stop.vbs
-' Sichtbare Variante (Logs/Debug): Start.bat
+' Stop it: "Quit app" button in the app's settings
+'          or double-click Stop.vbs
+' Visible variant (logs/debug): Start.bat
 ' ============================================================
 Option Explicit
 
@@ -21,7 +21,7 @@ Set app   = CreateObject("Shell.Application")
 
 appDir = fso.GetParentFolderName(WScript.ScriptFullName)
 
-' --- 1. Node.js pruefen (verstecktes Fenster, wartet auf Ergebnis) ---
+' --- 1. check Node.js (hidden window, waits for the result) ---
 exitCode = shell.Run("cmd /c where node >nul 2>&1", 0, True)
 If exitCode <> 0 Then
     MsgBox "Node.js wurde nicht gefunden." & vbCrLf & vbCrLf & _
@@ -30,10 +30,10 @@ If exitCode <> 0 Then
     WScript.Quit 1
 End If
 
-' --- 2.+3. Server mit Adminrechten UND unsichtbar starten ---
-' ShellExecute mit Verb "runas" loest die UAC-Abfrage aus;
-' Fensterstil 0 = komplett versteckt (kein Fenster, kein Taskleisten-Eintrag).
-' Bricht der Nutzer die UAC-Abfrage ab, beendet sich das Skript still.
+' --- 2.+3. start the server with admin rights AND hidden ---
+' ShellExecute with verb "runas" triggers the UAC prompt;
+' window style 0 = completely hidden (no window, no taskbar entry).
+' If the user cancels the UAC prompt, the script quits silently.
 On Error Resume Next
 app.ShellExecute "cmd.exe", "/c cd /d """ & appDir & """ && node server.js", "", "runas", 0
 If Err.Number <> 0 Then
@@ -41,9 +41,9 @@ If Err.Number <> 0 Then
 End If
 On Error GoTo 0
 
-' --- 4. Warten bis der Server antwortet (max. ~15 s), dann Browser ---
-' Ein versteckter PowerShell-Aufruf testet den Port; das vermeidet
-' eine Fehlerseite, falls die UAC-Abfrage laenger offen war.
+' --- 4. wait until the server responds (max. ~15 s), then browser ---
+' A hidden PowerShell call tests the port; this avoids an error
+' page in case the UAC prompt stayed open longer.
 For tries = 1 To 30
     exitCode = shell.Run("powershell -NoProfile -Command " & _
         """try { $c = New-Object Net.Sockets.TcpClient('127.0.0.1', 8420); $c.Close(); exit 0 } catch { exit 1 }""", _

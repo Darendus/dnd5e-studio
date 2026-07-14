@@ -1,20 +1,20 @@
 // ============================================================
-// utils/pdfExport.js, Export auf den offiziellen WotC-Bogen
+// utils/pdfExport.js, export to the official WotC sheet
 // ------------------------------------------------------------
-// Befüllt den ausfüllbaren 3-Seiten-Standardbogen (D&D 5e, ©WotC)
-// unter public/assets/character-sheet.pdf:
-//   Seite 1: Kernbogen (Attribute, Saves, Skills, Kampf, Waffen,
-//            Ausrüstung, Währung, Talente/Merkmale)
-//   Seite 2: Beschreibung (Hintergrundgeschichte, Talente im Detail)
-//   Seite 3: Zauberbogen (Klasse, SG, Slots, Zauber pro Grad mit
-//            Vorbereitet-Häkchen)
-// Die Zeilen-/Checkbox-Zuordnung der Zauberseite wurde geometrisch
-// aus den Widget-Positionen des Formulars abgeleitet.
+// Fills the fillable 3-page standard sheet (D&D 5e, ©WotC)
+// at public/assets/character-sheet.pdf:
+//   page 1: core sheet (abilities, saves, skills, combat, weapons,
+//           equipment, currency, feats/features)
+//   page 2: description (backstory, feats in detail)
+//   page 3: spell sheet (class, DC, slots, spells per level with
+//           prepared checkboxes)
+// The row/checkbox mapping of the spell page was derived
+// geometrically from the form's widget positions.
 //
-// Wichtig: Einige Felder des Bogens haben keinen /DA-Eintrag -
-// ohne gesetzte Schriftgröße rendert Acrobat sie in Auto-Größe
-// (riesiger Text). setText setzt daher notfalls die Default-
-// Appearance direkt, bevor der Text geschrieben wird.
+// Important: some fields on the sheet have no /DA entry - without
+// a set font size, Acrobat renders them at auto size (huge text).
+// setText therefore falls back to writing the default appearance
+// directly before the text is written.
 // ============================================================
 import { repo } from '../core/DataRepository.js';
 import { t } from '../core/i18n.js';
@@ -24,7 +24,7 @@ import {
   effectiveInitiative, effectiveSpeed,
 } from '../rules/calculations.js';
 
-// == Seite 1: Checkbox- und Feldnamen (offizieller Bogen) =====
+// == Page 1: checkbox and field names (official sheet) ========
 const SAVE_BOXES  = { str: 'Check Box 11', dex: 'Check Box 18', con: 'Check Box 19',
                       int: 'Check Box 20', wis: 'Check Box 21', cha: 'Check Box 22' };
 const SKILL_BOXES = {
@@ -52,9 +52,9 @@ const DMG_WORDS = { P: 'piercing', B: 'bludgeoning', S: 'slashing', R: 'radiant'
                     N: 'necrotic', F: 'fire', C: 'cold', L: 'lightning', A: 'acid',
                     T: 'thunder', PS: 'psychic', I: 'poison', O: 'force' };
 
-// == Seite 3: Zauberzeilen pro Grad + Vorbereitet-Checkboxen ==
-// (geometrisch aus dem offiziellen Formular abgeleitet, Reihenfolge
-//  = von oben nach unten innerhalb des jeweiligen Grad-Blocks)
+// == Page 3: spell rows per level + prepared checkboxes ========
+// (derived geometrically from the official form, order
+//  = top to bottom within the respective level block)
 const SPELL_LINES = {
   0: ["Spells 1014", "Spells 1016", "Spells 1017", "Spells 1018", "Spells 1019", "Spells 1020", "Spells 1021", "Spells 1022"],
   1: ["Spells 1015", "Spells 1023", "Spells 1024", "Spells 1025", "Spells 1026", "Spells 1027", "Spells 1028", "Spells 1029", "Spells 1030", "Spells 1031", "Spells 1032", "Spells 1033"],
@@ -68,19 +68,19 @@ const SPELL_LINES = {
   9: ["Spells 10108", "Spells 10107", "Spells 10109", "Spells 101010", "Spells 101011", "Spells 101012", "Spells 101013"],
 };
 const PREPARED_BOX = {"Spells 1015":"Check Box 251", "Spells 1023":"Check Box 309", "Spells 1024":"Check Box 3010", "Spells 1025":"Check Box 3011", "Spells 1026":"Check Box 3012", "Spells 1027":"Check Box 3013", "Spells 1028":"Check Box 3014", "Spells 1029":"Check Box 3015", "Spells 1030":"Check Box 3016", "Spells 1031":"Check Box 3017", "Spells 1032":"Check Box 3018", "Spells 1033":"Check Box 3019", "Spells 1034":"Check Box 310", "Spells 1035":"Check Box 3020", "Spells 1036":"Check Box 3021", "Spells 1037":"Check Box 3022", "Spells 1038":"Check Box 3023", "Spells 1039":"Check Box 3024", "Spells 1040":"Check Box 3025", "Spells 1041":"Check Box 3026", "Spells 1042":"Check Box 3027", "Spells 1043":"Check Box 3028", "Spells 1044":"Check Box 3029", "Spells 1045":"Check Box 3030", "Spells 1046":"Check Box 313", "Spells 1047":"Check Box 314", "Spells 1048":"Check Box 315", "Spells 1049":"Check Box 3031", "Spells 1050":"Check Box 3032", "Spells 1051":"Check Box 3033", "Spells 1052":"Check Box 3034", "Spells 1053":"Check Box 3035", "Spells 1054":"Check Box 3036", "Spells 1055":"Check Box 3037", "Spells 1056":"Check Box 3038", "Spells 1057":"Check Box 3039", "Spells 1058":"Check Box 3040", "Spells 1059":"Check Box 3041", "Spells 1060":"Check Box 316", "Spells 1061":"Check Box 317", "Spells 1062":"Check Box 3042", "Spells 1063":"Check Box 3043", "Spells 1064":"Check Box 3044", "Spells 1065":"Check Box 3045", "Spells 1066":"Check Box 3046", "Spells 1067":"Check Box 3047", "Spells 1068":"Check Box 3048", "Spells 1069":"Check Box 3049", "Spells 1070":"Check Box 3050", "Spells 1071":"Check Box 3051", "Spells 1072":"Check Box 3052", "Spells 1073":"Check Box 318", "Spells 1074":"Check Box 319", "Spells 1075":"Check Box 3053", "Spells 1076":"Check Box 3054", "Spells 1077":"Check Box 3055", "Spells 1078":"Check Box 3056", "Spells 1079":"Check Box 3057", "Spells 1080":"Check Box 3058", "Spells 1081":"Check Box 3059", "Spells 1082":"Check Box 320", "Spells 1083":"Check Box 321", "Spells 1084":"Check Box 3060", "Spells 1085":"Check Box 3061", "Spells 1086":"Check Box 3062", "Spells 1087":"Check Box 3063", "Spells 1088":"Check Box 3064", "Spells 1089":"Check Box 3065", "Spells 1090":"Check Box 3066", "Spells 1091":"Check Box 322", "Spells 1092":"Check Box 323", "Spells 1093":"Check Box 3067", "Spells 1094":"Check Box 3068", "Spells 1095":"Check Box 3069", "Spells 1096":"Check Box 3070", "Spells 1097":"Check Box 3071", "Spells 1098":"Check Box 3072", "Spells 1099":"Check Box 3073", "Spells 10100":"Check Box 324", "Spells 10101":"Check Box 325", "Spells 10102":"Check Box 3074", "Spells 10103":"Check Box 3075", "Spells 10104":"Check Box 3076", "Spells 10105":"Check Box 3077", "Spells 10106":"Check Box 3078", "Spells 10107":"Check Box 326", "Spells 10108":"Check Box 327", "Spells 10109":"Check Box 3079", "Spells 101010":"Check Box 3080", "Spells 101011":"Check Box 3081", "Spells 101012":"Check Box 3082", "Spells 101013":"Check Box 3083"};
-// SlotsTotal/SlotsRemaining 19..27 entsprechen Grad 1..9
+// SlotsTotal/SlotsRemaining 19..27 correspond to levels 1..9
 const slotField = (kind, level) => `${kind} ${18 + level}`;
 
-/** Aktiven Charakter (oder Generator-Vorschau) als WotC-PDF herunterladen */
+/** Download the active character (or generator preview) as a WotC PDF */
 export async function exportToPdf(s) {
   const { PDFDocument } = window.PDFLib;
   const bytes = await (await fetch('assets/character-sheet.pdf')).arrayBuffer();
   const doc   = await PDFDocument.load(bytes);
   const form  = doc.getForm();
 
-  // Text setzen; Schriftgröße robust: erst setFontSize, bei fehlendem
-  // /DA-Eintrag Default-Appearance direkt schreiben (verhindert Auto-
-  // Größe = Riesen-Schrift in großen Feldern).
+  // set text; font size robustly: try setFontSize first, if there's
+  // no /DA entry write the default appearance directly (prevents
+  // auto size = huge text in large fields).
   const setText = (name, value, size = null) => {
     let f;
     try { f = form.getTextField(name); } catch { return; }
@@ -96,7 +96,7 @@ export async function exportToPdf(s) {
   const pb  = calcProfBonus(totalLevel);
   const eff = effectiveAbilities(s).scores;
 
-  // ════ SEITE 1 ════════════════════════════════════════════
+  // ════ PAGE 1 ════════════════════════════════════════════
 
   setText('CharacterName', s.name);
   setText('ClassLevel', (s.classes ?? [])
@@ -145,7 +145,7 @@ export async function exportToPdf(s) {
   setText('HDTotal', hitDiceSummary(s.classes));
   setText('HD', s.hitDiceLeft ?? '');
 
-  // Waffen (max. 3 aus angelegter Ausrüstung), Schadenstyp ausgeschrieben
+  // weapons (max. 3 from equipped gear), damage type spelled out
   const weapons = [];
   const seen = new Set();
   for (const it of s.items ?? []) {
@@ -169,7 +169,7 @@ export async function exportToPdf(s) {
     setText(wpnFields[i][2], w.dmg, 8);
   });
 
-  // Kurzliste der Angriffs-/Schadenszauber unter den Waffenzeilen
+  // short list of attack/damage spells below the weapon rows
   const spellLines = (s.spells ?? [])
     .map(sp => ({ sp, lib: repo.findSpell(sp.name) }))
     .filter(x => x.lib?.damage || x.lib?.attackRoll)
@@ -205,29 +205,29 @@ export async function exportToPdf(s) {
   if (featureSection?.content) featureParts.push(featureSection.content);
   setText('Features and Traits', featureParts.join('\n'), 8);
 
-  // "Other Proficiencies & Languages": tatsächliche andere Übungen
-  // (Rüstung/Waffen/Werkzeuge) + Sprachen. Fertigkeiten stehen bereits
-  // als Häkchen im Skills-Block und gehören hier NICHT hin.
+  // "Other Proficiencies & Languages": actual other proficiencies
+  // (armor/weapons/tools) + languages. Skills are already checkboxes
+  // in the skills block and do NOT belong here.
   const profParts = [];
   if (s.otherProficiencies) profParts.push(s.otherProficiencies);
   if (s.languages) profParts.push(t('desc.languages') + ': ' + s.languages);
   setText('ProficienciesLang', profParts.join('\n'), 8);
 
-  // ════ SEITE 2: Beschreibung ══════════════════════════════
+  // ════ PAGE 2: description ══════════════════════════════
 
   setText('CharacterName 2', s.name);
-  // Aussehen-Details (Age/Height/… gibt es als eigene Felder auf Seite 2)
+  // appearance details (Age/Height/… exist as their own fields on page 2)
   setText('Age', s.age ?? '', 9);
   setText('Height', s.height ?? '', 9);
   setText('Weight', s.weight ?? '', 9);
   setText('Eyes', s.eyes ?? '', 9);
   setText('Skin', s.skin ?? '', 9);
   setText('Hair', s.hair ?? '', 9);
-  // Aussehen-Freitext + Hintergrundgeschichte
+  // appearance free text + backstory
   const appearance = blockText('appearance');
   setText('Backstory',
     (appearance ? appearance + '\n\n' : '') + blockText('backstory'), 9);
-  // Talente im Detail (Name + Kurzbeschreibung aus der Bibliothek)
+  // feats in detail (name + short description from the library)
   const featDetails = (s.feats ?? []).map(name => {
     const lib = repo.findFeat(name);
     return lib?.description ? `${name}: ${lib.description.slice(0, 220)}` : name;
@@ -236,7 +236,7 @@ export async function exportToPdf(s) {
   setText('Allies', s.allies ?? '', 9);
   setText('Treasure', s.treasure ?? '', 9);
 
-  // ════ SEITE 3: Zauberbogen ═══════════════════════════════
+  // ════ PAGE 3: spell sheet ═══════════════════════════════
 
   const casterClasses = (s.classes ?? [])
     .map(c => ({ c, data: repo.getClass(c.name) }))
@@ -247,10 +247,10 @@ export async function exportToPdf(s) {
     const ability = first.data.spellAbility;
     setText('Spellcasting Class 2', casterClasses.map(x => x.c.name).join(' / '), 10);
     setText('SpellcastingAbility 2', ability.toUpperCase());
-    setText('SpellSaveDC  2', 8 + pb + calcMod(eff[ability])); // Feldname mit 2 Leerzeichen!
+    setText('SpellSaveDC  2', 8 + pb + calcMod(eff[ability])); // field name has 2 spaces!
     setText('SpellAtkBonus 2', fmtMod(pb + calcMod(eff[ability])));
 
-    // Slots pro Grad (inkl. Warlock-Pakt-Slots auf ihrem Grad)
+    // slots per level (incl. Warlock pact slots at their level)
     const { slots, pact } = calcSpellSlots(s.classes);
     const used = s.spellSlotsUsed ?? [];
     for (let lv = 1; lv <= 9; lv++) {
@@ -261,7 +261,7 @@ export async function exportToPdf(s) {
       setText(slotField('SlotsRemaining', lv), Math.max(0, total - (used[lv - 1] ?? 0)));
     }
 
-    // Zauber in die Zeilen ihres Grades, Vorbereitet-Häkchen setzen
+    // spells into the rows of their level, set prepared checkboxes
     const byLevel = {};
     for (const sp of s.spells ?? []) (byLevel[sp.level ?? 0] ??= []).push(sp);
     for (const [lv, list] of Object.entries(byLevel)) {
@@ -274,14 +274,14 @@ export async function exportToPdf(s) {
     }
   }
 
-  // == Charakterbild → "CHARACTER IMAGE"-Bereich (Seite 2, Appearance) ==
-  // Das Porträt liegt als DataURL am Charakter (Canvas-Export, JPEG;
-  // ältere Stände evtl. PNG). WICHTIG: Das Bild wird DIREKT in den
-  // Seiteninhalt gezeichnet statt per setImage in das Button-Feld -
-  // das gesetzte NeedAppearances-Flag (nötig für die Modifikator-
-  // Ovale) lässt Viewer die Button-Darstellung neu generieren und
-  // würde ein Feld-Bild wieder löschen (mit pdfium verifiziert).
-  // Gezeichneter Seiteninhalt bleibt in jedem Viewer und im Druck.
+  // == Character image → "CHARACTER IMAGE" area (page 2, appearance) ==
+  // The portrait lives as a data URL on the character (canvas export,
+  // JPEG; older records possibly PNG). IMPORTANT: the image is drawn
+  // DIRECTLY into the page content instead of via setImage into the
+  // button field - the NeedAppearances flag that's set (needed for the
+  // modifier ovals) makes viewers regenerate the button appearance,
+  // which would delete a field image again (verified with pdfium).
+  // Page content drawn this way survives in every viewer and in print.
   if (typeof s.portrait === 'string' && s.portrait.startsWith('data:image/')) {
     try {
       const [head, b64] = s.portrait.split(',');
@@ -291,12 +291,12 @@ export async function exportToPdf(s) {
       const img = head.includes('image/png')
         ? await doc.embedPng(imgBytes)
         : await doc.embedJpg(imgBytes);
-      // Zielrechteck vom Formularfeld übernehmen (liegt auf Seite 2)
+      // adopt the target rectangle from the form field (lives on page 2)
       const widget = form.getButton('CHARACTER IMAGE').acroField.getWidgets()[0];
       const rect   = widget.getRectangle();
       const pages  = doc.getPages();
       const page   = pages.find(p => p.ref === widget.P()) ?? pages[1];
-      // "contain": Seitenverhältnis erhalten, zentriert einpassen
+      // "contain": preserve aspect ratio, fit centered
       const fit = Math.min(rect.width / img.width, rect.height / img.height);
       const w = img.width * fit, h = img.height * fit;
       page.drawImage(img, {
@@ -305,15 +305,15 @@ export async function exportToPdf(s) {
         width: w, height: h,
       });
     } catch (e) {
-      // Bild-Einbettung darf den Export nie verhindern
-      console.warn('Porträt konnte nicht in den Bogen übernommen werden:', e);
+      // image embedding must never block the export
+      console.warn('Could not embed portrait into the sheet:', e);
     }
   }
 
-  // == Speichern & Download ==
-  // NeedAppearances erzwingt, dass Viewer die Feld-Darstellungen neu
-  // generieren, ohne das bleiben manche Felder (z. B. die kleinen
-  // Modifikator-Ovale) in strengen Viewern leer.
+  // == Save & download ==
+  // NeedAppearances forces viewers to regenerate field appearances;
+  // without it, some fields (e.g. the small modifier ovals) remain
+  // empty in strict viewers.
   try { form.acroForm.dict.set(window.PDFLib.PDFName.of('NeedAppearances'), window.PDFLib.PDFBool.True); } catch {}
   const out  = await doc.save();
   const blob = new Blob([out], { type: 'application/pdf' });

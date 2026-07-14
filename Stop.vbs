@@ -1,10 +1,10 @@
 ' ============================================================
-' Stop.vbs - D&D 5e Studio beenden (versteckt)
+' Stop.vbs - stop D&D 5e Studio (hidden)
 ' ------------------------------------------------------------
-' Beendet den unsichtbar laufenden Server. Da der Server mit
-' Administratorrechten laeuft, wird auch das Beenden per UAC
-' erhoeht ausgefuehrt. Alternativ: Knopf "App beenden" in den
-' Einstellungen der App (ohne UAC-Abfrage).
+' Stops the invisibly running server. Since the server runs with
+' administrator rights, stopping it also requires elevation via
+' UAC. Alternative: "Quit app" button in the app's settings
+' (without a UAC prompt).
 ' ============================================================
 Option Explicit
 On Error Resume Next
@@ -12,8 +12,8 @@ On Error Resume Next
 Dim app
 Set app = CreateObject("Shell.Application")
 
-' Beendet alle node-Prozesse, deren Kommandozeile server.js enthaelt.
-' Fensterstil 0 = versteckt, Verb "runas" = mit Adminrechten.
+' Stops all node processes whose command line contains server.js.
+' Window style 0 = hidden, verb "runas" = with admin rights.
 app.ShellExecute "powershell.exe", _
     "-NoProfile -Command ""Get-CimInstance Win32_Process | " & _
     "Where-Object { $_.Name -eq 'node.exe' -and $_.CommandLine -like '*server.js*' } | " & _

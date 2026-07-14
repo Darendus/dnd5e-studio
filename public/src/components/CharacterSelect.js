@@ -1,12 +1,12 @@
 // ============================================================
-// components/CharacterSelect.js, Charakterauswahl beim Start
+// components/CharacterSelect.js, character selection at startup
 // ------------------------------------------------------------
-// Vollbild-Overlay, das VOR dem Charakterbogen erscheint:
-//  • Karten aller gespeicherten Charaktere (Bild, Name, Klassen,
-//    Stufe, letzte Änderung), Klick lädt den Charakter
-//  • "Neu"-Knopf öffnet einen komplett leeren Bogen
-//  • Löschen pro Karte (mit Rückfrage)
-// Über die Kopfleiste ("Charaktere") jederzeit wieder aufrufbar.
+// Full-screen overlay that appears BEFORE the character sheet:
+//  • cards for all saved characters (image, name, classes,
+//    level, last modified), clicking loads the character
+//  • "New" button opens a completely blank sheet
+//  • delete per card (with confirmation)
+// Reachable again at any time via the header bar ("Characters").
 // ============================================================
 import { store }   from '../core/Store.js';
 import { repo }    from '../core/DataRepository.js';
@@ -28,9 +28,9 @@ export function showCharacterSelect() {
 
 function hide() { if (overlay) overlay.style.display = 'none'; }
 
-/** Regelwerk-Abfrage vor dem Erstellen: PHB 2014 oder PHB 2024.
- *  Die Wahl bestimmt, welche Buchquelle bei Doppelungen bevorzugt wird
- *  und aktiviert/deaktiviert die jeweils passenden Quellenbücher. */
+/** Ruleset prompt before creating a character: PHB 2014 or PHB 2024.
+ *  The choice determines which book source is preferred on duplicates
+ *  and enables/disables the respective matching source books. */
 function showRulesetChooser() {
   const dlg = document.createElement('div');
   dlg.className = 'overlay';
@@ -69,9 +69,9 @@ function showRulesetChooser() {
   dlg.onclick = e => { if (e.target === dlg) dlg.remove(); };
 }
 
-/** Passende Quellenbücher für die Regelversion aktivieren/deaktivieren:
- *  phb14 → PHB an, XPHB aus; phb24 → XPHB an, PHB aus. Andere Bücher
- *  bleiben unberührt. */
+/** Enable/disable the matching source books for the ruleset version:
+ *  phb14 → PHB on, XPHB off; phb24 → XPHB on, PHB off. Other books
+ *  remain untouched. */
 function applyRulesetSources(ruleset) {
   if (ruleset === 'phb24') {
     repo.setSourceEnabled('XPHB', true);
@@ -91,7 +91,7 @@ function render() {
     <p class="panel__hint" style="text-align:center;margin-bottom:1.5rem">${t('select.hint')}</p>
 
     <div class="select-grid">
-      <!-- Neu: leerer Bogen -->
+      <!-- new: blank sheet -->
       <button class="select-card select-card--new" id="selNew">
         <span class="select-card__plus">+</span>
         <span class="select-card__name">${t('select.new')}</span>
@@ -124,7 +124,7 @@ function render() {
 
   overlay.querySelectorAll('[data-sel-load]').forEach(card => {
     card.onclick = e => {
-      if (e.target.closest('[data-sel-del]')) return; // Löschen nicht als Laden werten
+      if (e.target.closest('[data-sel-del]')) return; // don't treat delete as load
       store.loadCharacter(card.dataset.selLoad);
       hide();
     };
@@ -135,7 +135,7 @@ function render() {
       e.stopPropagation();
       if (confirm(t('select.confirmDelete'))) {
         store.deleteCharacter(b.dataset.selDel);
-        render(); // Liste aktualisieren, Overlay bleibt offen
+        render(); // refresh the list, overlay stays open
       }
     };
   });

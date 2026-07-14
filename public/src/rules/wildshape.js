@@ -1,44 +1,44 @@
 // ============================================================
-// rules/wildshape.js, Wildgestalt-Regeln (PHB, inkl. Mond-Zirkel)
+// rules/wildshape.js, wild shape rules (PHB, incl. Circle of the Moon)
 // ------------------------------------------------------------
-// Standard-Druide ("Beast Shapes"-Tabelle):
-//   Stufe 2:  max HG 1/4, KEIN Flug- und KEIN Schwimmtempo
-//   Stufe 4:  max HG 1/2, KEIN Flugtempo
-//   Stufe 8:  max HG 1,   keine Einschränkungen
+// Standard druid ("Beast Shapes" table):
+//   level 2:  max CR 1/4, NO flying and NO swimming speed
+//   level 4:  max CR 1/2, NO flying speed
+//   level 8:  max CR 1,   no restrictions
 //
-// Zirkel des Mondes ("Circle Forms"):
-//   Stufe 2:  max HG 1 (Bewegungs-Einschränkungen der Tabelle
-//             gelten weiterhin: kein Schwimmen < St. 4, kein Flug < St. 8)
-//   Stufe 6+: max HG = Druidenstufe / 3 (abgerundet)
+// Circle of the Moon ("Circle Forms"):
+//   level 2:  max CR 1 (movement restrictions of the table still
+//             apply: no swimming < lvl 4, no flying < lvl 8)
+//   level 6+: max CR = druid level / 3 (rounded down)
 //
-// Bei Multiclassing zählt NUR die Druiden-Stufe.
+// With multiclassing, ONLY the druid level counts.
 // ============================================================
 import { repo } from '../core/DataRepository.js';
 
-/** Herausforderungsgrad-String → Zahl ("1/4" → 0.25) */
+/** Challenge rating string → number ("1/4" → 0.25) */
 export function crToNumber(cr) {
   const s = String(cr);
   if (s.includes('/')) { const [a, b] = s.split('/'); return (+a) / (+b); }
   return +s || 0;
 }
 
-/** Druiden-Stufe (nur die Druide-Einträge im Multiclass-Array) */
+/** Druid level (only the druid entries in the multiclass array) */
 export function druidLevel(classes) {
   return (classes ?? [])
     .filter(c => c.name === 'Druid')
     .reduce((sum, c) => sum + (+c.level || 0), 0);
 }
 
-/** Ist die Unterklasse "Circle of the Moon" gewählt? */
+/** Is the "Circle of the Moon" subclass selected? */
 export function isMoonDruid(classes) {
   return (classes ?? []).some(c =>
     c.name === 'Druid' && /moon/i.test(c.subclass ?? ''));
 }
 
 /**
- * Aktuelle Wildgestalt-Grenzen des Charakters.
+ * Character's current wild shape limits.
  * @returns {null | { level, moon, maxCR, noFly, noSwim }}
- *   null = keine Wildgestalt verfügbar (Druide < Stufe 2 oder kein Druide)
+ *   null = no wild shape available (druid < level 2 or not a druid)
  */
 export function wildshapeLimits(classes) {
   const level = druidLevel(classes);
@@ -50,28 +50,28 @@ export function wildshapeLimits(classes) {
 
   return {
     level, moon, maxCR,
-    noFly:  level < 8, // Flugtempo erst ab Stufe 8
-    noSwim: level < 4, // Schwimmtempo erst ab Stufe 4
+    noFly:  level < 8, // flying speed only from level 8
+    noSwim: level < 4, // swimming speed only from level 4
   };
 }
 
 /**
- * Elemental Wild Shape (Zirkel des Mondes, Stufe 10):
- * Verwandlung in Luft-/Erd-/Feuer-/Wasserelementar für ZWEI
- * Wildgestalt-Nutzungen. Die HG-/Bewegungs-Grenzen der
- * Tiergestalten-Tabelle gelten dafür NICHT.
+ * Elemental Wild Shape (Circle of the Moon, level 10):
+ * Transformation into an air/earth/fire/water elemental for TWO
+ * wild shape uses. The CR/movement limits of the beast shape
+ * table do NOT apply to this.
  */
 export function elementalUnlocked(classes) {
   return isMoonDruid(classes) && druidLevel(classes) >= 10;
 }
 
-/** Alle Formen aus dem Bestiarium, die der Charakter annehmen darf */
+/** All forms from the bestiary the character is allowed to take */
 export function availableForms(classes) {
   const limits = wildshapeLimits(classes);
   if (!limits) return [];
   const elementals = elementalUnlocked(classes);
   return repo.getBeasts().filter(b => {
-    // Elementare: eigener Freischalt-Pfad, Tier-Tabelle greift nicht
+    // elementals: own unlock path, the beast table does not apply
     if (b.elemental) return elementals;
     if (crToNumber(b.cr) > limits.maxCR) return false;
     if (limits.noFly  && b.speed?.fly)  return false;
@@ -80,7 +80,7 @@ export function availableForms(classes) {
   });
 }
 
-/** Geschwindigkeits-Objekt hübsch formatieren: "40 ft, Schwimmen 40 ft" */
+/** Nicely format a speed object: "40 ft, Swim 40 ft" */
 export function formatSpeed(speed, labels = {}) {
   const L = { walk: '', fly: labels.fly ?? 'Fly', swim: labels.swim ?? 'Swim',
               climb: labels.climb ?? 'Climb', burrow: labels.burrow ?? 'Burrow' };

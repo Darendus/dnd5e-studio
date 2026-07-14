@@ -1,11 +1,11 @@
 // ============================================================
-// components/WildshapePanel.js, Wildgestalt (Druide)
+// components/WildshapePanel.js, wild shape (druid)
 // ------------------------------------------------------------
-// Erscheint nur, wenn eine Druide-Klasse gewählt ist (auch als
-// Multiclass). Zeigt alle regelkonform verfügbaren Tierformen
-// als aufklappbare Statblocks inkl. Bild (5etools-img-Mirror).
-// "Verwandeln" übernimmt STÄ/GES/KON, RK, TP und Angriffe der
-// Form; die Grenzen (HG, Flug/Schwimmen, Mond-Zirkel) kommen aus
+// Only appears if a druid class is selected (including as a
+// multiclass). Shows all rules-compliant available beast forms
+// as expandable stat blocks incl. image (5etools-img mirror).
+// "Transform" takes on the form's STR/DEX/CON, AC, HP and attacks;
+// the limits (CR, flying/swimming, Circle of the Moon) come from
 // rules/wildshape.js.
 // ============================================================
 import { store }   from '../core/Store.js';
@@ -18,8 +18,8 @@ import {
 } from '../rules/wildshape.js';
 import { toggleExpand } from './InventoryPanel.js';
 
-// Bilder aus dem 5etools-Bild-Mirror (gleiche Organisation wie die Daten).
-// Nicht vorhandene Bilder werden per onerror einfach ausgeblendet.
+// Images from the 5etools image mirror (same organization as the data).
+// Missing images are simply hidden via onerror.
 const IMG_BASE = 'https://raw.githubusercontent.com/5etools-mirror-3/5etools-img/main/bestiary';
 
 export function mountWildshape() {
@@ -31,11 +31,11 @@ export function mountWildshape() {
   bus.on(EV.SOURCES_CHANGED, render);
 }
 
-let search = '';            // Suchfeld über Re-Renders hinweg erhalten
-let crFilter = '';          // CR-Filter ('' = alle)
-const openCRs = new Set();  // aufgeklappte CR-Sektionen
+let search = '';            // search field preserved across re-renders
+let crFilter = '';          // CR filter ('' = all)
+const openCRs = new Set();  // expanded CR sections
 
-// == Favoriten (QOL): häufig genutzte Formen schnell erreichbar ==
+// == Favorites (QOL): quick access to frequently used forms ====
 const FAV_KEY = 'dnd5e_wildshape_favs';
 function loadFavs() {
   try { return new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]')); }
@@ -56,7 +56,7 @@ function render() {
   const s = store.get();
   const limits = wildshapeLimits(s.classes);
 
-  // Kein Druide (Stufe 2+) → Tab-Inhalt mit Hinweis (Tab selbst ist ausgeblendet)
+  // not a druid (level 2+) → tab content with a hint (the tab itself is hidden)
   if (!limits) {
     el.innerHTML = `<div class="panel"><p class="panel__hint">${t('wildshape.needDruid')}</p></div>`;
     return;
@@ -65,7 +65,7 @@ function render() {
   const maxUses = store.wildshapeMax();
   const uses  = s.wildshapeUses ?? maxUses;
   const allForms = availableForms(s.classes);
-  // Alle vorkommenden CR-Stufen (für das Filter-Dropdown), aufsteigend
+  // all occurring CR levels (for the filter dropdown), ascending
   const crValues = [...new Set(allForms.map(b => b.cr))]
     .sort((a, b) => crToNumber(a) - crToNumber(b));
 
@@ -74,14 +74,14 @@ function render() {
     .filter(b => !search || b.name.toLowerCase().includes(search))
     .sort((a, b) => crToNumber(a.cr) - crToNumber(b.cr) || a.name.localeCompare(b.name));
 
-  // Nach CR gruppieren
+  // group by CR
   const byCR = {};
   forms.forEach(b => (byCR[b.cr] ??= []).push(b));
-  // Bei aktiver Suche/Filterung Sektionen automatisch aufklappen
+  // with an active search/filter, auto-expand sections
   const forceOpen = !!search || !!crFilter;
 
   el.innerHTML = `
-  <!-- Status: Grenzen, Nutzungen, aktive Form -->
+  <!-- status: limits, uses, active form -->
   <div class="panel">
     <div class="panel__title">${t('wildshape.title')}
       ${limits.moon ? `<span class="tag tag--magic">${t('wildshape.moonBadge')}</span>` : ''}
@@ -109,7 +109,7 @@ function render() {
 
   ${s.wildshape ? renderActiveForm(s) : ''}
 
-  <!-- Formenliste: Suche + CR-Filter, Sektionen pro CR auf-/zuklappbar -->
+  <!-- form list: search + CR filter, sections per CR expandable -->
   <div class="panel">
     <div class="panel__title">${t('wildshape.forms')}</div>
     <div style="display:flex;gap:8px;margin-bottom:10px">
@@ -121,7 +121,7 @@ function render() {
     </div>
     <div id="wsList">
       ${(() => {
-        // Favoriten-Sektion (nur verfügbare Formen), immer oben und offen
+        // favorites section (available forms only), always on top and open
         const favForms = forms.filter(b => favs.has(b.name));
         if (!favForms.length) return '';
         return `
@@ -152,7 +152,7 @@ function render() {
   bindEvents(el, s);
 }
 
-// == Aktive Form (Status + Zurückverwandeln) ==================
+// == Active form (status + reverting) ==========================
 
 function renderActiveForm(s) {
   const beast = repo.findBeast(s.wildshape.form);
@@ -180,7 +180,7 @@ function renderActiveForm(s) {
   </div>`;
 }
 
-// == Statblock eines Tiers (aufklappbar, mit Bild) ============
+// == A beast's stat block (expandable, with image) =============
 
 function renderStatblock(b, s) {
   const isActive = s.wildshape?.form === b.name;
@@ -229,7 +229,7 @@ function renderStatblock(b, s) {
 // == Events ===================================================
 
 function bindEvents(el, s) {
-  // Suche (Fokus erhalten: nur Liste neu bauen)
+  // search (preserve focus: only rebuild the list)
   const searchInput = el.querySelector('#wsSearch');
   searchInput.oninput = () => {
     search = searchInput.value.toLowerCase();
@@ -239,13 +239,13 @@ function bindEvents(el, s) {
     if (again) { again.focus(); again.setSelectionRange(pos, pos); }
   };
 
-  // CR-Filter
+  // CR filter
   el.querySelector('#wsCRFilter').onchange = e => {
     crFilter = e.target.value;
     render();
   };
 
-  // CR-Sektionen auf-/zuklappen
+  // expand/collapse CR sections
   el.querySelectorAll('[data-cr-toggle]').forEach(btn => {
     btn.onclick = () => {
       const cr = btn.dataset.crToggle;
@@ -254,14 +254,14 @@ function bindEvents(el, s) {
     };
   });
 
-  // Verwandeln: Form aktivieren, TP-Pool des Tiers übernehmen, 1 Nutzung abziehen
+  // transform: activate the form, adopt the beast's HP pool, deduct 1 use
   el.querySelectorAll('[data-ws-transform]').forEach(btn => {
     btn.onclick = e => {
       e.stopPropagation();
       const beast = repo.findBeast(btn.dataset.wsTransform);
       if (!beast) return;
       const uses = store.field('wildshapeUses') ?? 2;
-      const cost = beast.elemental ? 2 : 1; // Elemental Wild Shape kostet 2 Nutzungen
+      const cost = beast.elemental ? 2 : 1; // Elemental Wild Shape costs 2 uses
       if (uses < cost) {
         bus.emit(EV.TOAST, { message: '✗ ' + t('wildshape.notEnoughUses') });
         return;
@@ -274,12 +274,12 @@ function bindEvents(el, s) {
     };
   });
 
-  // Zurückverwandeln
+  // revert back
   el.querySelector('#wsRevert')?.addEventListener('click', () => {
     store.update({ wildshape: null });
   });
 
-  // Form-TP anpassen (sinkt auf 0 → automatische Rückverwandlung, RAW)
+  // adjust the form's HP (drops to 0 → automatic revert, RAW)
   el.querySelector('#wsHP')?.addEventListener('change', e => {
     const val = Math.max(0, +e.target.value || 0);
     if (val === 0) {
@@ -291,7 +291,7 @@ function bindEvents(el, s) {
     }
   });
 
-  // Nutzungs-Blasen (Klick verbraucht/gibt frei) + Rast
+  // use bubbles (click spends/frees a use) + rest
   el.querySelectorAll('[data-ws-use]').forEach(b => {
     b.onclick = () => {
       const i = +b.dataset.wsUse;
@@ -303,7 +303,7 @@ function bindEvents(el, s) {
   });
   el.querySelector('#wsRest').onclick = () => store.update({ wildshapeUses: store.wildshapeMax() });
 
-  // Favoriten-Stern (verhindert Aufklappen/Verwandeln)
+  // favorite star (prevents expanding/transforming)
   el.querySelectorAll('[data-ws-fav]').forEach(btn => {
     btn.onclick = e => {
       e.stopPropagation();
@@ -312,14 +312,14 @@ function bindEvents(el, s) {
     };
   });
 
-  // Statblöcke aufklappen (nicht bei Klick auf Buttons)
+  // expand stat blocks (not on button clicks)
   el.querySelector('#wsList').onclick = e => {
     if (e.target.closest('button')) return;
     toggleExpand(e);
   };
 }
 
-// == Helfer ===================================================
+// == Helpers ===================================================
 
 function formatCR(n) {
   if (n === 0.25) return '1/4';

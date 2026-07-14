@@ -1,7 +1,7 @@
 // ============================================================
-// components/CombatPanel.js, TP, RK, Angriffe, Todesrettwürfe
-// Angriffe würfeln automatisch: erst Treffer (W20+Bonus),
-// dann Schaden (Formel) über die Dice-Engine.
+// components/CombatPanel.js, HP, AC, attacks, death saving throws
+// Attacks roll automatically: first the hit (d20+bonus),
+// then damage (formula) via the dice engine.
 // ============================================================
 import { store }   from '../core/Store.js';
 import { bus, EV } from '../core/EventBus.js';
@@ -29,7 +29,7 @@ function render() {
   const pct = hpPct(s);
 
   el.innerHTML = `
-  <!-- Angriffs-Wurfergebnis -->
+  <!-- attack roll result -->
   <div id="atkResult"></div>
 
   <div class="panel">
@@ -95,7 +95,7 @@ function render() {
 
   ${renderWildshapeSection(s)}
 
-  <!-- Angriffe: angelegte Waffen + schadensverursachende bekannte Zauber -->
+  <!-- attacks: equipped weapons + known damage-dealing spells -->
   <div class="panel">
     <div class="panel__title">${t('combat.attacks')}, ${t('combat.weapons')}</div>
     ${renderWeaponRows(s)}
@@ -127,10 +127,10 @@ function render() {
   bindEvents(el, s);
 }
 
-// == Angelegte Waffen aus dem Inventar ========================
-// Quelle: Items mit equipped=true, deren Bibliothekseintrag einen
-// Schadenswürfel (dmg1) hat. Angriffsbonus aus Übungsbonus +
-// STÄ/GES (Fernkampf → GES, Finesse → das Bessere).
+// == Equipped weapons from the inventory =======================
+// Source: items with equipped=true whose library entry has a
+// damage die (dmg1). Attack bonus from proficiency bonus +
+// STR/DEX (ranged → DEX, finesse → the better of the two).
 
 function equippedWeapons(s) {
   const seen = new Set();
@@ -159,19 +159,19 @@ function renderWeaponRows(s) {
     </div>`).join('');
 }
 
-// == Schadenszauber aus "Bekannte Zauber" =====================
-// Angriffswurf/Schaden/Rettungswurf wurden beim Daten-Update aus
-// den Zauberbeschreibungen extrahiert (attackRoll, damage, saveType).
+// == Damage spells from "known spells" =========================
+// Attack roll/damage/saving throw were extracted from the spell
+// descriptions during the data update (attackRoll, damage, saveType).
 
 function damagingSpells(s) {
   const eff = effectiveAbilities(s).scores;
   const pb  = calcProfBonus((s.classes ?? []).reduce((a, c) => a + (+c.level || 0), 0) || 1);
   const out = [];
   for (const sp of s.spells ?? []) {
-    if (!sp.prepared) continue; // nur VORBEREITETE Zauber (roter Punkt)
+    if (!sp.prepared) continue; // only PREPARED spells (red dot)
     const lib = repo.findSpell(sp.name);
     if (!lib?.damage) continue;
-    // Zauberfähigkeit der passenden Klasse ermitteln
+    // determine the spellcasting ability of the matching class
     let mod = 0;
     for (const c of s.classes ?? []) {
       const cd = repo.getClass(c.name);
@@ -201,9 +201,9 @@ function renderSpellRows(s) {
     </div>`).join('');
 }
 
-// == Wildgestalt im Kampf =====================================
-// In Tierform: AC/TP der Form, ihre Angriffe mit Treffer- und
-// Schadenswurf (Boni aus dem Statblock des Tiers), Rückverwandlung.
+// == Wild shape in combat =======================================
+// In beast form: AC/HP of the form, its attacks with hit and
+// damage rolls (bonuses from the beast's stat block), reverting back.
 
 function renderWildshapeSection(s) {
   if (!s.wildshape?.form) return '';
@@ -240,9 +240,9 @@ function renderWildshapeSection(s) {
 
 function esc(str) { return String(str ?? '').replace(/"/g, '&quot;'); }
 
-// == Wurf-Logik: getrennter Hit- und Damage-Roll ==============
-// Nach einem kritischen Treffer merkt sich lastCrit den Eintrag -
-// der nächste Schadenswurf dafür verdoppelt die Würfel automatisch.
+// == Roll logic: separate hit and damage roll ==================
+// After a critical hit, lastCrit remembers the entry - the next
+// damage roll for it automatically doubles the dice.
 const lastCrit = new Set();
 
 function showSteps(steps) {
@@ -258,13 +258,13 @@ function showSteps(steps) {
 }
 
 async function rollHit(key, label, bonus) {
-  // Abfrage: Vorteil / Normal / Nachteil (Abbrechen möglich)
+  // prompt: advantage / normal / disadvantage (cancel possible)
   const mode = await askRollMode(label);
   if (!mode) return;
 
   const hit = d20(bonus, mode);
   if (hit.isCrit) lastCrit.add(key); else lastCrit.delete(key);
-  // Bei Vorteil/Nachteil beide W20 zeigen: "W20(14|3)→14"
+  // with advantage/disadvantage show both d20s: "W20(14|3)→14"
   const dice = hit.second !== null
     ? `W20(${hit.first}|${hit.second})→${hit.raw}` : `W20(${hit.raw})`;
   showSteps([{
@@ -276,7 +276,7 @@ async function rollHit(key, label, bonus) {
 }
 
 function rollDmg(key, label, formula, flatMod = 0) {
-  const crit = lastCrit.delete(key); // Krit einmalig verbrauchen
+  const crit = lastCrit.delete(key); // consume the crit once
   let f = formula;
   if (crit) f = f.replace(/(\d+)d/g, (m, n) => (+n * 2) + 'd');
   if (flatMod) f += (flatMod > 0 ? '+' : '') + flatMod;
@@ -298,7 +298,7 @@ function bindEvents(el, s) {
   upd('#cbMaxHP', 'maxHP', 1);
   upd('#cbCurrHP', 'currHP');
   upd('#cbTempHP', 'tempHP');
-  // RK manuell editieren → automatische Anpassung durch Rüstung aussetzen
+  // manually editing AC → suspend automatic adjustment from armor
   el.querySelector('#cbAC').onchange = e =>
     store.update({ ac: Math.max(0, +e.target.value || 0), acManual: true });
 
@@ -326,13 +326,13 @@ function bindEvents(el, s) {
   };
   el.querySelector('#cbRecalcAC').onclick = () => {
     const newAC = calcAC(store.get());
-    // Zurück auf Automatik: RK folgt ab jetzt wieder der Rüstung
+    // back to automatic: AC follows armor again from now on
     store.update({ ac: newAC, acManual: false });
     bus.emit(EV.TOAST, { message: `${t('combat.ac')}: ${newAC}` });
   };
   el.querySelector('#cbInsp').onchange = e => store.update({ inspiration: e.target.checked });
 
-  // Todesrettungswürfe: Klick auf Blase n setzt Zähler auf n+1 (oder n bei erneutem Klick)
+  // death saving throws: clicking bubble n sets the counter to n+1 (or n on another click)
   el.querySelectorAll('[data-ds]').forEach(b => {
     b.onclick = () => {
       const key = b.dataset.ds === 's' ? 'deathSuccesses' : 'deathFailures';
@@ -341,7 +341,7 @@ function bindEvents(el, s) {
     };
   });
 
-  // Angriff hinzufügen / entfernen
+  // add / remove attack
   el.querySelector('#atkAdd').onclick = () => {
     const name = el.querySelector('#atkName').value.trim();
     if (!name) return;
@@ -360,7 +360,7 @@ function bindEvents(el, s) {
     };
   });
 
-  // Waffen: Hit-Roll / Damage-Roll (angelegte Items)
+  // weapons: hit roll / damage roll (equipped items)
   el.querySelectorAll('[data-wpn-hit]').forEach(b => {
     b.onclick = () => {
       const w = equippedWeapons(store.get()).find(x => x.lib.name === b.dataset.wpnHit);
@@ -374,7 +374,7 @@ function bindEvents(el, s) {
     };
   });
 
-  // Zauber: Hit-Roll / Damage-Roll (bekannte Schadenszauber)
+  // spells: hit roll / damage roll (known damage spells)
   el.querySelectorAll('[data-sp-hit]').forEach(b => {
     b.onclick = () => {
       const sp = damagingSpells(store.get()).find(x => x.lib.name === b.dataset.spHit);
@@ -388,7 +388,7 @@ function bindEvents(el, s) {
     };
   });
 
-  // Eigene Angriffe: Hit / Damage
+  // custom attacks: hit / damage
   el.querySelectorAll('[data-catk-hit]').forEach(b => {
     b.onclick = () => {
       const a = store.field('attacks')[+b.dataset.catkHit];
@@ -402,7 +402,7 @@ function bindEvents(el, s) {
     };
   });
 
-  // Wildgestalt: Angriffe der Tierform (Boni aus dem Statblock)
+  // wild shape: the beast form's attacks (bonuses from the stat block)
   const wsBeast = s.wildshape?.form ? repo.findBeast(s.wildshape.form) : null;
   el.querySelectorAll('[data-ws-hit]').forEach(b => {
     b.onclick = () => {

@@ -1,7 +1,7 @@
 // ============================================================
-// app.js, Einstiegspunkt: Daten laden, Komponenten mounten
+// app.js, entry point: load data, mount components
 // ============================================================
-import './core/theme.js'; // Erscheinungsbild sofort anwenden (vor dem ersten Rendern)
+import './core/theme.js'; // apply appearance immediately (before the first render)
 import { repo }            from './core/DataRepository.js';
 import { bus, EV }         from './core/EventBus.js';
 import { t }               from './core/i18n.js';
@@ -22,7 +22,7 @@ import { mountSettings }   from './components/SettingsPanel.js';
 import { mountDescription } from './components/DescriptionPanel.js';
 import { showCharacterSelect } from './components/CharacterSelect.js';
 
-// == Toast-System (global, hört auf Bus) ======================
+// == Toast system (global, listens on the bus) ================
 bus.on(EV.TOAST, ({ message }) => {
   const el = document.createElement('div');
   el.className = 'toast';
@@ -34,25 +34,25 @@ bus.on(EV.TOAST, ({ message }) => {
 
 // == Start ====================================================
 (async function boot() {
-  await repo.load();          // Packs/Seed/Homebrew laden
+  await repo.load();          // load packs/seed/homebrew
 
-  mountShell();               // Tabs + IO-Leiste
-  mountHeader();              // Charakterkopf
-  mountCore();                // Attribute & Rettungswürfe
-  mountClasses();             // Multiclass-Editor
-  mountCombat();              // HP / RK / Angriffe
-  mountWildshape();           // Wildgestalt (nur bei Druiden sichtbar)
-  mountSkills();              // Fertigkeiten
-  mountSpells();              // Zauber + Bibliothek + Wirken
-  mountInventory();           // Items + Bibliothek
-  mountDescription();         // Charakterbild (DropZone) + Freitext-Blöcke
-  mountSections();            // Freie Abschnitte
-  mountDiceBot();             // Würfelbot
-  mountGenerator();           // Charakter-Generator
-  mountSettings();            // Sprache, Quellen, Update, Homebrew
+  mountShell();               // tabs + IO bar
+  mountHeader();               // character header
+  mountCore();                // abilities & saving throws
+  mountClasses();              // multiclass editor
+  mountCombat();               // HP / AC / attacks
+  mountWildshape();            // wild shape (only visible for druids)
+  mountSkills();                // skills
+  mountSpells();                // spells + library + casting
+  mountInventory();            // items + library
+  mountDescription();          // character image (DropZone) + free-text blocks
+  mountSections();              // free sections
+  mountDiceBot();               // dice bot
+  mountGenerator();             // character generator
+  mountSettings();              // language, sources, update, homebrew
 
   document.title = t('app.title');
 
-  // Vor dem Bogen: Charakterauswahl anzeigen ('Neu' → leerer Bogen)
+  // before the sheet: show character selection ('New' → blank sheet)
   showCharacterSelect();
 })();

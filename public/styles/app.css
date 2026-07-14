@@ -1,5 +1,5 @@
 /* ============================================================
-   styles/app.css, Gesamtes Styling (Hell-/Dunkelmodus)
+   styles/app.css, all styling (light/dark mode)
    ============================================================ */
 
 :root {
@@ -9,15 +9,15 @@
   --gold: #755408; --gold-bg: #fdf8e1;
   --green: #1a6e2a; --green-bg: #edfbef;
   --blue: #1a4e8b; --blue-bg: #eff5fd;
-  --boost: #0e7490; /* Farbe für Item-verstärkte Attribute */
+  --boost: #0e7490; /* color for item-boosted abilities */
   --r-sm: 6px; --r-md: 10px; --r-lg: 14px;
   --font: system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: ui-monospace, 'Cascadia Code', monospace;
 }
-/* Dunkel-Werte greifen bei Systemeinstellung (auto) ODER erzwungenem Modus.
-   theme.js setzt data-mode="light"/"dark" am <html>; ohne Attribut gilt "auto".
-   Akzent/Gold werden im Dunkelmodus aufgehellt, damit rote/goldene Schrift
-   auf dunklem Grund gut lesbar bleibt (theme.js kann sie weiterhin überschreiben). */
+/* Dark values apply on system setting (auto) OR forced mode.
+   theme.js sets data-mode="light"/"dark" on <html>; without the attribute "auto" applies.
+   Accent/gold are lightened in dark mode so red/gold text stays
+   readable on a dark background (theme.js can still override them). */
 @media (prefers-color-scheme: dark) {
   :root:not([data-mode="light"]) {
     --bg: #1c1a17; --bg2: #26231f; --ink: #ece7de; --muted: #9b948a;
@@ -76,7 +76,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--ink); font-
 .panel-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 @media (max-width: 720px) { .panel-row { grid-template-columns: 1fr; } }
 
-/* == Formulare == */
+/* == Forms == */
 input[type=text], input[type=number], select, textarea {
   font-family: inherit; font-size: 13px; color: var(--ink);
   background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 6px 8px;
@@ -85,7 +85,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--b
 textarea { width: 100%; min-height: 90px; resize: vertical; }
 label { font-size: 11px; color: var(--muted); }
 
-/* == Charakterkopf == */
+/* == Character header == */
 .char-header { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1rem; }
 .char-name { font-size: 20px; font-weight: 600; border: none; background: none; color: var(--ink);
              border-bottom: 1px solid var(--border); width: 100%; padding: 2px 0; }
@@ -99,7 +99,7 @@ label { font-size: 11px; color: var(--muted); }
 .badge--red  { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); cursor: pointer; }
 .badge--off  { opacity: .4; }
 
-/* == Attribute == */
+/* == Abilities == */
 .ability-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 10px; }
 .ability-block { text-align: center; border: 1px solid var(--border); border-radius: var(--r-md);
                  padding: 10px 6px; background: var(--bg); }
@@ -112,7 +112,7 @@ label { font-size: 11px; color: var(--muted); }
 .stat-box__val { font-size: 20px; font-weight: 600; display: block; }
 .stat-box__lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
 
-/* == Listen (Skills, Items, Zauber) == */
+/* == Lists (skills, items, spells) == */
 .list-row { display: flex; align-items: center; gap: 8px; padding: 6px 0;
             border-bottom: 1px solid var(--border); font-size: 13px; }
 .list-row:last-child { border-bottom: none; }
@@ -126,19 +126,19 @@ label { font-size: 11px; color: var(--muted); }
 .indicator--exp  { color: var(--gold); }
 .indicator--none { color: var(--border2); }
 
-/* == HP-Leiste == */
+/* == HP bar == */
 .hp-bar { height: 8px; border-radius: 4px; background: var(--bg); border: 1px solid var(--border); overflow: hidden; }
 .hp-fill { height: 100%; background: var(--green); transition: width .3s; }
 .hp-fill--mid { background: var(--gold); }
 .hp-fill--low { background: var(--accent); }
 
-/* == Todesrettungswürfe == */
+/* == Death saving throws == */
 .ds-bubble { width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--border2);
              cursor: pointer; background: var(--bg); }
 .ds-bubble--s.filled { background: var(--green); border-color: var(--green); }
 .ds-bubble--f.filled { background: var(--accent); border-color: var(--accent); }
 
-/* == Zauberplatz-Blasen == */
+/* == Spell slot bubbles == */
 .slot-bubble { width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--border2);
                cursor: pointer; background: var(--gold-bg); }
 .slot-bubble--used { background: var(--border); }
@@ -146,7 +146,7 @@ label { font-size: 11px; color: var(--muted); }
 .slot-level { min-width: 62px; font-size: 12px; color: var(--muted); }
 .slot-bubbles { display: flex; gap: 4px; flex: 1; flex-wrap: wrap; }
 
-/* == Badges für Zauber-Eigenschaften == */
+/* == Badges for spell properties == */
 .tag { font-size: 10px; font-weight: 500; padding: 1px 7px; border-radius: 99px; white-space: nowrap; }
 .tag--atk  { background: var(--gold-bg);   color: var(--gold);   border: 1px solid var(--gold); }
 .tag--save { background: var(--blue-bg);   color: var(--blue);   border: 1px solid var(--blue); }
@@ -154,7 +154,7 @@ label { font-size: 11px; color: var(--muted); }
 .tag--heal { background: var(--green-bg);  color: var(--green);  border: 1px solid var(--green); }
 .tag--src  { background: var(--bg);        color: var(--muted);  border: 1px solid var(--border2); }
 
-/* == Würfelbot == */
+/* == Dice bot == */
 .dice-result { text-align: center; padding: 1.25rem; }
 .dice-result__num { font-size: 44px; font-weight: 700; line-height: 1; font-family: var(--mono); }
 .dice-result__num.crit { color: var(--gold); }
@@ -168,7 +168,7 @@ label { font-size: 11px; color: var(--muted); }
                  border-bottom: 1px solid var(--border); font-family: var(--mono); }
 .history-entry .total { font-weight: 700; min-width: 30px; }
 
-/* == Modal (Bibliotheken) == */
+/* == Modal (libraries) == */
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 50;
            display: flex; align-items: center; justify-content: center; padding: 1rem; }
 .modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--r-lg);
@@ -187,7 +187,7 @@ label { font-size: 11px; color: var(--muted); }
 .lib-group-head { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em;
                   color: var(--muted); margin: 12px 0 6px; border-bottom: 1px solid var(--border); padding-bottom: 3px; }
 
-/* == Cast-Ergebnis == */
+/* == Cast result == */
 .cast-step { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding: 8px 12px;
              border: 1px solid var(--border); border-radius: var(--r-md); margin-bottom: 6px; background: var(--bg); }
 .cast-step--atk  { border-color: var(--gold);   background: var(--gold-bg); }
@@ -207,19 +207,19 @@ label { font-size: 11px; color: var(--muted); }
          font-size: 13px; opacity: 0; transition: all .25s; z-index: 100; pointer-events: none; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-/* == Custom Sections == */
+/* == Custom sections == */
 .section-card { position: relative; }
 .section-card .btn-icon { position: absolute; top: 12px; right: 12px; }
 .section-title-input { font-weight: 600; font-size: 14px; border: none; background: none;
                        color: var(--ink); border-bottom: 1px dashed var(--border2); width: 60%; }
 
-/* == Klassen-Editor == */
+/* == Class editor == */
 .class-row { display: grid; grid-template-columns: 1fr 70px 1fr 32px; gap: 8px; align-items: center;
              padding: 8px 0; border-bottom: 1px solid var(--border); }
 .class-row:last-child { border-bottom: none; }
 @media (max-width: 640px) { .class-row { grid-template-columns: 1fr 60px; } }
 
-/* == Große Bibliotheks-Ansicht (Inventar) == */
+/* == Large library view (inventory) == */
 .modal--wide { max-width: 1040px; max-height: 92vh; }
 .modal--wide .modal__body { padding: .8rem 1.4rem; }
 .modal__head .row-dim { flex: 1; text-align: right; margin-right: 10px; font-family: var(--mono); }
@@ -228,7 +228,7 @@ label { font-size: 11px; color: var(--muted); }
                 background: var(--bg); cursor: pointer; user-select: none; }
 .filter-check:has(input:checked) { border-color: var(--gold); background: var(--gold-bg); color: var(--gold); }
 
-/* == Magie- & Seltenheits-Tags == */
+/* == Magic & rarity tags == */
 .tag--magic { background: var(--gold-bg); color: var(--gold); border: 1px solid var(--gold); }
 .tag--rarity { border: 1px solid var(--border2); background: var(--bg); color: var(--muted); }
 .tag--rarity-common     { border-color: #6b7280; color: #6b7280; }
@@ -247,7 +247,7 @@ label { font-size: 11px; color: var(--muted); }
   .tag--rarity-artifact  { color: #e07070; }
 }
 
-/* == Aufklappbare Einträge (Inventar-Zeilen & Bibliotheken) == */
+/* == Expandable entries (inventory rows & libraries) == */
 .lib-entry--expandable { cursor: pointer; }
 .lib-entry--expandable .lib-entry__desc {
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
@@ -263,7 +263,7 @@ label { font-size: 11px; color: var(--muted); }
 .expandable.open .expandable__body { display: block; }
 .expandable.open .list-row { border-bottom: none; }
 
-/* == DropZone (Charakterbild) == */
+/* == Drop zone (character image) == */
 .dropzone {
   border: 2px dashed var(--border2); border-radius: var(--r-lg);
   min-height: 220px; display: flex; align-items: center; justify-content: center;
@@ -276,7 +276,7 @@ label { font-size: 11px; color: var(--muted); }
 .dropzone__icon { font-size: 34px; margin-bottom: 6px; color: var(--border2); }
 .dropzone__img { max-width: 100%; max-height: 320px; display: block; border-radius: var(--r-md); }
 
-/* == Charakterauswahl (Startbildschirm) == */
+/* == Character select (start screen) == */
 .select-screen {
   position: fixed; inset: 0; z-index: 200; background: var(--bg);
   display: flex; align-items: flex-start; justify-content: center;
@@ -309,12 +309,12 @@ label { font-size: 11px; color: var(--muted); }
 .select-card__date { font-family: var(--mono); }
 .select-card__delete { position: absolute; top: 6px; right: 8px; }
 
-/* == Item-verstärkte Attribute (z. B. Gürtel der Riesenstärke) == */
+/* == Item-boosted abilities (e.g. Belt of Giant Strength) == */
 .ability-block--boosted { border-color: var(--boost); box-shadow: inset 0 0 0 1px var(--boost); }
 .ability-boost { font-size: 12px; font-weight: 700; color: var(--boost); font-family: var(--mono); }
 .ability-mod--boosted { color: var(--boost); }
 
-/* == Erscheinungsbild-Einstellungen == */
+/* == Appearance settings == */
 .preset-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .preset-swatch {
   width: 60px; height: 40px; border-radius: var(--r-md); cursor: pointer;
@@ -328,7 +328,7 @@ label { font-size: 11px; color: var(--muted); }
 .color-field input[type=color] { width: 34px; height: 26px; border: none; background: none; padding: 0; cursor: pointer; }
 .font-sample { font-size: 15px; }
 
-/* == Wurf-Abfrage (Vorteil / Normal / Nachteil) == */
+/* == Roll prompt (advantage / normal / disadvantage) == */
 .roll-prompt { max-width: 380px; }
 .roll-prompt__body { display: flex; gap: 10px; padding: 1.1rem 1.2rem; }
 .roll-prompt__btn { flex: 1; padding: 12px 8px; font-weight: 600; font-size: 13px; }
@@ -339,7 +339,7 @@ label { font-size: 11px; color: var(--muted); }
 .roll-prompt__btn--normal { border-color: var(--border2); }
 .roll-prompt__btn--normal:hover { background: var(--bg); }
 
-/* == Wildgestalt-Statblöcke == */
+/* == Wild shape stat blocks == */
 .ws-block .ws-details { display: none; }
 .ws-block.open .ws-details { display: block; padding-top: 8px; }
 .ws-img { float: right; max-width: 130px; max-height: 130px; border-radius: var(--r-md);
@@ -354,7 +354,7 @@ label { font-size: 11px; color: var(--muted); }
 .ws-trait, .ws-action { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 6px; }
 .ws-trait b, .ws-action b { color: var(--ink); }
 
-/* == CR-Sektionen (Wildgestalt, auf-/zuklappbar) == */
+/* == CR sections (wild shape, expandable) == */
 .cr-section { border: 1px solid var(--border); border-radius: var(--r-md);
               margin-bottom: 8px; overflow: hidden; background: var(--bg2); }
 .cr-section__head {
@@ -367,18 +367,18 @@ label { font-size: 11px; color: var(--muted); }
 .cr-section__chev { color: var(--muted); font-size: 11px; width: 12px; }
 .cr-section__body { padding: 8px 10px 2px; }
 
-/* == Bild-Überlauf-Fix (Wildgestalt-Statblöcke) ==
-   Das Tier-Bild schwebt rechts (float). Ohne Block Formatting
-   Context ragt es bei kurzem Text unten aus der Karte heraus.
-   flow-root schließt den Float ein → die Karte wächst dynamisch mit. */
+/* == Image overflow fix (wild shape stat blocks) ==
+   The beast image floats to the right. Without a block formatting
+   context it sticks out below the card when the text is short.
+   flow-root contains the float → the card grows dynamically with it. */
 .ws-block.open .ws-details { display: flow-root; }
 .ws-img { max-width: min(140px, 35%); height: auto; max-height: none; }
 
-/* == Generator-Vorschau: Detailzeilen == */
+/* == Generator preview: detail rows == */
 .gen-detail { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 4px; }
 .gen-detail b { color: var(--ink); }
 
-/* == Vorbereitet-Umschalter (Zauber), deutlich klickbar == */
+/* == Prepared toggle (spells), clearly clickable == */
 .prep-toggle {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 5px 10px; border-radius: 999px; cursor: pointer;
@@ -394,7 +394,7 @@ label { font-size: 11px; color: var(--muted); }
 .prep-toggle--on { border-color: var(--gold); background: var(--gold-bg); color: var(--gold); }
 .prep-toggle--on .prep-toggle__dot { background: var(--gold); border-color: var(--gold); }
 
-/* == Mehrfachauswahl-Leiste (Bibliothek) == */
+/* == Multi-select bar (library) == */
 .lib-action-bar {
   display: flex; align-items: center; gap: 12px; justify-content: flex-end;
   padding: 10px 16px; border-top: 1px solid var(--border);
@@ -402,7 +402,7 @@ label { font-size: 11px; color: var(--muted); }
 }
 .lib-select { width: 17px; height: 17px; cursor: pointer; accent-color: var(--gold); }
 
-/* == Kritische Würfe hervorheben (NAT 20 / NAT 1) == */
+/* == Highlight critical rolls (NAT 20 / NAT 1) == */
 .cast-step--crit .cast-step__val,
 .dice-result__num.crit { color: var(--gold) !important; font-weight: 800; }
 .roll-nat {
@@ -414,7 +414,7 @@ label { font-size: 11px; color: var(--muted); }
 .history-entry .nat20 { color: var(--gold); font-weight: 800; }
 .history-entry .nat1  { color: var(--accent); font-weight: 800; }
 
-/* == Wildgestalt-Favoriten (Stern) == */
+/* == Wild shape favorites (star) == */
 .ws-fav {
   background: none; border: none; cursor: pointer; font-size: 17px;
   color: var(--border2); padding: 0 2px; line-height: 1; transition: color .12s;
@@ -422,13 +422,13 @@ label { font-size: 11px; color: var(--muted); }
 .ws-fav:hover { color: var(--gold); }
 .ws-fav--on { color: var(--gold); }
 
-/* == Feste Beschreibungs-Kategorien (nicht editierbarer Titel) == */
+/* == Fixed description categories (non-editable title) == */
 .section-title-fixed {
   font-family: var(--serif, Georgia, serif); font-size: 15px; font-weight: 600;
   color: var(--gold); padding-bottom: 6px; border-bottom: 1px solid var(--border);
 }
 
-/* == Attributswahl-Picker (Rasse/Hintergrund mit choose-Boni) == */
+/* == Ability choice picker (race/background with choose bonuses) == */
 .choice-picker {
   margin: 10px 0; padding: 10px 12px; border: 1px dashed var(--gold);
   border-radius: var(--r-md); background: var(--gold-bg);
@@ -442,7 +442,7 @@ label { font-size: 11px; color: var(--muted); }
 .choice-picker__picks .meta-field { min-width: 140px; }
 .choice-picker__picks .meta-field > span { font-weight: 700; color: var(--gold); }
 
-/* == Regelwerk-Auswahl: gut lesbare Karten statt Akzent-Buttons == */
+/* == Ruleset selection: easily readable cards instead of accent buttons == */
 .ruleset-option {
   display: block; width: 100%; text-align: left; cursor: pointer;
   padding: 14px 16px; border-radius: var(--r-md);
@@ -456,7 +456,7 @@ label { font-size: 11px; color: var(--muted); }
   color: var(--muted); line-height: 1.45;
 }
 
-/* == Combobox-Zeile (Freitext + Standard-Auswahl) == */
+/* == Combobox row (free text + default selection) == */
 .combo-row { display: flex; gap: 8px; }
 .combo-row input { flex: 1; min-width: 0; }
 .combo-row select { max-width: 190px; color: var(--muted); }

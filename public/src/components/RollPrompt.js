@@ -1,14 +1,14 @@
 // ============================================================
-// components/RollPrompt.js, Abfrage vor dem Würfeln
+// components/RollPrompt.js, prompt before rolling
 // ------------------------------------------------------------
-// Vor jedem W20-Wurf mit Modifikator (Attribut, Fertigkeit,
-// Rettungswurf, Initiative, Treffer-Würfe, Zauberangriffe)
-// erscheint dieser kleine Dialog: Nachteil / Normal / Vorteil.
-// Abbrechen (×, Hintergrund, Esc) bricht den Wurf ab.
+// Before every d20 roll with a modifier (ability, skill, saving
+// throw, initiative, hit rolls, spell attacks), this small dialog
+// appears: disadvantage / normal / advantage.
+// Cancel (×, background, Esc) aborts the roll.
 //
-// Verwendung:
-//   const mode = await askRollMode('Heimlichkeit');
-//   if (!mode) return;            // abgebrochen
+// Usage:
+//   const mode = await askRollMode('Stealth');
+//   if (!mode) return;            // cancelled
 //   rollSkill('stealth', mode);   // 'normal' | 'adv' | 'dis'
 // ============================================================
 import { t } from '../core/i18n.js';
@@ -18,7 +18,7 @@ let cleanup = null;
 
 export function askRollMode(label = '') {
   return new Promise(resolve => {
-    // Eventuell offenen Dialog abbrechen (Doppelklicks etc.)
+    // cancel any open dialog (double clicks etc.)
     if (cleanup) cleanup(null);
 
     if (!overlay) {
@@ -52,18 +52,18 @@ export function askRollMode(label = '') {
 
     const onKey = e => {
       if (e.key === 'Escape') done(null);
-      if (e.key === 'Enter')  done('normal'); // Enter = normaler Wurf
+      if (e.key === 'Enter')  done('normal'); // Enter = normal roll
     };
     document.addEventListener('keydown', onKey);
 
     overlay.onclick = e => {
-      if (e.target === overlay) return done(null); // Hintergrund = abbrechen
+      if (e.target === overlay) return done(null); // background = cancel
       const btn = e.target.closest('[data-rp]');
       if (!btn) return;
       done(btn.dataset.rp === 'cancel' ? null : btn.dataset.rp);
     };
 
-    // Fokus auf "Normal" für schnelle Tastatur-Bedienung
+    // focus "Normal" for quick keyboard use
     overlay.querySelector('[data-rp="normal"]')?.focus();
   });
 }

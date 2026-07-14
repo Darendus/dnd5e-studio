@@ -1,9 +1,9 @@
 // ============================================================
-// components/ClassesPanel.js, Multiclass-Editor
+// components/ClassesPanel.js, multiclass editor
 // ------------------------------------------------------------
-// Jede Zeile = eine Klasse mit eigener Stufe + Unterklasse.
-// Beispiel: Paladin 5 / Warlock 1. Zauberplätze, Trefferwürfel
-// und Übungsbonus werden automatisch daraus abgeleitet.
+// Each row = one class with its own level + subclass.
+// Example: Paladin 5 / Warlock 1. Spell slots, hit dice, and
+// proficiency bonus are derived from this automatically.
 // ============================================================
 import { store }   from '../core/Store.js';
 import { repo }    from '../core/DataRepository.js';
@@ -90,8 +90,8 @@ function render() {
     sel.onchange = () => {
       const idx = +sel.dataset.clsName;
       store.updateClass(idx, { name: sel.value, subclass: null });
-      // Rettungswurf-Übungen aus der HAUPTKLASSE übernehmen (5e-Regel:
-      // nur die erste Klasse gewährt Save-Übungen; Multiclass nicht).
+      // adopt saving throw proficiencies from the FIRST class (5e rule:
+      // only the first class grants save proficiencies; multiclassing does not).
       if (idx === 0) {
         const saves = repo.getClass(sel.value)?.saves;
         if (saves?.length) {
@@ -99,11 +99,11 @@ function render() {
           bus.emit(EV.TOAST, { message: t('classes.savesApplied') + ': ' + saves.map(a => a.toUpperCase()).join(', ') });
         }
       }
-      // Bekannte Zauber, die nur zur alten Klasse gehörten, entfernen
-      // (Zauber anderer noch vorhandener Klassen bleiben erhalten).
+      // remove known spells that belonged only to the old class
+      // (spells of other still-present classes are kept).
       const remaining = store.field('classes').map(c => c.name);
       const kept = (store.field('spells') ?? []).filter(sp => {
-        // Unterklassen-Zauber bleiben, solange die Unterklasse existiert
+        // subclass spells remain as long as the subclass exists
         if (sp.fromSubclass && store.field('classes').some(c => c.subclass === sp.fromSubclass)) return true;
         const lib = repo.findSpell(sp.name);
         if (!lib || sp.source === 'HB') return true;
@@ -121,7 +121,7 @@ function render() {
       store.updateClass(+inp.dataset.clsLevel,
         { level: Math.max(1, Math.min(20, +inp.value || 1)) });
       syncHP();
-      syncSubclassSpells(); // ggf. neue Domänen-Zauber ab dieser Stufe
+      syncSubclassSpells(); // possibly new domain spells from this level
     };
   });
   el.querySelectorAll('[data-cls-sub]').forEach(sel => {
@@ -129,7 +129,7 @@ function render() {
       const idx = +sel.dataset.clsSub;
       const oldSub = store.field('classes')[idx]?.subclass;
       store.updateClass(idx, { subclass: sel.value || null });
-      // Auto-Zauber der ALTEN Unterklasse entfernen, neue vergeben
+      // remove auto spells of the OLD subclass, grant new ones
       if (oldSub) removeSubclassSpells(oldSub);
       syncSubclassSpells();
     };
@@ -148,11 +148,11 @@ function render() {
 }
 
 
-// == Level-Up-Dialog =========================================
-// Interaktiver Stufenaufstieg: Trefferpunkte (Durchschnitt oder
-// gewürfelt), ggf. Unterklassen-Wahl, ASI-Stufen (Attribute ODER
-// Talent) und Zauberauswahl für neu erreichbare Grade. ASI-Stufen
-// sind klassenspezifisch (Kämpfer 6/14, Schurke 10 zusätzlich).
+// == Level-up dialog ===========================================
+// Interactive leveling up: hit points (average or rolled), subclass
+// choice if due, ASI levels (abilities OR feat), and spell selection
+// for newly reachable levels. ASI levels are class-specific
+// (Fighter additionally 6/14, Rogue additionally 10).
 
 function showLevelUp(idx) {
   const s = store.get();
@@ -162,17 +162,17 @@ function showLevelUp(idx) {
   const cls = repo.getClass(c.name);
   const die = +(cls?.hitDie?.slice(1) ?? 8);
   const conMod = calcMod(effectiveAbilities(s).scores.con);
-  const perLvl = featEffects(s).hpPerLevel;           // z. B. Zäh: +2
+  const perLvl = featEffects(s).hpPerLevel;           // e.g. Tough: +2
   const avg = Math.floor(die / 2) + 1;
 
-  // Unterklasse fällig?
+  // subclass due?
   const subLevel = subclassEntryLevel(c.name, s.ruleset);
   const needsSub = !c.subclass && newLevel >= subLevel && (cls?.subclasses?.length ?? 0) > 0;
 
-  // ASI-Stufe? (klassenspezifisch)
+  // ASI level? (class-specific)
   const isASI = asiLevels(c.name).includes(newLevel);
 
-  // Zauber: welche Grade werden mit der neuen Stufe erreichbar?
+  // spells: which levels become reachable with the new level?
   const newClasses = s.classes.map((x, i) => i === idx ? { ...x, level: newLevel } : x);
   const maxLvOf = classes => {
     const { slots, pact } = calcSpellSlots(classes);
@@ -267,7 +267,7 @@ function showLevelUp(idx) {
   document.body.appendChild(dlg);
   const q = sel => dlg.querySelector(sel);
 
-  // TP: Würfel-Modus
+  // HP: roll mode
   let rolled = null;
   dlg.querySelectorAll('input[name="luHp"]').forEach(r => r.onchange = () => {
     q('#luRollBtn').style.display = r.value === 'roll' && r.checked ? '' : 'none';
@@ -277,7 +277,7 @@ function showLevelUp(idx) {
     q('#luRollOut').textContent = `${rolled} + ${conMod + perLvl} = ${Math.max(1, rolled + conMod + perLvl)}`;
   };
 
-  // ASI: Umschalten Attribut/Talent, +2 vs +1/+1, Talent-Suche
+  // ASI: toggle ability/feat, +2 vs +1/+1, feat search
   if (isASI) {
     dlg.querySelectorAll('input[name="luAsi"]').forEach(r => r.onchange = () => {
       q('#luAttrBox').style.display = r.value === 'attr' && r.checked ? 'flex' : 'none';
@@ -292,7 +292,7 @@ function showLevelUp(idx) {
     };
   }
 
-  // Zauber-Suche
+  // spell search
   const spSearch = q('#luSpSearch');
   if (spSearch) spSearch.oninput = () => {
     const needle = spSearch.value.toLowerCase();
@@ -303,20 +303,20 @@ function showLevelUp(idx) {
   q('#luClose').onclick = () => dlg.remove();
   dlg.onclick = e => { if (e.target === dlg) dlg.remove(); };
 
-  // == Anwenden ==
+  // == Apply ==
   q('#luApply').onclick = () => {
-    // 1) TP-Zuwachs (min. 1)
+    // 1) HP gain (min. 1)
     const useRoll = dlg.querySelector('input[name="luHp"]:checked')?.value === 'roll';
     if (useRoll && rolled == null) { q('#luRollBtn').click(); }
     const gain = Math.max(1, (useRoll ? rolled : avg) + conMod + perLvl);
 
-    // 2) Stufe (+ ggf. Unterklasse)
+    // 2) level (+ subclass if applicable)
     const patch = { level: newLevel };
     const pickedSub = q('#luSub')?.value || null;
     if (pickedSub) patch.subclass = pickedSub;
     store.updateClass(idx, patch);
 
-    // 3) TP anwenden (aktuelle TP wachsen mit)
+    // 3) apply HP (current HP grows along)
     store.update({
       maxHP: store.field('maxHP') + gain,
       currHP: store.field('currHP') + gain,
@@ -325,7 +325,7 @@ function showLevelUp(idx) {
 
     const summary = [`+${gain} ${t('combat.maxHP')}`];
 
-    // 4) ASI: Attribute oder Talent
+    // 4) ASI: abilities or feat
     if (isASI) {
       const mode = dlg.querySelector('input[name="luAsi"]:checked')?.value;
       if (mode === 'attr') {
@@ -351,7 +351,7 @@ function showLevelUp(idx) {
           const feats = [...(store.field('feats') ?? []), featName];
           const featLevels = [...(store.field('featLevels') ?? []), newLevel];
           store.update({ feats, featLevels, featBonus: featBonusFor(feats) });
-          // Feste/stufige TP-Boni des NEUEN Talents direkt aufschlagen
+          // apply fixed/per-level HP bonuses of the NEW feat directly
           const fx = repo.findFeat(featName)?.effects ?? {};
           const featHp = (fx.hpFlat ?? 0) + (fx.hpPerLevel ?? 0) * store.totalLevel();
           if (featHp) store.update({
@@ -363,7 +363,7 @@ function showLevelUp(idx) {
       }
     }
 
-    // 5) Gewählte Zauber lernen
+    // 5) learn the chosen spells
     const picks = [...dlg.querySelectorAll('#luSpList input:checked')];
     if (picks.length) {
       const cur = store.field('spells') ?? [];
@@ -372,7 +372,7 @@ function showLevelUp(idx) {
       summary.push(`${picks.length} ${t('tabs.spells')}`);
     }
 
-    // 6) Unterklassen-Zauber der neuen Stufe synchronisieren
+    // 6) sync subclass spells of the new level
     syncSubclassSpells();
 
     dlg.remove();
@@ -380,13 +380,13 @@ function showLevelUp(idx) {
   };
 }
 
-// == Unterklassen-Zauber automatisch vergeben ================
-// Domänen-/Eid-/Zirkel-Zauber (additionalSpells "prepared"/"known")
-// werden beim Erreichen der jeweiligen Klassenstufe automatisch als
-// vorbereitete Zauber eingetragen (markiert mit fromSubclass) und bei
-// Stufensenkung oder Unterklassen-Wechsel wieder entfernt.
-// Funktioniert für alle Klassen und beide Regelwerke (PHB14: ab St. 1,
-// PHB24: ab St. 3, die Stufen kommen direkt aus den Daten).
+// == Automatically grant subclass spells =======================
+// Domain/oath/circle spells (additionalSpells "prepared"/"known")
+// are entered as prepared spells (marked with fromSubclass) once
+// the respective class level is reached, and removed again on a
+// level decrease or subclass change. Works for all classes and
+// both rulesets (PHB14: from lvl 1, PHB24: from lvl 3; the levels
+// come directly from the data).
 
 function removeSubclassSpells(subclassName) {
   const kept = (store.field('spells') ?? []).filter(sp => sp.fromSubclass !== subclassName);
@@ -403,8 +403,8 @@ function syncSubclassSpells() {
     const auto = repo.subclassAutoSpells(c.name, c.subclass);
     if (!auto) continue;
 
-    // Soll-Menge: alle Zauber der Stufen ≤ aktueller Klassenstufe
-    const desired = new Map(); // lowercase → Spell-Objekt
+    // target set: all spells of levels ≤ current class level
+    const desired = new Map(); // lowercase → spell object
     for (const [lvl, names] of Object.entries(auto)) {
       if (+lvl > (+c.level || 1)) continue;
       for (const n of names) {
@@ -412,12 +412,12 @@ function syncSubclassSpells() {
         if (lib) desired.set(lib.name.toLowerCase(), lib);
       }
     }
-    // Entfernen: Auto-Zauber dieser Unterklasse oberhalb der Stufe
+    // remove: auto spells of this subclass above the level
     const before = spells.length;
     spells = spells.filter(sp =>
       sp.fromSubclass !== c.subclass || desired.has(sp.name.toLowerCase()));
     removed += before - spells.length;
-    // Hinzufügen: fehlende Soll-Zauber (immer vorbereitet)
+    // add: missing target spells (always prepared)
     const have = new Set(spells.map(sp => sp.name.toLowerCase()));
     for (const [key, lib] of desired) {
       if (have.has(key)) continue;
@@ -431,9 +431,9 @@ function syncSubclassSpells() {
   }
 }
 
-/** Nach einer Stufen-/Klassenänderung die maximalen TP neu berechnen.
- *  Stand der Charakter auf voller Gesundheit, bleiben die aktuellen TP
- *  am neuen Maximum; sonst wird nur maxHP angepasst (currHP gekappt). */
+/** Recompute maximum HP after a level/class change.
+ *  If the character was at full health, current HP stays at the
+ *  new maximum; otherwise only maxHP is adjusted (currHP capped). */
 function syncHP() {
   const s = store.get();
   const newMax = calcMaxHP(s);
@@ -447,7 +447,7 @@ function syncHP() {
 }
 
 
-/** Doppelte Einträge (gleicher Name, z. B. PHB + XPHB) nur einmal anzeigen */
+/** Show duplicate entries (same name, e.g. PHB + XPHB) only once */
 function dedupeByName(arr) {
   return [...new Map(arr.map(e => [e.name, e])).values()];
 }

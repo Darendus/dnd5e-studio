@@ -1,5 +1,5 @@
 // ============================================================
-// components/Shell.js, Tab-Navigation + Speichern/Export/Import
+// components/Shell.js, tab navigation + save/export/import
 // ============================================================
 import { bus, EV } from '../core/EventBus.js';
 import { store }   from '../core/Store.js';
@@ -10,10 +10,10 @@ import { exportToPdf } from '../utils/pdfExport.js';
 
 const TAB_IDS = ['core','classes','combat','skills','spells','inventory','description','sections','dice','generator','settings'];
 
-/** Aktive Tab-Liste:
- *  • Wildgestalt nur mit Druide (Stufe 2+), auch im Multiclassing
- *  • Generator NUR bei einem neuen, noch ungespeicherten Charakter
- *    (über den "Neu"-Knopf geöffnet) */
+/** Active tab list:
+ *  • wild shape only with a druid (level 2+), also in multiclassing
+ *  • generator ONLY for a new, not-yet-saved character
+ *    (opened via the "New" button) */
 function visibleTabs() {
   let ids = [...TAB_IDS];
   if (druidLevel(store.field('classes')) >= 2) {
@@ -27,8 +27,8 @@ export function mountShell() {
   renderTabs();
   renderToolbar();
   bus.on(EV.LANG_CHANGED, () => { renderTabs(); renderToolbar(); });
-  // Tab-Sichtbarkeit kann sich ändern (Druide hinzugefügt, Charakter
-  // gespeichert/geladen → Generator verschwindet). Signatur vergleichen.
+  // Tab visibility can change (druid added, character saved/loaded
+  // → generator disappears). Compare a signature.
   let tabSig = visibleTabs().join(',');
   const refreshTabs = () => {
     const sig = visibleTabs().join(',');
@@ -63,12 +63,12 @@ function renderTabs() {
       p.classList.toggle('active', p.id === 'tab-' + activeTab));
   };
 
-  // Ersten Tab aktivieren
+  // activate the first tab
   document.querySelectorAll('.tab-panel').forEach(p =>
     p.classList.toggle('active', p.id === 'tab-' + activeTab));
 }
 
-// == IO-Leiste ================================================
+// == IO bar ====================================================
 function renderToolbar() {
   const bar = document.getElementById('toolbar-io');
   bar.innerHTML = `
@@ -103,7 +103,7 @@ function renderToolbar() {
     const reader = new FileReader();
     reader.onload = ev => {
       const ok = store.importJson(ev.target.result);
-      bus.emit(EV.TOAST, { message: ok ? '✓ Import' : '✗ Ungültige Datei' });
+      bus.emit(EV.TOAST, { message: ok ? '✓ Import' : '✗ Invalid file' });
     };
     reader.readAsText(file);
     e.target.value = '';

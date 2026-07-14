@@ -1,18 +1,18 @@
 // ============================================================
-// components/GeneratorPanel.js, Vollständiger Charakter-Generator
+// components/GeneratorPanel.js, complete character generator
 // ------------------------------------------------------------
-// Nur für NEUE Charaktere sichtbar (über "Neu" geöffnet, noch
-// ungespeichert), die Shell blendet den Tab sonst aus.
-// Erzeugt einen kompletten Charakter auf wählbarer Stufe (1-20):
-//  • Attribute (4W6 / Standard-Array / Point Buy) klassenoptimiert
-//    verteilt + Volksboni
-//  • Rettungswurf-Übungen und Fertigkeits-Auswahl der Klasse
-//  • Hintergrund inkl. dessen Fertigkeiten
-//  • Unterklasse (ab Stufe 3), Attributssteigerungen/Talente
-//    auf den ASI-Stufen (4/8/12/16/19)
-//  • TP nach Durchschnittsregel, Zauber für Zauberklassen,
-//    Start-Ausrüstung mit berechneter RK, Währung, XP
-//  • Export als offizieller WotC-PDF-Bogen
+// Only visible for NEW characters (opened via "New", still
+// unsaved); the shell hides the tab otherwise.
+// Generates a complete character at a selectable level (1-20):
+//  • abilities (4d6 / standard array / point buy) distributed
+//    class-optimized + race bonuses
+//  • saving throw proficiencies and skill selection of the class
+//  • background incl. its skills
+//  • subclass (from level 3), ability increases/feats
+//    at the ASI levels (4/8/12/16/19)
+//  • HP per the average rule, spells for spellcasting classes,
+//    starting equipment with computed AC, currency, XP
+//  • export as an official WotC PDF sheet
 // ============================================================
 import { store, blankCharacter } from '../core/Store.js';
 import { repo }    from '../core/DataRepository.js';
@@ -30,14 +30,14 @@ const XP_THRESHOLDS = [0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000,
                        64000, 85000, 100000, 120000, 140000, 165000, 195000,
                        225000, 265000, 305000, 355000];
 
-// 5e.tools-Fertigkeitsnamen → App-IDs (für Hintergrund-Daten)
+// 5e.tools skill names → app IDs (for background data)
 const SKILL_MAP = { 'animal handling': 'animal', 'sleight of hand': 'sleight' };
 const toSkillId = n => SKILL_MAP[n] ?? n;
 const VALID_SKILLS = new Set(['acrobatics','animal','arcana','athletics','deception',
   'history','insight','intimidation','investigation','medicine','nature','perception',
   'performance','persuasion','religion','sleight','stealth','survival']);
 
-// Start-Ausrüstung je Klasse (Namen aus dem PHB-Item-Pack)
+// starting equipment per class (names from the PHB item pack)
 const CLASS_GEAR = {
   Barbarian: { weapons: ['Greataxe', 'Handaxe'], armor: null },
   Bard:      { weapons: ['Rapier', 'Dagger'], armor: 'Leather Armor' },
@@ -122,12 +122,12 @@ function render() {
   renderPreview();
 }
 
-// == Generierung ==============================================
+// == Generation =================================================
 
 function generate({ level, method, race: raceName, cls: className, bg: bgName }) {
   const races   = repo.getRaces();
   const classes = repo.getClasses();
-  // Platzhalter-Hintergründe ("Custom Background" etc.) nicht zufällig wählen
+  // don't randomly pick placeholder backgrounds ("Custom Background" etc.)
   const bgs = repo.getBackgrounds();
   const randomBgs = bgs.filter(b => !/custom|variant/i.test(b.name));
 
@@ -136,13 +136,13 @@ function generate({ level, method, race: raceName, cls: className, bg: bgName })
   const bg   = bgName ? bgs.find(b => b.name === bgName) : pick(randomBgs);
 
   const char = blankCharacter();
-  // Regelwerk des AKTUELLEN Kontexts übernehmen, sonst würde ein unter
-  // PHB24 generierter Charakter als phb14 gespeichert und beim Laden
-  // das Regelwerk der App umkippen.
+  // adopt the ruleset of the CURRENT context, otherwise a character
+  // generated under PHB24 would be saved as phb14 and flip the app's
+  // ruleset when loaded.
   char.ruleset = repo.ruleset;
   const clsName = cls?.name ?? 'Fighter';
 
-  // 1) Rohwerte + klassenoptimierte Verteilung + Volksboni
+  // 1) raw scores + class-optimized distribution + race bonuses
   let scores;
   if (method === '4d6') {
     scores = Array.from({ length: 6 }, () =>
@@ -156,31 +156,31 @@ function generate({ level, method, race: raceName, cls: className, bg: bgName })
   scores.sort((a, b) => b - a);
   priority.forEach((attr, i) => { char[attr] = scores[i]; });
 
-  // Boni ins Bonus-System schreiben (nicht in die Basiswerte einbacken),
-  // damit die Herkunft im Editor farblich nachvollziehbar bleibt.
+  // write bonuses into the bonus system (don't bake them into the base
+  // values), so the origin stays traceable by color in the editor.
   char.raceBonus = { ...(race?.abilityBonuses ?? {}) };
-  // Frei wählbare Boni automatisch klassenoptimiert verteilen
+  // automatically distribute freely selectable bonuses class-optimized
   char.raceChoice = autoPickChoice(race, priority);
   if (char.raceChoice) char.raceBonus = combinedBonus(race, char.raceChoice);
   char.bgChoice = autoPickChoice(bg, priority);
   char.bgBonus = char.bgChoice ? combinedBonus(bg, char.bgChoice) : { ...(bg?.abilityBonuses ?? {}) };
 
-  // Effektiver Wert (Basis + Rasse-/Hintergrund-Boni) für Folgeberechnungen
+  // effective value (base + race/background bonuses) for follow-up calculations
   const effA = a => (char[a] ?? 10) + (char.raceBonus[a] ?? 0) + (char.bgBonus[a] ?? 0);
 
-  // 2) ASI-Stufen: Attributssteigerung ODER Talent (Feat)
+  // 2) ASI levels: ability increase OR feat
   const feats = [];
   const featLevels = [];
   const featPool = repo.getFeats().filter(f => !f.prerequisite);
   for (const asiLvl of asiLevels(clsName).filter(l => l <= level)) {
     if (Math.random() < 0.4 && featPool.length) {
-      // Talent nehmen (keine Duplikate, wiederholbare ausgenommen)
+      // take a feat (no duplicates, except repeatable ones)
       const f = pick(featPool.filter(f => f.repeatable || !feats.includes(f.name)));
       if (f) { feats.push(f.name); featLevels.push(asiLvl); continue; }
     }
-    // +2 auf das wichtigste Attribut, dessen EFFEKTIVER Wert
-    // (Basis + Volks-/Hintergrund-Boni) unter 20 liegt, so entstehen
-    // keine regelwidrigen Werte über dem Attributs-Maximum.
+    // +2 on the most important ability whose EFFECTIVE value
+    // (base + race/background bonuses) is below 20, so no
+    // rule-breaking values above the ability maximum occur.
     const bonusOf = a => (char.raceBonus[a] ?? 0) + (char.bgBonus[a] ?? 0);
     const target = priority.find(a => effA(a) < 20) ?? priority[0];
     char[target] = Math.min(char[target] + 2, 20 - bonusOf(target));
@@ -188,16 +188,16 @@ function generate({ level, method, race: raceName, cls: className, bg: bgName })
   char.feats = feats;
   char.featLevels = featLevels;
 
-  // 3) Klasse, Stufe, Unterklasse, Einstiegsstufe je Edition:
-  //    2014: Kleriker/Sorcerer/Warlock ab 1, Druide/Magier ab 2, Rest ab 3.
-  //    2024: alle Klassen einheitlich ab Stufe 3.
+  // 3) class, level, subclass, entry level per edition:
+  //    2014: Cleric/Sorcerer/Warlock from 1, Druid/Wizard from 2, rest from 3.
+  //    2024: all classes uniformly from level 3.
   const subLevel = subclassEntryLevel(clsName, char.ruleset);
-  // Unterklassen editionstreu (regelwerk-dedupliziert) über das Repo
+  // subclasses edition-accurate (ruleset-deduplicated) via the repo
   const subPool = repo.getClass(clsName)?.subclasses ?? [];
   const subclass = level >= subLevel && subPool.length ? pick(subPool).name : null;
   char.classes = [{ name: clsName, level, subclass }];
 
-  // 4) Rettungswürfe (aus Klassendaten) + Fertigkeiten (Klasse + Hintergrund)
+  // 4) saving throws (from class data) + skills (class + background)
   char.saveProficiencies = (cls?.saves ?? priority.slice(0, 2)).filter(a => ABILITY_IDS.includes(a));
 
   const skills = new Set();
@@ -211,8 +211,8 @@ function generate({ level, method, race: raceName, cls: className, bg: bgName })
   }
   char.skillProficiencies = [...skills];
 
-  // 5) TP: Stufe 1 = Maximum, danach Durchschnitt (PHB-Standard)
-  // KON inkl. Rasse-/Hintergrund-Boni
+  // 5) HP: level 1 = maximum, then average (PHB standard)
+  // CON incl. race/background bonuses
   const die = +(cls?.hitDie?.slice(1) ?? 8);
   const conMod = calcMod(effA('con'));
   char.maxHP = Math.max(1, die + conMod +
@@ -220,7 +220,7 @@ function generate({ level, method, race: raceName, cls: className, bg: bgName })
   char.currHP = char.maxHP;
   char.hitDiceLeft = level;
 
-  // 6) Zauber für Zauberklassen (Klassen-Liste, bis zum höchsten Slot-Grad)
+  // 6) spells for spellcasting classes (class list, up to the highest slot level)
   if (cls?.spellcasting) {
     const { slots, pact } = calcSpellSlots(char.classes);
     let maxLv = 0;
@@ -234,8 +234,8 @@ function generate({ level, method, race: raceName, cls: className, bg: bgName })
       .map(sp => ({ name: sp.name, level: sp.level, prepared: true }));
   }
 
-  // 6b) Exklusive Unterklassen-Zauber (Domänen/Eide/Patrone) automatisch
-  //     vergeben, wie im Editor, für beide Regelwerke.
+  // 6b) automatically grant exclusive subclass spells (domains/oaths/patrons),
+  //     just like in the editor, for both rulesets.
   if (subclass) {
     const auto = repo.subclassAutoSpells(clsName, subclass);
     if (auto) {
@@ -254,7 +254,7 @@ function generate({ level, method, race: raceName, cls: className, bg: bgName })
     }
   }
 
-  // 7) Ausrüstung + RK + Währung
+  // 7) equipment + AC + currency
   const gear = CLASS_GEAR[clsName] ?? { weapons: ['Dagger'], armor: 'Leather Armor' };
   const items = [];
   const addItem = (name, equipped) => {
@@ -266,11 +266,11 @@ function generate({ level, method, race: raceName, cls: className, bg: bgName })
   if (gear.shield) addItem('Shield', true);
   BASE_GEAR.forEach(n => addItem(n, false));
   char.items = items;
-  char.ac = calcAC(char); // zentrale RK-Logik aus rules/calculations
+  char.ac = calcAC(char); // central AC logic from rules/calculations
   char.currency = { cp: 0, sp: 0, ep: 0,
     gp: (2 + level) * 10 + Math.floor(Math.random() * 41), pp: 0 };
 
-  // 8) Rest
+  // 8) rest
   char.name  = pick(NAMES);
   char.race  = race?.name ?? '';
   char.background = bg?.name ?? '';
@@ -281,8 +281,8 @@ function generate({ level, method, race: raceName, cls: className, bg: bgName })
 }
 
 
-/** Frei wählbare Boni automatisch verteilen: erste Variante, Attribute
- *  nach Klassen-Priorität aus der erlaubten Liste. */
+/** Automatically distribute freely selectable bonuses: first variant,
+ *  abilities per class priority from the allowed list. */
 function autoPickChoice(entry, priority) {
   const variants = entry?.abilityChoose;
   if (!variants?.length) return null;
@@ -292,7 +292,7 @@ function autoPickChoice(entry, priority) {
     if (picks.length >= variant.weights.length) break;
     if (variant.from.includes(attr) && !picks.includes(attr)) picks.push(attr);
   }
-  // auffüllen, falls die Prioritätsliste nicht genug erlaubte Attribute hatte
+  // fill up in case the priority list didn't have enough allowed abilities
   for (const attr of variant.from) {
     if (picks.length >= variant.weights.length) break;
     if (!picks.includes(attr)) picks.push(attr);
@@ -336,7 +336,7 @@ const pickN = (arr, n) => {
   return out;
 };
 
-// == Vorschau =================================================
+// == Preview ====================================================
 
 function renderPreview() {
   const box = document.getElementById('genPreview');
@@ -359,7 +359,7 @@ function renderPreview() {
             const bonus = (p.raceBonus?.[a] ?? 0) + (p.bgBonus?.[a] ?? 0);
             const eff = p[a] + bonus;
             return `
-          <div style="font-size:20px;font-weight:600;margin:4px 0">${eff}${bonus ? ` <span style="font-size:11px;color:var(--gold)" title="+${bonus} Rasse/Hintergrund">▲</span>` : ''}</div>
+          <div style="font-size:20px;font-weight:600;margin:4px 0">${eff}${bonus ? ` <span style="font-size:11px;color:var(--gold)" title="+${bonus} race/background">▲</span>` : ''}</div>
           <div class="ability-mod">${fmtMod(calcMod(eff))}</div>`;
           })()}
         </div>`).join('')}
@@ -374,7 +374,7 @@ function renderPreview() {
     <div class="gen-detail"><b>${t('tabs.skills')}:</b> ${p.skillProficiencies.map(s => t('skills.' + s)).join(', ')}</div>
     ${p.feats.length ? `<div class="gen-detail"><b>${t('feats.title')}:</b> ${p.feats.join(', ')}</div>` : ''}
     ${(() => {
-      // Zauberplätze des generierten Charakters anzeigen
+      // show the generated character's spell slots
       const { slots, pact } = calcSpellSlots(p.classes);
       const parts = slots.map((n, i) => n > 0 ? `${i + 1}. ${t('generator.gradeShort')}: ${n}` : '').filter(Boolean);
       if (pact) parts.push(`${t('generator.pactShort')}: ${pact.count}× ${pact.level}. ${t('generator.gradeShort')}`);
@@ -393,8 +393,8 @@ function renderPreview() {
     store.replace(preview);
     bus.emit(EV.TOAST, { message: `✓ ${preview.name}` });
     preview = null;
-    // Nach dem Übernehmen ist der Charakter gespeichert → Generator-Tab
-    // verschwindet; die Shell wechselt automatisch auf den Kern-Tab.
+    // once applied, the character is saved → the generator tab
+    // disappears; the shell automatically switches to the core tab.
   };
   box.querySelector('#genPdf').onclick = async () => {
     try { await exportToPdf(preview); }

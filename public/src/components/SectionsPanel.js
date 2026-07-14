@@ -1,9 +1,9 @@
 // ============================================================
-// components/SectionsPanel.js, Freie Bogen-Abschnitte
+// components/SectionsPanel.js, free sheet sections
 // ------------------------------------------------------------
-// Der Nutzer kann beliebig viele Abschnitte hinzufügen, z. B.
-// weitere Fähigkeitsbeschreibungen oder zusätzliches Inventar,
-// wenn der Standardbereich voll ist. Titel + Inhalt frei editierbar.
+// The user can add any number of sections, e.g. further feature
+// descriptions or additional inventory, when the default area is
+// full. Title + content are freely editable.
 // ============================================================
 import { store }   from '../core/Store.js';
 import { bus, EV } from '../core/EventBus.js';
@@ -12,15 +12,15 @@ import { t }       from '../core/i18n.js';
 export function mountSections() {
   render();
   bus.on(EV.CHAR_CHANGED, ({ changed }) => {
-    // Nur bei strukturellen Änderungen (Anzahl der Abschnitte) neu rendern,
-    // Textinhalte werden "leise" gespeichert (Fokus bleibt erhalten).
+    // only re-render on structural changes (number of sections);
+    // text content is saved "quietly" (focus is preserved).
     if (changed.includes('*')) render();
     if (changed.includes('sections') && structureChanged()) render();
   });
   bus.on(EV.LANG_CHANGED, render);
 }
 
-// Struktur-Erkennung: Anzahl/IDs der Abschnitte vergleichen
+// structure detection: compare number/IDs of sections
 let lastIds = '';
 function structureChanged() {
   const ids = store.field('sections').map(s => s.id).join(',');
@@ -61,7 +61,7 @@ function render() {
     b.onclick = () => store.removeSection(b.dataset.secRm);
   });
 
-  // Titel & Inhalt: leise speichern (kein Re-Render während des Tippens)
+  // title & content: save quietly (no re-render while typing)
   el.querySelectorAll('[data-sec-title]').forEach(inp => {
     inp.oninput = () => store.updateSection(inp.dataset.secTitle, { title: inp.value });
   });

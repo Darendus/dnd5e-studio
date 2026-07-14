@@ -1,12 +1,12 @@
 // ============================================================
-// components/SpellsPanel.js, Zauber
+// components/SpellsPanel.js, spells
 // ------------------------------------------------------------
-// • Zauberplätze aus Multiclass-Regeln (inkl. Warlock-Pakt-Slots)
-// • Bibliothek: alle Zauber der Klassen des Charakters,
-//   gefiltert nach aktivierten Regelwerken, mit Suche/Filter
-// • "Wirken": erst Zauberangriffswurf (falls nötig), dann
-//   automatisch Schaden/Heilung; Rettungswurf-SW wird angezeigt
-// • Homebrew-Formular für eigene Zauber
+// • spell slots from multiclass rules (incl. Warlock pact slots)
+// • library: all spells of the character's classes,
+//   filtered by enabled rulesets, with search/filter
+// • "cast": first a spell attack roll (if needed), then
+//   automatic damage/healing; the saving throw DC is displayed
+// • homebrew form for custom spells
 // ============================================================
 import { store }   from '../core/Store.js';
 import { toggleExpand } from './InventoryPanel.js';
@@ -30,10 +30,10 @@ export function mountSpells() {
   bus.on(EV.SOURCES_CHANGED, render);
 }
 
-// == Zauberstatistiken pro Klasse =============================
-// Bei Multiclassing hat jede Klasse eine eigene Zauberfähigkeit.
-// Für Würfe verwenden wir die Fähigkeit der Klasse, die den
-// Zauber kennt; Anzeige oben zeigt alle zaubernden Klassen.
+// == Spellcasting stats per class ===============================
+// With multiclassing, each class has its own spellcasting ability.
+// For rolls we use the ability of the class that knows the
+// spell; the display at the top shows all spellcasting classes.
 function spellStats(s) {
   const pb = calcProfBonus(store.totalLevel());
   const eff = effectiveAbilities(s).scores;
@@ -49,7 +49,7 @@ function spellStats(s) {
     }));
 }
 
-/** Beste Statistik für einen konkreten Zauber (Klassenzuordnung) */
+/** Best stats for a specific spell (class assignment) */
 function statsForSpell(spellName, allStats) {
   const lib = repo.findSpell(spellName);
   if (lib && allStats.length > 1) {
@@ -59,7 +59,7 @@ function statsForSpell(spellName, allStats) {
   return allStats[0] ?? { mod: 0, dc: 8, atk: 0, cls: '-', ability: null };
 }
 
-// == Render ===================================================
+// == Render =====================================================
 
 function render() {
   const el = document.getElementById('tab-spells');
@@ -109,7 +109,7 @@ function render() {
     ${knownList(s.spells, stats)}
   </div>
 
-  <!-- Bibliothek-Modal (per Button eingeblendet) -->
+  <!-- library modal (shown via button) -->
   <div class="overlay" id="spLibOverlay" style="display:none">
     <div class="modal">
       <div class="modal__head">
@@ -143,7 +143,7 @@ function render() {
     </div>
   </div>
 
-  <!-- Homebrew-Modal -->
+  <!-- homebrew modal -->
   <div class="overlay" id="spHbOverlay" style="display:none">
     <div class="modal" style="max-width:480px">
       <div class="modal__head"><b>${t('spells.homebrew')}</b>
@@ -193,11 +193,11 @@ function slotRow(i, total, used) {
 }
 
 function pactRow(pact, used, arcanumUsed = []) {
-  // Alle Pakt-Slots haben denselben (hoechsten) Grad, sind aber fuer
-  // JEDEN Zaubergrad bis dahin einsetzbar. Das Label nennt daher den
-  // nutzbaren Bereich, damit keine "fehlenden" Grad-Zeilen vermutet
-  // werden. Ab Stufe 11 kommen die Mystischen Arkana (Grad 6 bis 9,
-  // je 1x pro langer Rast) als eigene Zeilen dazu.
+  // All pact slots share the same (highest) level, but are usable
+  // for EVERY spell level up to that. The label therefore names the
+  // usable range, so no "missing" level rows are suspected. From
+  // level 11, the Mystic Arcana (levels 6 to 9, 1x per long rest
+  // each) are added as their own rows.
   const range = pact.level > 1
     ? `1. ${t('spells.gradeTo')} ${pact.level}${t('spells.grade')}`
     : `1${t('spells.grade')}`;
@@ -257,7 +257,7 @@ function knownList(spells, stats) {
     }).join('')}`).join('');
 }
 
-// == Bibliothek ===============================================
+// == Library ====================================================
 
 function renderLibrary(s) {
   const list = document.getElementById('spLibList');
@@ -268,8 +268,8 @@ function renderLibrary(s) {
   const schFilter = document.getElementById('spLibSchool')?.value ?? '';
   const search    = (document.getElementById('spLibSearch')?.value ?? '').toLowerCase();
 
-  // Volle Klassen-Objekte übergeben → exklusive Unterklassen-Zauber
-  // (Domänen, Patron-Listen) erscheinen mit in der Bibliothek.
+  // pass full class objects → exclusive subclass spells
+  // (domains, patron lists) appear in the library too.
   const classArg = clsFilter
     ? s.classes.filter(c => c.name === clsFilter).length
       ? s.classes.filter(c => c.name === clsFilter)
@@ -309,7 +309,7 @@ function renderLibrary(s) {
       </div>`;
     }).join('')}`).join('') || `<p class="panel__hint" style="padding:1rem">-</p>`;
 
-  // Aktionsleiste für Mehrfachauswahl (erscheint bei ≥1 Häkchen)
+  // action bar for multi-select (appears with ≥1 checkbox checked)
   const bar = document.getElementById('spLibActionBar');
   const updateBar = () => {
     const n = list.querySelectorAll('.lib-select:checked').length;
@@ -321,18 +321,18 @@ function renderLibrary(s) {
   };
   updateBar();
 
-  // Klick auf Eintrag → Beschreibung auf-/zuklappen (nicht bei Checkbox/Button)
+  // click on an entry → expand/collapse the description (not on checkbox/button)
   list.onclick = e => {
     if (e.target.closest('.lib-select, button')) return;
     toggleExpand(e);
   };
 
-  // Mehrfachauswahl-Häkchen
+  // multi-select checkboxes
   list.querySelectorAll('.lib-select').forEach(cb => {
     cb.onchange = e => { e.stopPropagation(); updateBar(); };
     cb.onclick  = e => e.stopPropagation();
   });
-  // "Ausgewählte lernen"
+  // "learn selected"
   const learnBtn = bar?.querySelector('#spLibLearnSel');
   if (learnBtn) learnBtn.onclick = () => {
     const picks = [...list.querySelectorAll('.lib-select:checked')]
@@ -346,7 +346,7 @@ function renderLibrary(s) {
     bus.emit(EV.TOAST, { message: `✓ ${added.length}` });
   };
 
-  // Lern-/Entfern-Buttons
+  // learn/remove buttons
   list.querySelectorAll('[data-lib-sp-add]').forEach(b => {
     b.onclick = () => {
       store.update({ spells: [...store.field('spells'),
@@ -360,7 +360,7 @@ function renderLibrary(s) {
   });
 }
 
-// == Wirken: Angriffswurf → Schaden/Heilung automatisch ======
+// == Cast: attack roll → damage/healing automatically ==========
 
 async function castSpell(name, stats) {
   const lib = repo.findSpell(name);
@@ -368,17 +368,17 @@ async function castSpell(name, stats) {
   const box = document.getElementById('castResult');
   if (!box) return;
 
-  // Erfordert der Zauber einen Angriffswurf → vorher abfragen
+  // if the spell requires an attack roll → prompt beforehand
   let mode = 'normal';
   if (lib?.attackRoll) {
     mode = await askRollMode(name);
-    if (!mode) return; // abgebrochen → gar nicht wirken
+    if (!mode) return; // cancelled → don't cast at all
   }
 
   const steps = [];
   let critical = false, fumbled = false;
 
-  // 1) Zauberangriffswurf, falls der Zauber einen erfordert
+  // 1) spell attack roll, if the spell requires one
   if (lib?.attackRoll) {
     const hit = d20(st.atk, mode);
     critical = hit.isCrit; fumbled = hit.isFumble;
@@ -393,7 +393,7 @@ async function castSpell(name, stats) {
     });
   }
 
-  // 2) Rettungswurf-Hinweis (Zauber ohne Angriffswurf)
+  // 2) saving throw hint (spells without an attack roll)
   if (lib?.saveType && !lib?.attackRoll) {
     steps.push({
       cls: 'save',
@@ -403,7 +403,7 @@ async function castSpell(name, stats) {
     });
   }
 
-  // 3) Schaden automatisch würfeln (bei Patzer entfällt er)
+  // 3) roll damage automatically (skipped on a fumble)
   if (lib?.damage && !fumbled) {
     let formula = lib.damage;
     if (critical) formula = formula.replace(/(\d+)d/g, (m, n) => (+n * 2) + 'd');
@@ -416,7 +416,7 @@ async function castSpell(name, stats) {
     });
   }
 
-  // 4) Heilung automatisch würfeln (+ Zaubermodifikator)
+  // 4) roll healing automatically (+ spellcasting modifier)
   if (lib?.healing) {
     const heal = parseAndRoll(lib.healing + (st.mod ? `+${st.mod}` : ''));
     if (heal) steps.push({
@@ -445,7 +445,7 @@ async function castSpell(name, stats) {
 // == Events ===================================================
 
 function bindEvents(el, s, stats) {
-  // Slot-Blasen: Klick auf freie → verbrauchen; auf verbrauchte → freigeben
+  // slot bubbles: click a free one → spend; a spent one → free it up
   el.querySelectorAll('[data-slot]').forEach(b => {
     b.onclick = () => {
       const lvl = +b.dataset.slot, idx = +b.dataset.idx;
@@ -462,7 +462,7 @@ function bindEvents(el, s, stats) {
     };
   });
 
-  // Mystisches Arkanum: Blase togglet verbraucht/verfuegbar
+  // Mystic Arcanum: bubble toggles spent/available
   el.querySelectorAll('[data-arcanum]').forEach(b => {
     b.onclick = () => {
       const grade = +b.dataset.arcanum;
@@ -474,13 +474,13 @@ function bindEvents(el, s, stats) {
   });
 
   el.querySelector('#spShortRest')?.addEventListener('click', () => {
-    store.shortRest(); // regelwerk-abhängig (Pakt-Slots, ggf. Wildgestalt)
+    store.shortRest(); // ruleset-dependent (pact slots, possibly wild shape)
     bus.emit(EV.TOAST, { message: t('combat.shortRestDone') });
   });
   el.querySelector('#spLongRest')?.addEventListener('click', () =>
     store.update({ spellSlotsUsed: Array(9).fill(0), pactSlotsUsed: 0 }));
 
-  // Bekannte Zauber: wirken / vorbereiten / entfernen
+  // known spells: cast / prepare / remove
   el.querySelectorAll('[data-sp-cast]').forEach(b => {
     b.onclick = () => castSpell(b.dataset.spCast, stats);
   });
@@ -494,7 +494,7 @@ function bindEvents(el, s, stats) {
       spells: store.field('spells').filter(sp => sp.name !== b.dataset.spRemove) });
   });
 
-  // Bibliothek öffnen/schließen + Filter
+  // open/close library + filters
   const overlay = el.querySelector('#spLibOverlay');
   el.querySelector('#spLibrary').onclick  = () => { overlay.style.display = 'flex'; renderLibrary(store.get()); };
   el.querySelector('#spLibClose').onclick = () => overlay.style.display = 'none';
@@ -503,7 +503,7 @@ function bindEvents(el, s, stats) {
     el.querySelector('#' + id).oninput = () => renderLibrary(store.get());
   });
 
-  // Homebrew-Formular
+  // homebrew form
   const hbOverlay = el.querySelector('#spHbOverlay');
   el.querySelector('#spHomebrew').onclick = () => hbOverlay.style.display = 'flex';
   el.querySelector('#spHbClose').onclick  = () => hbOverlay.style.display = 'none';
@@ -515,7 +515,7 @@ function bindEvents(el, s, stats) {
     const entry = {
       name,
       level: +el.querySelector('#hbSpLevel').value,
-      classes: s.classes.map(c => c.name), // für alle eigenen Klassen verfügbar
+      classes: s.classes.map(c => c.name), // available for all of the character's own classes
       attackRoll: el.querySelector('#hbSpAtk').checked,
       damage:  el.querySelector('#hbSpDamage').value.trim() || null,
       healing: el.querySelector('#hbSpHealing').value.trim() || null,

@@ -1,16 +1,16 @@
 // ============================================================
-// rules/bonuses.js, Attributs-Boni aus Rasse/Hintergrund/Talent
+// rules/bonuses.js, ability bonuses from race/background/feat
 // ------------------------------------------------------------
-// Feste Boni werden automatisch gesetzt; frei wählbare Boni
-// ("choose") kommen als VARIANTEN aus den Daten:
+// Fixed bonuses are set automatically; freely selectable bonuses
+// ("choose") come as VARIANTS from the data:
 //   abilityChoose = [{from:['int','wis','cha'], weights:[2,1]}, …]
-// Jede Variante ist eine Liste von Boni (weights), die der Nutzer
-// auf verschiedene Attribute aus "from" verteilt. 2024er-Hinter-
-// gründe bieten z. B. zwei Varianten: +2/+1 oder +1/+1/+1.
+// Each variant is a list of bonuses (weights) that the user
+// distributes across different abilities from "from". 2024
+// backgrounds offer e.g. two variants: +2/+1 or +1/+1/+1.
 //
-// Die getroffene Wahl liegt am Charakter als
+// The choice made lives on the character as
 //   { variant: 0, picks: ['wis', 'cha'] }   (picks[i] ↔ weights[i])
-// und wird hier mit den festen Boni zum Gesamt-Bonus kombiniert.
+// and is combined here with the fixed bonuses into the total bonus.
 // ============================================================
 import { repo } from '../core/DataRepository.js';
 
@@ -22,21 +22,21 @@ function fixedFrom(entry) {
   return out;
 }
 
-/** Rassen-Eintrag (dedupliziert, mit Roh-Fallback) */
+/** Race entry (deduplicated, with raw fallback) */
 export function raceEntry(raceName) {
   return repo.getRaces().find(x => x.name === raceName)
       ?? repo.races.find(x => x.name === raceName) ?? null;
 }
-/** Hintergrund-Eintrag */
+/** Background entry */
 export function bgEntry(bgName) {
   return repo.getBackgrounds().find(x => x.name === bgName)
       ?? repo.backgrounds.find(x => x.name === bgName) ?? null;
 }
 
 /**
- * Gesamt-Bonus eines Eintrags: feste Boni + verteilte Wahl.
- * choice = { variant, picks } oder null (dann nur feste Boni).
- * Ungültige/unvollständige picks werden ignoriert (kein Doppel-Attribut).
+ * Total bonus of an entry: fixed bonuses + distributed choice.
+ * choice = { variant, picks } or null (then only fixed bonuses).
+ * Invalid/incomplete picks are ignored (no duplicate ability).
  */
 export function combinedBonus(entry, choice) {
   const out = fixedFrom(entry);
@@ -54,17 +54,17 @@ export function combinedBonus(entry, choice) {
   return out;
 }
 
-/** Rasse-Boni (fest + Wahl) */
+/** Race bonuses (fixed + choice) */
 export function raceBonusFor(raceName, choice = null) {
   return combinedBonus(raceEntry(raceName), choice);
 }
 
-/** Hintergrund-Boni (fest + Wahl) */
+/** Background bonuses (fixed + choice) */
 export function bgBonusFor(bgName, choice = null) {
   return combinedBonus(bgEntry(bgName), choice);
 }
 
-/** Talent-Boni aus der Feat-Liste */
+/** Feat bonuses from the feat list */
 export function featBonusFor(featNames) {
   const out = {};
   for (const name of featNames ?? []) {

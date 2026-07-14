@@ -1,10 +1,10 @@
 // ============================================================
-// components/DiceBotPanel.js, Würfelbot
+// components/DiceBotPanel.js, dice bot
 // ------------------------------------------------------------
-// Zentraler Würfelbereich. Alle Automatik-Würfe (Attribute,
-// Fertigkeiten, Rettungswürfe) holen ihre Modifikatoren selbst
-// aus dem Charakter, der Nutzer klickt nur den Wurf an.
-// Zusätzlich: Vorteil/Nachteil-Modus, freie Formeln, Verlauf.
+// Central rolling area. All automatic rolls (abilities, skills,
+// saving throws) fetch their modifiers from the character
+// themselves; the user just clicks the roll.
+// Additionally: advantage/disadvantage mode, free formulas, history.
 // ============================================================
 import { store }   from '../core/Store.js';
 import { bus, EV } from '../core/EventBus.js';
@@ -19,12 +19,12 @@ export function mountDiceBot() {
   render();
   bus.on(EV.LANG_CHANGED, render);
   bus.on(EV.CHAR_CHANGED, ({ changed }) => {
-    // Modifikator-Anzeigen aktualisieren, wenn sich relevante Werte ändern
+    // update modifier displays when relevant values change
     const rel = [...ABILITY_IDS, 'classes', 'items', 'wildshape', 'skillProficiencies', 'skillExpertise', 'saveProficiencies', '*'];
     if (changed.some(c => rel.includes(c))) render();
   });
 
-  // Ergebnisse aller Würfe landen im Verlauf + in der Anzeige
+  // results of all rolls end up in the history + in the display
   bus.on(EV.ROLL_RESULT, res => {
     history.unshift(res);
     if (history.length > 15) history.pop();
@@ -98,7 +98,7 @@ function render() {
 }
 
 function bindEvents(el) {
-  // Schnellwürfe (einzelner Würfel, kein Modifikator)
+  // quick rolls (single die, no modifier)
   el.querySelectorAll('[data-quick]').forEach(b => {
     b.onclick = () => {
       const sides = +b.dataset.quick;
@@ -110,7 +110,7 @@ function bindEvents(el) {
     };
   });
 
-  // Automatik-Würfe: erst Abfrage (Vorteil/Normal/Nachteil), dann würfeln
+  // automatic rolls: prompt first (advantage/normal/disadvantage), then roll
   el.querySelectorAll('[data-roll-ability]').forEach(b => {
     b.onclick = async () => {
       const mode = await askRollMode(t('abilities.' + b.dataset.rollAbility));
@@ -134,7 +134,7 @@ function bindEvents(el) {
     if (mode) rollInitiative(mode);
   };
 
-  // Freie Formel (Enter oder Button)
+  // free-form formula (Enter or button)
   const rollFromInput = () => {
     const formula = el.querySelector('#dbFormula').value.trim();
     if (formula && !rollFormula(formula)) {
@@ -155,7 +155,7 @@ function showResult({ total, detail, special }) {
     num.className = 'dice-result__num' + (special ? ' ' + special : '');
   }
   if (det) {
-    // NAT 20 / NAT 1 als deutliches Badge hinter der Detailzeile
+    // NAT 20 / NAT 1 as a clear badge after the detail line
     const badge = special === 'crit'
       ? ' <span class="roll-nat roll-nat--20">NAT 20</span>'
       : special === 'fail'

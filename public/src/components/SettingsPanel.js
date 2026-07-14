@@ -1,11 +1,11 @@
 // ============================================================
-// components/SettingsPanel.js, Einstellungen
+// components/SettingsPanel.js, settings
 // ------------------------------------------------------------
-// • Sprache (Deutsch / Englisch)
-// • Regelwerk-Auswahl: nur aktivierte Quellen erscheinen in
-//   den Bibliotheken und im Generator
-// • Datenstand-Anzeige + Anleitung zur Update-Funktion
-// • Homebrew-Verwaltung (eigene Einträge einsehen/löschen)
+// • language (German / English)
+// • ruleset selection: only enabled sources appear in
+//   the libraries and in the generator
+// • data status display + instructions for the update function
+// • homebrew management (view/delete own entries)
 // ============================================================
 import { repo }    from '../core/DataRepository.js';
 import { bus, EV } from '../core/EventBus.js';
@@ -27,7 +27,7 @@ function render() {
   const theme = getTheme();
 
   el.innerHTML = `
-  <!-- Kosmetik: Modus, Themes, eigene Farben, Schriftart -->
+  <!-- cosmetics: mode, themes, custom colors, font -->
   <div class="panel">
     <div class="panel__title">${t('appearance.title')}
       <button class="btn btn--sm" id="appReset">↺ ${t('appearance.reset')}</button>
@@ -155,14 +155,14 @@ function render() {
     }).join('') || `<p class="panel__hint">-</p>`}
   </div>
 
-  <!-- App beenden: stoppt den Server (unsichtbarer Betrieb via Start.vbs) -->
+  <!-- quit app: stops the server (invisible operation via Start.vbs) -->
   <div class="panel">
     <div class="panel__title">${t('settings.shutdown')}</div>
     <p class="panel__hint" style="margin-bottom:10px">${t('settings.shutdownHint')}</p>
     <button class="btn btn--danger" id="setShutdown">⏻ ${t('settings.shutdown')}</button>
   </div>`;
 
-  // == Events: Erscheinungsbild ==
+  // == Events: appearance ==
   el.querySelectorAll('[data-app-mode]').forEach(b => {
     b.onclick = () => { setTheme({ mode: b.dataset.appMode }); render(); };
   });
@@ -188,7 +188,7 @@ function render() {
   const adv = el.querySelector('#setAdvanced');
   if (adv) adv.onchange = () => repo.setAdvanced(adv.checked);
 
-  // Update per Knopfdruck: streamt den Fortschritt live ins Log-Fenster
+  // update at the push of a button: streams progress live into the log window
   const startUpdate = async force => {
     const logBox = el.querySelector('#setUpdateLog');
     const btns = [el.querySelector('#setUpdate'), el.querySelector('#setUpdateForce')];
@@ -207,20 +207,20 @@ function render() {
     } else {
       bus.emit(EV.TOAST, { message: result?.ok ? '✓ Update' : '⚠ Update' });
     }
-    render(); // Zähler & Datum aktualisieren (Log geht dabei zu, ok, Toast fasst zusammen)
+    render(); // refresh counters & date (the log closes in the process; the toast summarizes)
   };
   el.querySelector('#setUpdate').onclick      = () => startUpdate(false);
   el.querySelector('#setUpdateForce').onclick = () => startUpdate(true);
 
   el.querySelector('#setReload').onclick = async () => {
-    await repo.load(); // Manifest & Packs neu einlesen
+    await repo.load(); // re-read manifest & packs
     bus.emit(EV.TOAST, { message: '✓' });
     render();
   };
-  // App beenden: Server stoppen, Abschiedsseite anzeigen
+  // quit app: stop the server, show a farewell page
   el.querySelector('#setShutdown').onclick = async () => {
     if (!confirm(t('settings.shutdownConfirm'))) return;
-    try { await fetch('/api/shutdown'); } catch { /* Server ist weg, erwartbar */ }
+    try { await fetch('/api/shutdown'); } catch { /* server is gone, expected */ }
     document.body.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:center;height:100vh;
                   font-family:var(--font);color:var(--ink);background:var(--bg);
@@ -241,7 +241,7 @@ function render() {
 }
 
 
-/** Aktuellen Wert einer CSS-Variable als Hex lesen (Startwert der Farbwähler) */
+/** Read the current value of a CSS variable as hex (initial value of the color pickers) */
 function currentVar(cssVar) {
   const val = getComputedStyle(document.documentElement).getPropertyValue(cssVar).trim();
   if (/^#[0-9a-f]{6}$/i.test(val)) return val;

@@ -1,22 +1,22 @@
 // ============================================================
-// components/DescriptionPanel.js, Charakterbeschreibung
+// components/DescriptionPanel.js, character description
 // ------------------------------------------------------------
-// • DropZone für ein Charakterbild: Bild hineinziehen ODER
-//   anklicken zum Auswählen. Das Bild wird clientseitig auf
-//   max. 640 px verkleinert (JPEG) und im Charakter gespeichert,
-//   damit localStorage nicht überläuft.
-// • Freitext-Blöcke: beliebig viele Blöcke mit eigenem Titel,
-//   in denen der Spieler den Charakter beschreiben kann
-//   (Standard: Aussehen, Persönlichkeit, Hintergrundgeschichte).
+// • Drop zone for a character image: drag an image in OR click
+//   to pick one. The image is downscaled client-side to max
+//   640 px (JPEG) and saved on the character, so localStorage
+//   doesn't overflow.
+// • Free-text blocks: any number of blocks with their own title,
+//   where the player can describe the character
+//   (default: appearance, personality, backstory).
 // ============================================================
 import { store }   from '../core/Store.js';
 import { bus, EV } from '../core/EventBus.js';
 import { t }       from '../core/i18n.js';
 
 
-// Standard-Auswahl für die Comboboxen (englische Spielbegriffe,
-// konsistent zu Zauber-/Item-Namen und dem offiziellen PDF-Bogen).
-// Die Felder bleiben freie Textfelder, die Auswahl HÄNGT nur AN.
+// Default choices for the comboboxes (English game terms,
+// consistent with spell/item names and the official PDF sheet).
+// The fields remain free text fields; the selection only APPENDS.
 const LANGUAGES = [
   'Common', 'Common Sign Language', 'Dwarvish', 'Elvish', 'Giant', 'Gnomish',
   'Goblin', 'Halfling', 'Orc', 'Abyssal', 'Celestial', 'Deep Speech',
@@ -34,15 +34,15 @@ const PROFICIENCIES = [
 export function mountDescription() {
   render();
   bus.on(EV.CHAR_CHANGED, ({ changed }) => {
-    // Nur bei strukturellen Änderungen neu rendern; Texteingaben
-    // werden "leise" gespeichert (Fokus bleibt erhalten).
+    // only re-render on structural changes; text input
+    // is saved "quietly" (focus is preserved).
     if (changed.includes('*') || changed.includes('portrait')) return render();
     if (changed.includes('descriptionBlocks') && structureChanged()) render();
   });
   bus.on(EV.LANG_CHANGED, render);
 }
 
-// Struktur-Erkennung: Anzahl/IDs der Blöcke vergleichen
+// structure detection: compare number/IDs of the blocks
 let lastIds = '';
 function structureChanged() {
   const ids = (store.field('descriptionBlocks') ?? []).map(b => b.id).join(',');
@@ -59,7 +59,7 @@ function render() {
 
   el.innerHTML = `
   <div class="panel-row">
-    <!-- Bild-DropZone -->
+    <!-- image drop zone -->
     <div class="panel">
       <div class="panel__title">${t('desc.portrait')}</div>
       <div class="dropzone ${s.portrait ? 'dropzone--filled' : ''}" id="descDrop" tabindex="0">
@@ -78,7 +78,7 @@ function render() {
       </div>` : ''}
     </div>
 
-    <!-- Hinweis / Verwaltung -->
+    <!-- hint / management -->
     <div class="panel">
       <div class="panel__title">${t('desc.title')}
         <button class="btn btn--sm btn--gold" id="descAddBlock">+ ${t('desc.addBlock')}</button>
@@ -98,7 +98,7 @@ function render() {
                 style="margin-top:10px;min-height:110px">${esc(b.content)}</textarea>
     </div>`).join('')}
 
-  <!-- Bogen-Details für den PDF-Export (Seite 1 & 2) -->
+  <!-- sheet details for the PDF export (pages 1 & 2) -->
   <div class="panel">
     <div class="panel__title">${t('desc.sheetDetails')}</div>
     <p class="panel__hint" style="margin-bottom:10px">${t('desc.sheetDetailsHint')}</p>
@@ -143,7 +143,7 @@ function bindEvents(el) {
   const drop = el.querySelector('#descDrop');
   const file = el.querySelector('#descFile');
 
-  // DropZone: Klick öffnet Dateiauswahl
+  // drop zone: click opens the file picker
   drop.onclick = () => file.click();
   drop.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') file.click(); };
 
@@ -161,7 +161,7 @@ function bindEvents(el) {
   el.querySelector('#descRemove')?.addEventListener('click', () =>
     store.update({ portrait: null }));
 
-  // Blöcke verwalten
+  // manage blocks
   el.querySelector('#descAddBlock').onclick = () => {
     const title = prompt(t('desc.blockName'));
     if (title?.trim()) store.addDescriptionBlock(title.trim());
@@ -170,7 +170,7 @@ function bindEvents(el) {
     b.onclick = () => store.removeDescriptionBlock(b.dataset.descRm);
   });
 
-  // Titel & Inhalt: leise speichern (kein Re-Render während des Tippens)
+  // title & content: save quietly (no re-render while typing)
   el.querySelectorAll('[data-desc-title]').forEach(inp => {
     inp.oninput = () => store.updateDescriptionBlock(inp.dataset.descTitle, { title: inp.value });
   });
@@ -178,13 +178,13 @@ function bindEvents(el) {
     ta.oninput = () => store.updateDescriptionBlock(ta.dataset.descContent, { content: ta.value });
   });
 
-  // Bogen-Details (Seite 2): leise speichern, damit der Fokus bleibt
+  // sheet details (page 2): save quietly, so focus is preserved
   el.querySelectorAll('[data-desc-field]').forEach(inp => {
     inp.oninput = () => store.quietUpdate({ [inp.dataset.descField]: inp.value });
   });
 
-  // Combobox: gewählten Standardeintrag ANHÄNGEN (Feld bleibt Freitext,
-  // die PDF-Übergabe nutzt unverändert denselben String).
+  // combobox: APPEND the chosen default entry (the field stays free
+  // text; the PDF export uses the same string unchanged).
   el.querySelectorAll('[data-combo-add]').forEach(sel => {
     sel.onchange = () => {
       const val = sel.value;
@@ -200,7 +200,7 @@ function bindEvents(el) {
   });
 }
 
-// == Bild einlesen und verkleinern ============================
+// == Read and downscale the image ==============================
 
 function handleImage(fileObj) {
   if (!fileObj || !fileObj.type.startsWith('image/')) {
@@ -210,8 +210,8 @@ function handleImage(fileObj) {
   const img = new Image();
   const url = URL.createObjectURL(fileObj);
   img.onload = () => {
-    // Auf max. 640 px Kantenlänge skalieren → kleine DataURL,
-    // damit das Roster im localStorage (≈5 MB) Platz behält
+    // scale to max. 640 px edge length → small data URL,
+    // so the roster fits within localStorage (≈5 MB)
     const MAX = 640;
     const scale = Math.min(1, MAX / Math.max(img.width, img.height));
     const canvas = document.createElement('canvas');

@@ -1,10 +1,10 @@
 // ============================================================
-// rules/dice.js, Würfel-Engine des Würfelbots
+// rules/dice.js, dice engine of the dice bot
 // ------------------------------------------------------------
-// • Formel-Parser:  "2d6+3", "1d20-1", "4d6kh3" (keep highest 3)
-// • Vorteil/Nachteil für W20-Würfe
-// • Automatische Modifikator-Würfe (Attribut / Fertigkeit / Save)
-//   holen sich die Boni direkt aus Store + Regeln.
+// • Formula parser:  "2d6+3", "1d20-1", "4d6kh3" (keep highest 3)
+// • Advantage/disadvantage for d20 rolls
+// • Automatic modifier rolls (ability / skill / save) fetch their
+//   bonuses directly from Store + rules.
 // ============================================================
 import { store } from '../core/Store.js';
 import {
@@ -13,16 +13,16 @@ import {
 import { bus, EV } from '../core/EventBus.js';
 import { t } from '../core/i18n.js';
 
-// == Grund-Wurf ===============================================
+// == Basic roll ===============================================
 export function roll(sides, count = 1) {
-  // dS mit S≤0 hat keine Seiten → 0 (verhindert, dass 1d0 fälschlich 1 liefert)
+  // dS with S≤0 has no sides → 0 (prevents 1d0 incorrectly returning 1)
   if (!sides || sides < 1) return Array.from({ length: count }, () => 0);
   return Array.from({ length: count }, () => Math.floor(Math.random() * sides) + 1);
 }
 
-// == Formel-Parser ============================================
-// Unterstützt: NdS, NdSkhX (keep highest), NdSklX (keep lowest), +/- Bonus,
-// mehrere Terme: "2d6+1d4+3"
+// == Formula parser ===========================================
+// Supports: NdS, NdSkhX (keep highest), NdSklX (keep lowest), +/- bonus,
+// multiple terms: "2d6+1d4+3"
 export function parseAndRoll(formula) {
   const clean = formula.replace(/\s+/g, '').toLowerCase();
   if (!clean) return null;
@@ -36,10 +36,10 @@ export function parseAndRoll(formula) {
     matchedLen += match[0].length;
     const sign = match[1] === '-' ? -1 : 1;
 
-    if (match[3]) { // Würfelterm
+    if (match[3]) { // dice term
       const count = +(match[2] || 1);
       const sides = +match[3];
-      if (count > 100 || sides > 1000) return null; // Schutz
+      if (count > 100 || sides > 1000) return null; // guard
       let rolls = roll(sides, count);
       let kept  = rolls;
       if (match[4]) { // keep highest/lowest
@@ -50,17 +50,17 @@ export function parseAndRoll(formula) {
       const sum = kept.reduce((a, b) => a + b, 0);
       total += sign * sum;
       parts.push({ type: 'dice', text: `${count}d${sides}${match[4] ? 'k' + match[4] + match[5] : ''}`, rolls, kept, sign });
-    } else {      // Konstante
+    } else {      // constant
       total += sign * +match[6];
       parts.push({ type: 'const', text: match[6], sign });
     }
   }
 
-  if (matchedLen !== clean.length) return null; // ungültige Zeichen
+  if (matchedLen !== clean.length) return null; // invalid characters
   return { total, parts, formula: clean };
 }
 
-/** Wurf-Detail als String, z. B. "[4, 2] + 3" */
+/** Roll detail as a string, e.g. "[4, 2] + 3" */
 export function describeParts(parts) {
   return parts.map((p, i) => {
     const sign = i === 0 ? (p.sign < 0 ? '-' : '') : (p.sign < 0 ? ' − ' : ' + ');
@@ -72,7 +72,7 @@ export function describeParts(parts) {
   }).join('');
 }
 
-// == W20 mit Vorteil/Nachteil ================================
+// == d20 with advantage/disadvantage ==========================
 // mode: 'normal' | 'adv' | 'dis'
 export function d20(mod = 0, mode = 'normal') {
   const first  = roll(20)[0];
@@ -88,9 +88,9 @@ export function d20(mod = 0, mode = 'normal') {
   };
 }
 
-// == Automatik-Würfe (Würfelbot-Kern) =========================
-// Diese Funktionen berechnen den Modifikator selbstständig aus
-// dem Charakterzustand und publizieren das Ergebnis auf dem Bus.
+// == Automatic rolls (dice bot core) ===========================
+// These functions compute the modifier autonomously from the
+// character state and publish the result on the bus.
 
 function publish(total, label, detail, special = '') {
   bus.emit(EV.ROLL_RESULT, { total, label, detail, special });
@@ -101,7 +101,7 @@ function d20Detail(r, mod, suffix) {
   return `${both} ${fmtMod(mod)} ${suffix}`;
 }
 
-/** Attributs-Check, z. B. rollAbility('dex', 'adv') */
+/** Ability check, e.g. rollAbility('dex', 'adv') */
 export function rollAbility(attr, mode = 'normal') {
   const mod = calcMod(effectiveAbilities(store.get()).scores[attr]);
   const r   = d20(mod, mode);
@@ -111,7 +111,7 @@ export function rollAbility(attr, mode = 'normal') {
   return r;
 }
 
-/** Fertigkeits-Check inkl. Übung/Expertise, z. B. rollSkill('stealth') */
+/** Skill check incl. proficiency/expertise, e.g. rollSkill('stealth') */
 export function rollSkill(skillId, mode = 'normal') {
   const def = SKILL_DEFS.find(s => s.id === skillId);
   if (!def) return null;
@@ -130,7 +130,7 @@ export function rollSkill(skillId, mode = 'normal') {
   return r;
 }
 
-/** Rettungswurf inkl. Übung + flacher Item-Boni (z. B. Cloak of Protection) */
+/** Saving throw incl. proficiency + flat item bonuses (e.g. Cloak of Protection) */
 export function rollSave(attr, mode = 'normal') {
   const s   = store.get();
   const eff = effectiveAbilities(s).scores;
@@ -143,7 +143,7 @@ export function rollSave(attr, mode = 'normal') {
   return r;
 }
 
-/** Initiative (DEX-Mod) */
+/** Initiative (DEX mod) */
 export function rollInitiative(mode = 'normal') {
   const mod = calcMod(effectiveAbilities(store.get()).scores.dex);
   const r = d20(mod, mode);
@@ -151,7 +151,7 @@ export function rollInitiative(mode = 'normal') {
   return r;
 }
 
-/** Freie Formel würfeln */
+/** Roll a free-form formula */
 export function rollFormula(formula) {
   const result = parseAndRoll(formula);
   if (!result) return null;

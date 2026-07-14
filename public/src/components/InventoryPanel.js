@@ -1,12 +1,12 @@
 // ============================================================
-// components/InventoryPanel.js, Inventar & Währung
+// components/InventoryPanel.js, inventory & currency
 // ------------------------------------------------------------
-// • Zwei getrennte Bereiche: AUSRÜSTUNG (angelegt/equipped) und
-//   GEGENSTÄNDE (Gepäck), das Häkchen verschiebt zwischen beiden
-// • Bibliothek: großes Fenster, ALLE Items aus der Datenbank,
-//   Filter für "Nur magische Items" und Seltenheitsstufen
-// • Homebrew-Items per Formular
-// • Gesamtgewicht wird gegen Traglast (STR × 15) geprüft
+// • Two separate areas: EQUIPMENT (worn/equipped) and
+//   ITEMS (backpack); the checkbox moves items between the two
+// • Library: large window, ALL items from the database,
+//   filter for "magic items only" and rarity tiers
+// • Homebrew items via a form
+// • Total weight is checked against carrying capacity (STR × 15)
 // ============================================================
 import { store }   from '../core/Store.js';
 import { repo }    from '../core/DataRepository.js';
@@ -16,7 +16,7 @@ import { calcAC }  from '../rules/calculations.js';
 
 const CURRENCIES = ['cp', 'sp', 'ep', 'gp', 'pp'];
 
-// Wechselkurs zu Kupfer (cp): 1 sp=10, 1 ep=50, 1 gp=100, 1 pp=1000
+// exchange rate to copper (cp): 1 sp=10, 1 ep=50, 1 gp=100, 1 pp=1000
 const COIN_IN_CP = { cp: 1, sp: 10, ep: 50, gp: 100, pp: 1000 };
 
 const ELECTRUM_KEY = 'dnd5e_show_electrum';
@@ -27,15 +27,15 @@ function setElectrum(on) {
   try { localStorage.setItem(ELECTRUM_KEY, on ? '1' : '0'); } catch {}
 }
 
-/** Gesamtvermögen in Gold (gerundet auf 2 Nachkommastellen) */
+/** Total wealth in gold (rounded to 2 decimal places) */
 function totalInGp(cur) {
   const cp = CURRENCIES.reduce((s, c) => s + (cur?.[c] ?? 0) * COIN_IN_CP[c], 0);
   return Math.round(cp / 100 * 100) / 100;
 }
 
-/** Betrag einer Münzsorte in Kupfer, vom Gesamtvermögen abziehen und
- *  optimal zurückwechseln (größte Münzen zuerst). Gibt neue Währung
- *  oder null (nicht genug Geld) zurück. */
+/** Deduct an amount of a coin type (in copper) from the total wealth
+ *  and change it back optimally (largest coins first). Returns the
+ *  new currency or null (not enough money). */
 function payFromPurse(cur, amount, coin) {
   const need = amount * COIN_IN_CP[coin];
   let have = CURRENCIES.reduce((s, c) => s + (cur?.[c] ?? 0) * COIN_IN_CP[c], 0);
@@ -43,8 +43,8 @@ function payFromPurse(cur, amount, coin) {
   have -= need;
   return distribute(have);
 }
-/** Kupfer-Gesamtbetrag optimal auf Münzsorten aufteilen (ohne EP,
- *  falls ausgeblendet, dann fließt der Wert in Silber/Gold). */
+/** Optimally split a total copper amount across coin types (without
+ *  EP if hidden; the value then flows into silver/gold). */
 function distribute(cp) {
   const order = showElectrum() ? ['pp', 'gp', 'ep', 'sp', 'cp'] : ['pp', 'gp', 'sp', 'cp'];
   const out = { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 };
@@ -55,7 +55,7 @@ function distribute(cp) {
   return out;
 }
 
-// Seltenheitsstufen in Datenbank-Reihenfolge (Werte wie im Repo)
+// rarity tiers in database order (values as in the repo)
 const RARITIES = ['common', 'uncommon', 'rare', 'very rare', 'legendary', 'artifact', 'varies', 'none'];
 
 export function mountInventory() {
@@ -67,13 +67,13 @@ export function mountInventory() {
   bus.on(EV.SOURCES_CHANGED, render);
 }
 
-// == Helfer ===================================================
+// == Helpers ===================================================
 
 function totalWeight(items) {
   return items.reduce((sum, it) => sum + (it.weight ?? 0) * (it.qty ?? 1), 0);
 }
 
-/** Magie-Erkennung mit Fallback für alte Packs/Seed ohne magic-Feld */
+/** Magic detection with fallback for old packs/seed without a magic field */
 function isMagic(it) {
   if (typeof it.magic === 'boolean') return it.magic;
   const r = it.rarity ?? 'none';
@@ -85,8 +85,8 @@ function rarityTag(it) {
   return `<span class="tag tag--rarity tag--rarity-${it.rarity.replace(/\s/g, '-')}">${t('inventory.rarity_' + it.rarity.replace(/\s/g, '_')) }</span>`;
 }
 
-/** Eine Item-Zeile (für beide Bereiche identisch, Index = Position im Gesamt-Array)
- *  Klick auf die Zeile klappt die vollständige Beschreibung auf/zu. */
+/** A single item row (identical for both areas, index = position in the overall array)
+ *  Clicking the row expands/collapses the full description. */
 function itemRow(it, i) {
   const lib = repo.findItem(it.name);
   const hasDesc = !!lib?.description;
@@ -109,7 +109,7 @@ function itemRow(it, i) {
   </div>`;
 }
 
-// == Render ===================================================
+// == Render =====================================================
 
 function render() {
   const el = document.getElementById('tab-inventory');
@@ -117,8 +117,8 @@ function render() {
   const weight = totalWeight(s.items);
   const capacity = s.str * 15;
 
-  // Trennung: Ausrüstung (angelegt) vs. Gegenstände (Gepäck).
-  // Der Original-Index im items-Array bleibt für die Events erhalten.
+  // split: equipment (worn) vs. items (backpack).
+  // The original index in the items array is preserved for events.
   const equipped = [], carried = [];
   s.items.forEach((it, i) => (it.equipped ? equipped : carried).push([it, i]));
 
@@ -137,8 +137,8 @@ function render() {
           <span class="stat-box__lbl">${c.toUpperCase()}</span>
         </div>`).join('')}
     </div>
-    <!-- Gold-Rechner: bezahlt (−) oder nimmt ein (+) und rechnet über
-         alle Münzsorten hinweg mit Wechselkurs zu Kupfer um -->
+    <!-- gold calculator: pays (−) or receives (+), converting across
+         all coin types via the exchange rate to copper -->
     <div style="display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap">
       <input type="number" id="invCalcAmt" min="0" placeholder="0" style="width:80px;text-align:center">
       <select id="invCalcCur">
@@ -150,14 +150,14 @@ function render() {
     </div>
   </div>
 
-  <!-- AUSRÜSTUNG: angelegte Gegenstände -->
+  <!-- EQUIPMENT: worn items -->
   <div class="panel">
     <div class="panel__title">${t('inventory.equipment')} <span class="row-dim">(${equipped.length})</span></div>
     ${equipped.map(([it, i]) => itemRow(it, i)).join('')
       || `<p class="panel__hint">${t('inventory.emptyEquipment')}</p>`}
   </div>
 
-  <!-- GEGENSTÄNDE: Gepäck -->
+  <!-- ITEMS: backpack -->
   <div class="panel">
     <div class="panel__title">${t('inventory.items')} <span class="row-dim">(${carried.length})</span>
       <span>
@@ -176,7 +176,7 @@ function render() {
     </div>
   </div>
 
-  <!-- Item-Bibliothek: großes Fenster mit Magie- und Seltenheits-Filter -->
+  <!-- item library: large window with magic and rarity filters -->
   <div class="overlay" id="invLibOverlay" style="display:none">
     <div class="modal modal--wide">
       <div class="modal__head">
@@ -198,7 +198,7 @@ function render() {
     </div>
   </div>
 
-  <!-- Homebrew-Item: detailliertes Formular (Waffe/Rüstung/Gegenstand) -->
+  <!-- homebrew item: detailed form (weapon/armor/gear) -->
   <div class="overlay" id="invHbOverlay" style="display:none">
     <div class="modal" style="max-width:480px">
       <div class="modal__head"><b>${t('inventory.homebrew')}</b>
@@ -223,7 +223,7 @@ function render() {
               <input type="number" id="hbItValue" placeholder="gp" min="0"></label>
           </div>
 
-          <!-- Waffen-Felder -->
+          <!-- weapon fields -->
           <div id="hbWeaponFields" style="display:none;gap:8px;grid-template-columns:1fr 1fr;">
             <label class="meta-field"><span>${t('inventory.hbDamage')}</span>
               <input type="text" id="hbItDmg" placeholder="1d8"></label>
@@ -241,7 +241,7 @@ function render() {
               <input type="text" id="hbItProps" placeholder="${t('inventory.hbPropsPh')}"></label>
           </div>
 
-          <!-- Rüstungs-Felder -->
+          <!-- armor fields -->
           <div id="hbArmorFields" style="display:none;gap:8px;grid-template-columns:1fr 1fr;">
             <label class="meta-field"><span>${t('inventory.hbAcType')}</span>
               <select id="hbItAcType">
@@ -254,7 +254,7 @@ function render() {
               <input type="number" id="hbItAc" placeholder="14" min="0"></label>
           </div>
 
-          <!-- Magische Boni (alle Typen) -->
+          <!-- magic bonuses (all types) -->
           <details>
             <summary style="cursor:pointer;color:var(--gold);font-size:13px;font-weight:600">${t('inventory.hbMagic')}</summary>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
@@ -276,7 +276,7 @@ function render() {
   bindEvents(el);
 }
 
-// == Bibliothek: alle Items, gefiltert nach Magie/Seltenheit ==
+// == Library: all items, filtered by magic/rarity ==============
 
 function renderLibrary() {
   const list = document.getElementById('invLibList');
@@ -286,7 +286,7 @@ function renderLibrary() {
   const magicOnly = document.getElementById('invLibMagic')?.checked ?? false;
   const rarity    = document.getElementById('invLibRarity')?.value ?? '';
 
-  // Ohne Filter: ALLE Items der Datenbank anzeigen (kein Anzeige-Limit)
+  // without a filter: show ALL items of the database (no display limit)
   let items = repo.getItems();
   if (search)    items = items.filter(it => it.name.toLowerCase().includes(search));
   if (magicOnly) items = items.filter(isMagic);
@@ -295,7 +295,7 @@ function renderLibrary() {
   const countEl = document.getElementById('invLibCount');
   if (countEl) countEl.textContent = `${items.length} / ${repo.getItems().length}`;
 
-  // Ein Durchlauf mit Array-Join, auch bei ~2700 Einträgen flott genug
+  // a single pass with array join, fast enough even for ~2700 entries
   list.innerHTML = items.map(it => `
     <div class="lib-entry lib-entry--expandable" data-expand>
       <div class="lib-entry__top">
@@ -312,7 +312,7 @@ function renderLibrary() {
       <div class="lib-entry__desc">${it.description ?? ''}</div>
     </div>`).join('') || `<p class="panel__hint" style="padding:1rem">-</p>`;
 
-  // Event-Delegation statt 2700 Einzel-Listener
+  // event delegation instead of 2700 individual listeners
   list.onclick = e => {
     const btn = e.target.closest('[data-lib-it]');
     if (btn) {
@@ -325,21 +325,21 @@ function renderLibrary() {
       autoAC();
       return;
     }
-    // Klick auf den Eintrag (nicht auf Knöpfe/Inputs) → auf-/zuklappen
+    // click on the entry (not on buttons/inputs) → expand/collapse
     toggleExpand(e);
   };
 }
 
-/** Klick auf einen aufklappbaren Eintrag (nicht auf Bedienelemente) → toggeln */
+/** Click on an expandable entry (not on controls) → toggle */
 export function toggleExpand(e) {
   if (e.target.closest('button, input, select, a, textarea')) return;
   const box = e.target.closest('[data-expand]');
   if (box) box.classList.toggle('open');
 }
 
-/** RK automatisch aus getragener Rüstung neu berechnen.
- *  Übersprungen, wenn der Nutzer die RK manuell gesetzt hat
- *  (Flag acManual, wird beim Editieren des RK-Feldes gesetzt). */
+/** Automatically recompute AC from worn armor.
+ *  Skipped if the user has manually set the AC
+ *  (flag acManual, set when editing the AC field). */
 function autoAC() {
   if (store.field('acManual')) return;
   const newAC = calcAC(store.get());
@@ -349,20 +349,20 @@ function autoAC() {
 // == Events ===================================================
 
 function bindEvents(el) {
-  // Aufklappen der Item-Zeilen (Ausrüstung & Gegenstände)
+  // expanding item rows (equipment & items)
   el.querySelectorAll('.panel').forEach(p => p.addEventListener('click', toggleExpand));
 
-  // Währung
+  // currency
   el.querySelectorAll('[data-cur]').forEach(inp => {
     inp.onchange = () => store.update({
       currency: { ...store.field('currency'), [inp.dataset.cur]: Math.max(0, +inp.value || 0) } });
   });
 
-  // Electrum ein-/ausblenden
+  // show/hide electrum
   const elec = el.querySelector('#invElectrum');
   if (elec) elec.onchange = () => { setElectrum(elec.checked); render(); };
 
-  // Gold-Rechner: bezahlen (−) / einnehmen (+)
+  // gold calculator: pay (−) / receive (+)
   const amtEl = el.querySelector('#invCalcAmt');
   const curEl = el.querySelector('#invCalcCur');
   el.querySelector('#invPay').onclick = () => {
@@ -382,13 +382,13 @@ function bindEvents(el) {
     bus.emit(EV.TOAST, { message: `+ ${amt} ${curEl.value.toUpperCase()}` });
   };
 
-  // Item-Zeilen (Ausrüsten-Häkchen verschiebt zwischen den Bereichen)
+  // item rows (equip checkbox moves items between the areas)
   el.querySelectorAll('[data-inv-eq]').forEach(cb => {
     cb.onchange = () => {
       const items = store.field('items');
       items[+cb.dataset.invEq].equipped = cb.checked;
       store.update({ items });
-      autoAC(); // RK folgt der getragenen Rüstung
+      autoAC(); // AC follows the worn armor
     };
   });
   el.querySelectorAll('[data-inv-qty]').forEach(inp => {
@@ -407,7 +407,7 @@ function bindEvents(el) {
     };
   });
 
-  // Manuell hinzufügen
+  // add manually
   el.querySelector('#invAdd').onclick = () => {
     const name = el.querySelector('#invName').value.trim();
     if (!name) return;
@@ -416,13 +416,13 @@ function bindEvents(el) {
     }]});
   };
 
-  // Bibliothek öffnen: sofort ALLE Items laden (Filter leer)
+  // open library: immediately load ALL items (filter empty)
   const libOv = el.querySelector('#invLibOverlay');
   el.querySelector('#invLibrary').onclick  = () => { libOv.style.display = 'flex'; renderLibrary(); };
   el.querySelector('#invLibClose').onclick = () => libOv.style.display = 'none';
   libOv.onclick = e => { if (e.target === libOv) libOv.style.display = 'none'; };
 
-  // Filter: Suche, Magie, Seltenheit
+  // filters: search, magic, rarity
   ['invLibSearch', 'invLibMagic', 'invLibRarity'].forEach(id => {
     el.querySelector('#' + id).oninput = renderLibrary;
   });
@@ -433,7 +433,7 @@ function bindEvents(el) {
   el.querySelector('#invHbClose').onclick  = () => hbOv.style.display = 'none';
   hbOv.onclick = e => { if (e.target === hbOv) hbOv.style.display = 'none'; };
 
-  // Typ-abhängige Felder ein-/ausblenden
+  // show/hide type-dependent fields
   const hbType = el.querySelector('#hbItType');
   const wpnFields = el.querySelector('#hbWeaponFields');
   const armFields = el.querySelector('#hbArmorFields');
@@ -456,24 +456,24 @@ function bindEvents(el) {
       value: (+el.querySelector('#hbItValue').value || 0) * 100, // gp → cp
       description: el.querySelector('#hbItDesc').value.trim(),
       source: 'HB', rarity: 'none', magic: false,
-      // magische Boni (alle Typen)
+      // magic bonuses (all types)
       bonusSave: num('#hbItBonusSave') || null,
       bonusAc: num('#hbItBonusAc') || null,
     };
     if (kind === 'weapon') {
       entry.dmg1 = el.querySelector('#hbItDmg').value.trim() || null;
       entry.dmgType = el.querySelector('#hbItDmgType').value;
-      entry.atkBonus = num('#hbItAtkBonus');   // fester Angriffsbonus
-      entry.dmgBonus = num('#hbItDmgBonus');    // fester Schadensbonus
+      entry.atkBonus = num('#hbItAtkBonus');   // fixed attack bonus
+      entry.dmgBonus = num('#hbItDmgBonus');    // fixed damage bonus
       entry.property = el.querySelector('#hbItProps').value.trim()
         .split(',').map(x => x.trim()).filter(Boolean);
-      entry.type = 'M'; // Nahkampfwaffe (Standard)
+      entry.type = 'M'; // melee weapon (default)
       entry.weaponCategory = 'martial';
     } else if (kind === 'armor') {
       entry.type = el.querySelector('#hbItAcType').value; // LA/MA/HA/S
       entry.ac = +el.querySelector('#hbItAc').value || 10;
     } else {
-      entry.type = 'G'; // Gegenstand
+      entry.type = 'G'; // gear
     }
 
     repo.addHomebrew('items', entry);

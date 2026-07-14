@@ -1,7 +1,7 @@
 // ============================================================
-// components/HeaderPanel.js, Charakterkopf
-// Zeigt Name, Volk, Hintergrund + Multiclass-Zusammenfassung
-// ("Paladin 5 / Warlock 1") sowie Kern-Badges.
+// components/HeaderPanel.js, character header
+// Shows name, race, background + multiclass summary
+// ("Paladin 5 / Warlock 1") as well as core badges.
 // ============================================================
 import { store }   from '../core/Store.js';
 import { repo }    from '../core/DataRepository.js';
@@ -12,7 +12,7 @@ import { raceBonusFor, bgBonusFor, raceEntry, bgEntry } from '../rules/bonuses.j
 
 export function mountHeader() {
   render();
-  // Bei "leisen" Updates (Texteingabe) nicht neu rendern → Fokus bleibt erhalten
+  // don't re-render on "quiet" updates (text input) → focus is preserved
   bus.on(EV.CHAR_CHANGED, () => { if (!quiet) render(); });
   bus.on(EV.LANG_CHANGED, () => render());
   bus.on(EV.SOURCES_CHANGED, () => render());
@@ -77,7 +77,7 @@ function render() {
     </div>
   </div>`;
 
-  // Events (nach jedem Render neu binden, da innerHTML ersetzt)
+  // events (re-bind after every render, since innerHTML is replaced)
   el.querySelector('#hdName').oninput        = e => quietUpdate({ name: e.target.value });
   el.querySelector('#hdRace').onchange       = e => store.update({
     race: e.target.value, raceChoice: null,
@@ -91,10 +91,10 @@ function render() {
   bindChoicePicker(el, 'bg', bgEntry(s.background));
 }
 
-// == Attributswahl (Rasse/Hintergrund mit "choose"-Boni) =====
-// Zeigt Varianten-Auswahl (z. B. "+2/+1" vs. "+1/+1/+1") und je
-// Bonus ein Attribut-Dropdown. Die Wahl wird am Charakter gespeichert
-// und fließt über raceBonus/bgBonus in die effektiven Werte ein.
+// == Ability choice (race/background with "choose" bonuses) ===
+// Shows a variant selector (e.g. "+2/+1" vs. "+1/+1/+1") and, per
+// bonus, an ability dropdown. The choice is saved on the character
+// and feeds into the effective values via raceBonus/bgBonus.
 
 function renderChoicePicker(kind, entry, choice) {
   const variants = entry?.abilityChoose;
@@ -149,7 +149,7 @@ function bindChoicePicker(el, kind, entry) {
   };
   box.querySelectorAll(`input[name="${kind}Variant"]`).forEach(r => {
     r.onchange = () => {
-      // Variantenwechsel: Picks zurücksetzen (andere Anzahl Boni)
+      // variant change: reset picks (different number of bonuses)
       const variant = +r.value;
       const choice = { variant, picks: [] };
       const bonus = kind === 'race'
@@ -163,7 +163,7 @@ function bindChoicePicker(el, kind, entry) {
   box.querySelectorAll('[data-choice-pick]').forEach(sel => { sel.onchange = apply; });
 }
 
-// Bei Texteingaben nicht sofort neu rendern (Fokus-Verlust vermeiden)
+// don't re-render immediately on text input (avoid losing focus)
 let quiet = false;
 function quietUpdate(patch) {
   quiet = true;

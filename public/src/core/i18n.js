@@ -1,7 +1,7 @@
 // ============================================================
-// core/i18n.js, Mehrsprachigkeit (Deutsch / Englisch)
-// Verwendung:  t('abilities.str')  →  "Stärke" | "Strength"
-// Sprache wird in localStorage persistiert.
+// core/i18n.js, multilingual support (German / English)
+// Usage:  t('abilities.str')  →  "Stärke" | "Strength"
+// Language is persisted in localStorage.
 // ============================================================
 import { bus, EV } from './EventBus.js';
 
@@ -349,7 +349,7 @@ const DICT = {
 
 let currentLang = localStorage.getItem('dnd5e_lang') ?? 'de';
 
-/** Übersetzung abrufen: t('spells.cast') */
+/** Get a translation: t('spells.cast') */
 export function t(path) {
   const parts = path.split('.');
   let node = DICT[currentLang];

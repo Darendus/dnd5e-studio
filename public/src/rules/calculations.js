@@ -1,10 +1,10 @@
 // ============================================================
-// rules/calculations.js, D&D 5e Regelberechnungen
-// Reine Funktionen ohne Seiteneffekte, inkl. Multiclassing.
+// rules/calculations.js, D&D 5e rules calculations
+// Pure functions without side effects, incl. multiclassing.
 // ============================================================
 import { repo } from '../core/DataRepository.js';
 
-// == Basis ====================================================
+// == Basics ===================================================
 
 export const calcMod       = score => Math.floor(((score ?? 10) - 10) / 2);
 export const calcProfBonus = level => Math.ceil((level ?? 1) / 4) + 1;
@@ -14,7 +14,7 @@ export function calcSkillBonus(attrMod, prof, expert, pb) {
   return attrMod + (expert ? pb * 2 : prof ? pb : 0);
 }
 
-// == Fertigkeiten-Definitionen (IDs sind i18n-Schlüssel) =====
+// == Skill definitions (IDs are i18n keys) ===================
 export const SKILL_DEFS = [
   { id: 'acrobatics', attr: 'dex' },   { id: 'animal', attr: 'wis' },
   { id: 'arcana', attr: 'int' },       { id: 'athletics', attr: 'str' },
@@ -29,30 +29,30 @@ export const SKILL_DEFS = [
 
 export const ABILITY_IDS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 
-// == Effektive Attribute (Basis + angelegte Items) ============
-// Angelegte Gegenstände verändern Attribute dynamisch:
-//  • static (z. B. Belt of Storm Giant Strength → STR 29):
-//    Wert wird GESETZT, aber nur wenn er höher ist (RAW)
-//  • add (z. B. Belt of Dwarvenkind → KON +2): wird ADDIERT (Kappe 30)
-// Rückgabe enthält zusätzlich, WELCHES Item welches Attribut ändert,
-// damit die Oberfläche es farblich hervorheben kann.
+// == Effective abilities (base + equipped items) ==============
+// Equipped items change abilities dynamically:
+//  • static (e.g. Belt of Storm Giant Strength → STR 29):
+//    value is SET, but only if it is higher (RAW)
+//  • add (e.g. Belt of Dwarvenkind → CON +2): is ADDED (capped at 30)
+// The return value additionally contains WHICH item changes which
+// ability, so the UI can highlight it in color.
 
 /**
- * @param {object} state, Charakterzustand (mit items[])
+ * @param {object} state, character state (with items[])
  * @returns {{ scores: object, sources: object }}
- *   scores  = effektive Werte je Attribut
- *   sources = { attr: [Itemnamen] } nur für tatsächlich geänderte Attribute
+ *   scores  = effective value per ability
+ *   sources = { attr: [item names] } only for actually changed abilities
  */
 export function effectiveAbilities(state) {
   const scores  = {};
   ABILITY_IDS.forEach(a => scores[a] = state[a] ?? 10);
   const sources = {};
 
-  // == Rasse / Hintergrund / Talente ==
-  // Diese Boni werden ADDITIV auf die Basiswerte gerechnet und
-  // liegen als feste Bonus-Objekte am Charakter (beim Setzen von
-  // Rasse/Hintergrund/Talent befüllt). Das hält die Basiswerte
-  // editierbar und die Verrechnung transparent.
+  // == Race / background / feats ==
+  // These bonuses are calculated ADDITIVELY on top of the base values
+  // and live as fixed bonus objects on the character (populated when
+  // setting race/background/feat). This keeps the base values
+  // editable and the calculation transparent.
   const applyBonus = (obj, label) => {
     for (const [attr, val] of Object.entries(obj ?? {})) {
       if (ABILITY_IDS.includes(attr) && val) {
@@ -65,10 +65,10 @@ export function effectiveAbilities(state) {
   applyBonus(state.bgBonus,    'Background');
   applyBonus(state.featBonus,  'Feat');
 
-  // == Wildgestalt (Druide) ==
-  // In Tierform übernimmt der Charakter STÄ/GES/KON des Tiers,
-  // behält aber INT/WEI/CHA. Ausrüstung verschmilzt mit der Form
-  // und wirkt nicht (RAW) → Item-Effekte werden übersprungen.
+  // == Wild shape (druid) ==
+  // In beast form the character takes on the beast's STR/DEX/CON,
+  // but keeps INT/WIS/CHA. Equipment merges with the form and has
+  // no effect (RAW) → item effects are skipped.
   if (state.wildshape?.form) {
     const beast = repo.findBeast(state.wildshape.form);
     if (beast) {
@@ -83,7 +83,7 @@ export function effectiveAbilities(state) {
   }
 
   for (const it of state.items ?? []) {
-    if (!it.equipped) continue;                 // nur ANGELEGTE Items wirken
+    if (!it.equipped) continue;                 // only EQUIPPED items take effect
     const lib = repo.findItem(it.name);
     const ab  = lib?.ability;
     if (!ab) continue;
@@ -108,17 +108,17 @@ export function effectiveAbilities(state) {
   return { scores, sources };
 }
 
-/** Kurzform: effektiver Modifikator eines Attributs */
+/** Shorthand: effective modifier of an ability */
 export function effMod(state, attr) {
   return calcMod(effectiveAbilities(state).scores[attr]);
 }
 
-// == Waffenangriffe (aus angelegten Items) ====================
-// Angriffsbonus = Übungsbonus + Attributsmodifikator:
-//  • Fernkampfwaffe (type R) → GES
-//  • Finesse (property F)    → das Bessere aus STÄ/GES
-//  • sonst (Nahkampf)        → STÄ
-// Es werden die EFFEKTIVEN Attribute genutzt (Items zählen mit).
+// == Weapon attacks (from equipped items) ======================
+// Attack bonus = proficiency bonus + ability modifier:
+//  • ranged weapon (type R) → DEX
+//  • finesse (property F)   → the better of STR/DEX
+//  • otherwise (melee)      → STR
+// The EFFECTIVE abilities are used (items count too).
 
 export function weaponAttack(state, libItem) {
   const { scores } = effectiveAbilities(state);
@@ -130,7 +130,7 @@ export function weaponAttack(state, libItem) {
             : strM;
   const pb = calcProfBonus(
     (state.classes ?? []).reduce((s, c) => s + (+c.level || 0), 0) || 1);
-  // Feste magische Boni (z. B. +1-Waffe oder Homebrew-Werte)
+  // fixed magical bonuses (e.g. +1 weapon or homebrew values)
   const atkFlat = libItem?.atkBonus ?? 0;
   const dmgFlat = libItem?.dmgBonus ?? 0;
   return {
@@ -140,12 +140,12 @@ export function weaponAttack(state, libItem) {
   };
 }
 
-// == Multiclass-Zauberplätze ==================================
-// Nach PHB-Multiclassing-Regeln:
-//  full caster  → volle Stufe          (Bard, Cleric, Druid, Sorcerer, Wizard)
-//  1/2 caster   → Stufe / 2 abgerundet (Paladin, Ranger)
-//  1/3 caster   → Stufe / 3 abgerundet (Eldritch Knight, Arcane Trickster)
-//  pact (Warlock) → eigene Pakt-Slots, zählt NICHT zur Tabelle
+// == Multiclass spell slots ====================================
+// Per PHB multiclassing rules:
+//  full caster  → full level            (Bard, Cleric, Druid, Sorcerer, Wizard)
+//  1/2 caster   → level / 2 rounded down (Paladin, Ranger)
+//  1/3 caster   → level / 3 rounded down (Eldritch Knight, Arcane Trickster)
+//  pact (Warlock) → own pact slots, does NOT count toward the table
 // ------------------------------------------------------------
 
 const SLOT_TABLE = {
@@ -158,18 +158,18 @@ const SLOT_TABLE = {
   19:[4,3,3,3,3,2,1,1,1],20:[4,3,3,3,3,2,2,1,1],
 };
 
-// Warlock-Pakt-Slots: [Anzahl, Slot-Grad] je Warlock-Stufe
+// Warlock pact slots: [count, slot level] per warlock level
 const PACT_TABLE = {
   1:[1,1], 2:[2,1], 3:[2,2], 4:[2,2], 5:[2,3], 6:[2,3], 7:[2,4], 8:[2,4],
   9:[2,5], 10:[2,5], 11:[3,5], 12:[3,5], 13:[3,5], 14:[3,5], 15:[3,5],
   16:[3,5], 17:[4,5], 18:[4,5], 19:[4,5], 20:[4,5],
 };
 
-/** Progression einer Klasse ermitteln (aus Repo-Daten oder Fallback) */
+/** Determine a class's progression (from repo data or fallback) */
 function casterProgression(className) {
   const cls = repo.getClass(className);
   if (cls?.casterProgression) return cls.casterProgression;
-  // Fallback nach Klassenname (deckt Seed + Englisch ab)
+  // fallback by class name (covers seed + English)
   const FULL = ['Bard','Cleric','Druid','Sorcerer','Wizard','Barde','Kleriker','Druide','Zauberer','Magier'];
   const HALF = ['Paladin','Ranger'];
   const PACT = ['Warlock','Hexenmeister'];
@@ -180,7 +180,7 @@ function casterProgression(className) {
 }
 
 /**
- * Zauberplätze für einen Multiclass-Charakter.
+ * Spell slots for a multiclass character.
  * @param {Array<{name,level,subclass}>} classes
  * @returns {{ slots:number[], pact:{count,level}|null, casterLevel:number }}
  */
@@ -188,10 +188,10 @@ export function calcSpellSlots(classes) {
   let casterLevel = 0;
   let pact = null;
 
-  // Rundungsregel: EINZELKLASSE nutzt die eigene Klassentabelle,
-  // die dem AUFrunden entspricht (Paladin 5 = Casterstufe 3 = 4/2).
-  // Erst die Multiclass-Regel (PHB Kap. 6) rundet AB. Stufe 1 der
-  // Halbcaster und Stufen 1-2 der Drittelcaster geben nie Slots.
+  // Rounding rule: a SINGLE CLASS uses its own class table, which
+  // corresponds to rounding UP (Paladin 5 = caster level 3 = 4/2).
+  // Only the multiclass rule (PHB ch. 6) rounds DOWN. Level 1 of
+  // half casters and levels 1-2 of third casters never grant slots.
   const single = classes.length === 1;
   const half  = lvl => single ? (lvl < 2 ? 0 : Math.ceil(lvl / 2)) : Math.floor(lvl / 2);
   const third = lvl => single ? (lvl < 3 ? 0 : Math.ceil(lvl / 3)) : Math.floor(lvl / 3);
@@ -206,15 +206,15 @@ export function calcSpellSlots(classes) {
       const wl = Math.min(20, lvl);
       const p = PACT_TABLE[wl];
       if (p) pact = { count: p[0], level: p[1] };
-      // Mystisches Arkanum: je ein Wirken von Grad 6/7/8/9 ab
-      // Warlock-Stufe 11/13/15/17 (beide Editionen identisch)
+      // Mystic Arcanum: one casting each of level 6/7/8/9 from
+      // warlock level 11/13/15/17 (identical in both editions)
       if (pact) {
         pact.arcanum = [[11, 6], [13, 7], [15, 8], [17, 9]]
           .filter(([minLvl]) => wl >= minLvl)
           .map(([, grade]) => grade);
       }
     }
-    // Unterklassen-Caster (Eldritch Knight / Arcane Trickster)
+    // subclass casters (Eldritch Knight / Arcane Trickster)
     if (!prog && /eldritch knight|arcane trickster/i.test(c.subclass ?? '')) {
       casterLevel += third(lvl);
     }
@@ -229,9 +229,9 @@ export function calcSpellSlots(classes) {
 }
 
 /**
- * Primäre Zauberfähigkeit: Nimmt die der ersten zaubernden Klasse.
- * (Bei echtem Multiclassing hat jede Klasse ihre eigene, wir zeigen
- *  die wichtigste an; Würfe pro Zauber nutzen die Klassenzuordnung.)
+ * Primary spellcasting ability: takes that of the first casting class.
+ * (With true multiclassing each class has its own; we display the
+ *  most important one; rolls per spell use the class assignment.)
  */
 export function primarySpellAbility(classes) {
   for (const c of classes) {
@@ -241,14 +241,14 @@ export function primarySpellAbility(classes) {
   return null;
 }
 
-/** Trefferwürfel-Zusammenfassung: "5d10 + 1d8" bei Multiclassing */
+/** Hit dice summary: "5d10 + 1d8" for multiclassing */
 /**
- * Rüstungsklasse aus getragener Rüstung + Schild + GES:
- *  LA = RK + GES, MA = RK + min(GES,2), HA = fix; +2 (oder mehr) pro Schild.
- *  Magische Rüstungen/Schilde bringen ihren bonusAc in den eigenen RK-Wert
- *  ein (z. B. Dwarven Plate: 18 + 2 = 20). Ohne Rüstung: 10 + GES.
- *  Flache Boni von NICHT-Rüstungsgegenständen (Ring/Cloak of Protection)
- *  werden separat über itemBonuses(state).ac addiert.
+ * Armor class from worn armor + shield + DEX:
+ *  light armor = AC + DEX, medium armor = AC + min(DEX,2), heavy armor = fixed;
+ *  +2 (or more) per shield. Magic armor/shields fold their bonusAc into
+ *  their own AC value (e.g. Dwarven Plate: 18 + 2 = 20). Without armor: 10 + DEX.
+ *  Flat bonuses from NON-armor items (Ring/Cloak of Protection) are added
+ *  separately via itemBonuses(state).ac.
  */
 export function calcAC(state) {
   const dexMod = calcMod(effectiveAbilities(state).scores.dex);
@@ -258,17 +258,17 @@ export function calcAC(state) {
     if (!it.equipped) continue;
     const lib = repo.findItem(it.name);
     if (!lib?.ac) continue;
-    // bonusAc einer magischen Rüstung/eines Schilds zählt zu DEREN RK
+    // bonusAc of a magic armor/shield counts toward ITS OWN AC
     const bonus = lib.bonusAc ?? 0;
-    if (lib.type === 'S') { shield += lib.ac + bonus; continue; } // Schild-Basis meist 2
+    if (lib.type === 'S') { shield += lib.ac + bonus; continue; } // shield base usually 2
     base = lib.type === 'LA' ? lib.ac + dexMod + bonus
          : lib.type === 'MA' ? lib.ac + Math.min(dexMod, 2) + bonus
-         : lib.ac + bonus; // HA und alles andere: fester Wert + Bonus
+         : lib.ac + bonus; // heavy armor and everything else: fixed value + bonus
   }
   return base + shield + (itemBonuses(state).ac || 0);
 }
 
-/** Summe der mechanischen Feat-Effekte des Charakters */
+/** Sum of the character's mechanical feat effects */
 export function featEffects(state) {
   const out = { speed: 0, initiative: 0, hpPerLevel: 0, hpFlat: 0, carryFactor: 1, initiativeProf: false };
   for (const name of state.feats ?? []) {
@@ -284,12 +284,12 @@ export function featEffects(state) {
   return out;
 }
 
-/** Effektive Geschwindigkeit (Basis + Feat-Boni) */
+/** Effective speed (base + feat bonuses) */
 export function effectiveSpeed(state) {
   return (state.speed ?? 30) + featEffects(state).speed;
 }
 
-/** Initiative-Bonus: GES-Mod + evtl. Feat-Bonus/Übungsbonus (Alert) */
+/** Initiative bonus: DEX mod + possible feat bonus/proficiency bonus (Alert) */
 export function effectiveInitiative(state) {
   const dexMod = calcMod(effectiveAbilities(state).scores.dex);
   const fe = featEffects(state);
@@ -297,26 +297,26 @@ export function effectiveInitiative(state) {
   return dexMod + fe.initiative + (fe.initiativeProf ? pb : 0);
 }
 
-/** Traglast in lbs: STÄ × 15 × evtl. Faktor aus Feats */
+/** Carrying capacity in lbs: STR × 15 × possible factor from feats */
 export function carryCapacity(state) {
   const str = effectiveAbilities(state).scores.str;
   return str * 15 * featEffects(state).carryFactor;
 }
 
-/** Summe FLACHER Boni angelegter Items, die KEINE Rüstung/Schild sind
- *  (Ring/Cloak of Protection u. Ä.). Der bonusAc von Rüstungen/Schilden
- *  wird bereits in calcAC in deren eigenen RK-Wert eingerechnet und darf
- *  hier NICHT noch einmal zählen (sonst Doppelzählung, z. B. Dwarven Plate). */
+/** Sum of FLAT bonuses of equipped items that are NOT armor/shield
+ *  (Ring/Cloak of Protection and similar). The bonusAc of armor/shields
+ *  is already folded into their own AC value in calcAC and must NOT be
+ *  counted again here (otherwise double counting, e.g. Dwarven Plate). */
 export function itemBonuses(state) {
   const out = { save: 0, ac: 0, spellDc: 0, spellAtk: 0 };
-  if (state.wildshape?.form) return out; // Ausrüstung wirkt in Tierform nicht
+  if (state.wildshape?.form) return out; // equipment has no effect in beast form
   for (const it of state.items ?? []) {
     if (!it.equipped) continue;
     const lib = repo.findItem(it.name);
     if (!lib) continue;
-    const isArmorOrShield = lib.ac != null; // hat einen eigenen RK-Wert
+    const isArmorOrShield = lib.ac != null; // has its own AC value
     out.save     += lib.bonusSave     ?? 0;
-    if (!isArmorOrShield) out.ac += lib.bonusAc ?? 0; // nur Ringe/Umhänge etc.
+    if (!isArmorOrShield) out.ac += lib.bonusAc ?? 0; // rings/cloaks etc. only
     out.spellDc  += lib.bonusSpellDc  ?? 0;
     out.spellAtk += lib.bonusSpellAtk ?? 0;
   }
@@ -333,11 +333,11 @@ export function hitDiceSummary(classes) {
 }
 
 /**
- * Maximale TP nach Durchschnittsregel (PHB):
- *  • Stufe 1 der ersten Klasse: volles Trefferwürfel-Maximum
- *  • jede weitere Stufe: Durchschnitt (Würfel/2 + 1)
- *  • + KON-Mod je Charakterstufe (effektive KON inkl. Boni)
- * Zusätzlich: das Talent "Tough" gibt +2 TP pro Stufe.
+ * Maximum HP per the average rule (PHB):
+ *  • level 1 of the first class: full hit die maximum
+ *  • every further level: average (die/2 + 1)
+ *  • + CON mod per character level (effective CON incl. bonuses)
+ * Additionally: the "Tough" feat grants +2 HP per level.
  */
 export function calcMaxHP(state) {
   const classes = state.classes ?? [];
@@ -350,16 +350,16 @@ export function calcMaxHP(state) {
     const die = +(repo.getClass(c.name)?.hitDie?.slice(1) ?? 8);
     const avg = Math.floor(die / 2) + 1;
     for (let l = 0; l < (+c.level || 0); l++) {
-      // allererste Charakterstufe → Maximum, sonst Durchschnitt
+      // very first character level → maximum, otherwise average
       hp += (ci === 0 && l === 0) ? die : avg;
       levelsCounted++;
     }
   });
   hp += conMod * levelsCounted;
-  // Talente mit TP-Bonus pro Stufe (z. B. Tough: +2/Stufe)
+  // feats with an HP bonus per level (e.g. Tough: +2/level)
   const fe = featEffects(state);
   hp += fe.hpPerLevel * total;
-  // Feste TP-Boni aus Talenten (z. B. Boon of Fortitude: +40)
+  // fixed HP bonuses from feats (e.g. Boon of Fortitude: +40)
   hp += fe.hpFlat;
   return Math.max(1, hp);
 }
