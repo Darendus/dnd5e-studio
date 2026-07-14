@@ -1,6 +1,6 @@
 {
   "name": "dnd5e-studio",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "description": "Lokaler D&D 5e Charaktereditor & Generator mit 5e.tools-Datenanbindung",
   "type": "module",
   "scripts": {

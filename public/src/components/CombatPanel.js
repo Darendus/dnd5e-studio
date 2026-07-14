@@ -11,6 +11,7 @@ import { repo } from '../core/DataRepository.js';
 import { askRollMode } from './RollPrompt.js';
 import { formatSpeed } from '../rules/wildshape.js';
 import { d20, parseAndRoll, describeParts } from '../rules/dice.js';
+import { getHpMethod } from '../core/hpSettings.js';
 
 export function mountCombat() {
   render();
@@ -319,7 +320,7 @@ function bindEvents(el, s) {
     bus.emit(EV.TOAST, { message: t('combat.longRestDone') });
   };
   el.querySelector('#cbRecalcHP').onclick = () => {
-    const newMax = calcMaxHP(store.get());
+    const newMax = calcMaxHP(store.get(), getHpMethod());
     const wasFull = store.field('currHP') >= store.field('maxHP');
     store.update({ maxHP: newMax, currHP: wasFull ? newMax : Math.min(store.field('currHP'), newMax) });
     bus.emit(EV.TOAST, { message: `${t('combat.maxHP')}: ${newMax}` });

@@ -76,6 +76,10 @@ export function blankCharacter() {
     // level at which each feat was chosen (parallel to feats;
     // relevant for level-based feats and the level-up history)
     featLevels: [],
+    // chosen spell-list class for feats that grant spells from one of
+    // several lists (e.g. Magic Initiate), parallel to feats; entries
+    // are { class: 'wizard' } or null for feats with no such choice
+    featChoices: [],
     // chosen distribution of freely assignable bonuses: { variant, picks: [attr,…] }
     raceChoice: null, bgChoice: null,
     // free text for the PDF sheet (pages 1 & 2)

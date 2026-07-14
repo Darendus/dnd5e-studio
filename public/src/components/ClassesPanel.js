@@ -13,6 +13,9 @@ import { calcSpellSlots, hitDiceSummary, calcMaxHP, calcMod, effectiveAbilities,
          featEffects, ABILITY_IDS } from '../rules/calculations.js';
 import { featBonusFor } from '../rules/bonuses.js';
 import { asiLevels, subclassEntryLevel } from '../rules/progression.js';
+import { pickFeatSpellClass } from './FeatSpellChoice.js';
+import { getHpMethod } from '../core/hpSettings.js';
+import { toggleExpand } from './InventoryPanel.js';
 
 export function mountClasses() {
   render();
@@ -23,11 +26,54 @@ export function mountClasses() {
   bus.on(EV.SOURCES_CHANGED, render);
 }
 
+// == Class/subclass features and per-level progression =======
+// Combat abilities like Sneak Attack, Rage, Bardic Inspiration, etc.
+// come straight from the ruleset's class feature text, plus any
+// numeric/dice scaling table the class defines (e.g. Sneak Attack's
+// die count by level), sourced by tools/updater.js from the same
+// 5etools class file used for everything else about the class.
+
+/** { label: display value } for a class's progression columns at `level` */
+function progressionAt(classData, level) {
+  const out = {};
+  for (const [label, values] of Object.entries(classData?.progressionTable ?? {})) {
+    const v = values[level - 1];
+    if (v) out[label] = v;
+  }
+  return out;
+}
+
+/** All base-class + subclass features unlocked so far, across every
+ *  class the character has, sorted by level then name. */
+function unlockedFeatures(s) {
+  const rows = [];
+  for (const c of s.classes ?? []) {
+    const level = +c.level || 0;
+    const data = repo.getClass(c.name);
+    for (const f of data?.features ?? []) {
+      if (f.level <= level) rows.push({ ...f, cls: c.name });
+    }
+    if (c.subclass) {
+      const sub = data?.subclasses?.find(sc => sc.name === c.subclass);
+      for (const f of sub?.features ?? []) {
+        if (f.level <= level) rows.push({ ...f, cls: `${c.name} (${c.subclass})` });
+      }
+    }
+  }
+  return rows.sort((a, b) => a.level - b.level || a.name.localeCompare(b.name));
+}
+
 function render() {
   const el = document.getElementById('tab-classes');
   const s  = store.get();
   const allClasses = dedupeByName(repo.getClasses());
   const { casterLevel, pact } = calcSpellSlots(s.classes);
+
+  const progressionRows = s.classes.flatMap(c => {
+    const entries = Object.entries(progressionAt(repo.getClass(c.name), +c.level || 0));
+    return entries.map(([label, val]) => ({ label, val, cls: c.name }));
+  });
+  const features = unlockedFeatures(s);
 
   el.innerHTML = `
   <div class="panel">
@@ -81,10 +127,38 @@ function render() {
         <span class="stat-box__lbl">Pact Slots (Warlock)</span>
       </div>` : ''}
     </div>
+  </div>
+
+  ${progressionRows.length ? `
+  <div class="panel">
+    <div class="panel__title">${t('classes.progression')}</div>
+    <div class="stat-row">
+      ${progressionRows.map(r => `
+        <div class="stat-box">
+          <span class="stat-box__val">${r.val}</span>
+          <span class="stat-box__lbl">${r.label}${s.classes.length > 1 ? ` (${r.cls})` : ''}</span>
+        </div>`).join('')}
+    </div>
+  </div>` : ''}
+
+  <div class="panel">
+    <div class="panel__title">${t('classes.features')}</div>
+    <div id="clsFeatureList">
+      ${features.map(f => `
+        <div class="lib-entry lib-entry--expandable" data-expand>
+          <div class="lib-entry__top">
+            <span class="lib-entry__name"><b>${f.name}</b></span>
+            <span class="tag" title="${t('feats.takenAt')}">${t('app.level')} ${f.level}</span>
+            <span class="tag tag--src">${f.cls}</span>
+          </div>
+          <div class="lib-entry__desc">${f.text}</div>
+        </div>`).join('') || `<p class="panel__hint">-</p>`}
+    </div>
   </div>`;
 
   // == Events ==
   el.querySelector('#clsAdd').onclick = () => store.addClass(allClasses[0]?.name ?? 'Fighter');
+  el.querySelector('#clsFeatureList')?.addEventListener('click', toggleExpand);
 
   el.querySelectorAll('[data-cls-name]').forEach(sel => {
     sel.onchange = () => {
@@ -184,8 +258,12 @@ function showLevelUp(idx) {
   const oldMax = maxLvOf(s.classes), newMax = maxLvOf(newClasses);
   const isCaster = !!cls?.spellAbility;
   const known = new Set((s.spells ?? []).map(sp => sp.name.toLowerCase()));
+  // Feat-granted spells (Magic Initiate etc.) aren't level/slot-based, so
+  // they aren't offered here even for a caster; that's handled through the
+  // Spells tab's Library once the feat's class choice is picked.
+  const featSpellEntries = (s.feats ?? []).map((name, i) => ({ name, choice: (s.featChoices ?? [])[i] ?? null }));
   const learnable = isCaster
-    ? repo.getSpellsForClasses(newClasses, s.feats)
+    ? repo.getSpellsForClasses(newClasses, featSpellEntries)
         .filter(sp => sp.level > 0 && sp.level <= newMax && !known.has(sp.name.toLowerCase()))
         .sort((a, b) => a.level - b.level || a.name.localeCompare(b.name))
     : [];
@@ -304,19 +382,19 @@ function showLevelUp(idx) {
   dlg.onclick = e => { if (e.target === dlg) dlg.remove(); };
 
   // == Apply ==
-  q('#luApply').onclick = () => {
-    // 1) HP gain (min. 1)
+  q('#luApply').onclick = async () => {
+    // HP gain (min. 1)
     const useRoll = dlg.querySelector('input[name="luHp"]:checked')?.value === 'roll';
     if (useRoll && rolled == null) { q('#luRollBtn').click(); }
     const gain = Math.max(1, (useRoll ? rolled : avg) + conMod + perLvl);
 
-    // 2) level (+ subclass if applicable)
+    // level (+ subclass if applicable)
     const patch = { level: newLevel };
     const pickedSub = q('#luSub')?.value || null;
     if (pickedSub) patch.subclass = pickedSub;
     store.updateClass(idx, patch);
 
-    // 3) apply HP (current HP grows along)
+    // apply HP (current HP grows along)
     store.update({
       maxHP: store.field('maxHP') + gain,
       currHP: store.field('currHP') + gain,
@@ -325,7 +403,7 @@ function showLevelUp(idx) {
 
     const summary = [`+${gain} ${t('combat.maxHP')}`];
 
-    // 4) ASI: abilities or feat
+    // ASI: abilities or feat
     if (isASI) {
       const mode = dlg.querySelector('input[name="luAsi"]:checked')?.value;
       if (mode === 'attr') {
@@ -348,22 +426,30 @@ function showLevelUp(idx) {
       } else {
         const featName = q('#luFeat').value;
         if (featName) {
-          const feats = [...(store.field('feats') ?? []), featName];
-          const featLevels = [...(store.field('featLevels') ?? []), newLevel];
-          store.update({ feats, featLevels, featBonus: featBonusFor(feats) });
-          // apply fixed/per-level HP bonuses of the NEW feat directly
-          const fx = repo.findFeat(featName)?.effects ?? {};
-          const featHp = (fx.hpFlat ?? 0) + (fx.hpPerLevel ?? 0) * store.totalLevel();
-          if (featHp) store.update({
-            maxHP: store.field('maxHP') + featHp,
-            currHP: store.field('currHP') + featHp,
-          });
-          summary.push(featName);
+          // some feats (Magic Initiate, ...) grant spells from one of
+          // several class lists; ask which one before adding
+          const feat = repo.findFeat(featName);
+          const options = repo.featSpellClassOptions(featName);
+          const picked = await pickFeatSpellClass(feat, options);
+          if (picked !== undefined) {
+            const feats = [...(store.field('feats') ?? []), featName];
+            const featLevels = [...(store.field('featLevels') ?? []), newLevel];
+            const featChoices = [...(store.field('featChoices') ?? []), picked ? { class: picked } : null];
+            store.update({ feats, featLevels, featChoices, featBonus: featBonusFor(feats) });
+            // apply fixed/per-level HP bonuses of the NEW feat directly
+            const fx = repo.findFeat(featName)?.effects ?? {};
+            const featHp = (fx.hpFlat ?? 0) + (fx.hpPerLevel ?? 0) * store.totalLevel();
+            if (featHp) store.update({
+              maxHP: store.field('maxHP') + featHp,
+              currHP: store.field('currHP') + featHp,
+            });
+            summary.push(featName);
+          }
         }
       }
     }
 
-    // 5) learn the chosen spells
+    // learn the chosen spells
     const picks = [...dlg.querySelectorAll('#luSpList input:checked')];
     if (picks.length) {
       const cur = store.field('spells') ?? [];
@@ -372,7 +458,7 @@ function showLevelUp(idx) {
       summary.push(`${picks.length} ${t('tabs.spells')}`);
     }
 
-    // 6) sync subclass spells of the new level
+    // sync subclass spells of the new level
     syncSubclassSpells();
 
     dlg.remove();
@@ -436,7 +522,7 @@ function syncSubclassSpells() {
  *  new maximum; otherwise only maxHP is adjusted (currHP capped). */
 function syncHP() {
   const s = store.get();
-  const newMax = calcMaxHP(s);
+  const newMax = calcMaxHP(s, getHpMethod());
   if (newMax === s.maxHP) return;
   const wasFull = s.currHP >= s.maxHP;
   store.update({

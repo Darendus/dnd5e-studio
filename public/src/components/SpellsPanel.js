@@ -18,6 +18,7 @@ import {
   calcMod, calcProfBonus, fmtMod, calcSpellSlots, ABILITY_IDS, effectiveAbilities,
 } from '../rules/calculations.js';
 import { d20, parseAndRoll, describeParts } from '../rules/dice.js';
+import { abilityForFeatClass } from '../rules/featCasting.js';
 
 export function mountSpells() {
   render();
@@ -30,14 +31,24 @@ export function mountSpells() {
   bus.on(EV.SOURCES_CHANGED, render);
 }
 
+/** feats + their chosen spell-list class, zipped from the parallel
+ *  feats/featChoices arrays (choice is null for feats without one) */
+function featEntries(s) {
+  return (s.feats ?? []).map((name, i) => ({ name, choice: (s.featChoices ?? [])[i] ?? null }));
+}
+
 // == Spellcasting stats per class ===============================
 // With multiclassing, each class has its own spellcasting ability.
 // For rolls we use the ability of the class that knows the
 // spell; the display at the top shows all spellcasting classes.
+// Feats that grant spells from a chosen class (e.g. Magic Initiate)
+// contribute their own stat entry too, keyed by that chosen class,
+// so a non-caster with such a feat still gets correct DC/attack
+// bonus instead of a flat fallback.
 function spellStats(s) {
   const pb = calcProfBonus(store.totalLevel());
   const eff = effectiveAbilities(s).scores;
-  return s.classes
+  const classStats = s.classes
     .map(c => ({ cls: c.name, data: repo.getClass(c.name) }))
     .filter(x => x.data?.spellAbility)
     .map(x => ({
@@ -47,6 +58,22 @@ function spellStats(s) {
       dc: 8 + pb + calcMod(eff[x.data.spellAbility]),
       atk: pb + calcMod(eff[x.data.spellAbility]),
     }));
+
+  const featStats = featEntries(s)
+    .filter(f => f.choice?.class)
+    .map(f => {
+      const cls = f.choice.class;
+      const ability = abilityForFeatClass(cls);
+      return {
+        cls: cls.charAt(0).toUpperCase() + cls.slice(1),
+        ability,
+        mod: calcMod(eff[ability]),
+        dc: 8 + pb + calcMod(eff[ability]),
+        atk: pb + calcMod(eff[ability]),
+      };
+    });
+
+  return [...classStats, ...featStats];
 }
 
 /** Best stats for a specific spell (class assignment) */
@@ -275,7 +302,7 @@ function renderLibrary(s) {
       ? s.classes.filter(c => c.name === clsFilter)
       : [clsFilter]
     : s.classes;
-  let entries = repo.getSpellsForClasses(classArg, s.feats);
+  let entries = repo.getSpellsForClasses(classArg, featEntries(s));
   if (lvFilter !== '') entries = entries.filter(sp => sp.level === +lvFilter);
   if (schFilter)       entries = entries.filter(sp => sp.school === schFilter);
   if (search)          entries = entries.filter(sp => sp.name.toLowerCase().includes(search));

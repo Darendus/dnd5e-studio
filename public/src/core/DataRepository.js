@@ -190,7 +190,11 @@ class DataRepository {
    *  classes may also be [{name, subclass}], in which case the
    *  EXCLUSIVE subclass spells (domains, patron lists, circles) are
    *  included in the selectable list even if they are not on the
-   *  general class list. */
+   *  general class list.
+   *  featNames entries may be plain strings (no restriction beyond the
+   *  feat's own filters) or { name, choice: { class } } objects — when a
+   *  feat offers several class lists to choose from (e.g. Magic Initiate)
+   *  and a class has been chosen, filters are narrowed to that one class. */
   getSpellsForClasses(classes, featNames = []) {
     const names = new Set();
     const extraNames = new Set(); // lowercase names from subclasses/feats
@@ -207,10 +211,16 @@ class DataRepository {
     // Feat-granted spells: concrete names + choice criteria
     // (e.g. Adept of the Black Robes: level 2 from enchantment/necromancy,
     // selectable even outside the own class list)
-    for (const fn of featNames ?? []) {
+    for (const entry of featNames ?? []) {
+      const fn = typeof entry === 'string' ? entry : entry.name;
+      const chosenClass = (typeof entry === 'object' ? entry.choice?.class : null)?.toLowerCase();
       const f = this.findFeat(fn);
       for (const n of f?.spells?.names ?? []) extraNames.add(n);
-      for (const fl of f?.spells?.filters ?? []) featFilters.push(fl);
+      for (const fl of f?.spells?.filters ?? []) {
+        // narrow a "pick one class list" feat to the class actually chosen
+        if (chosenClass && fl.classNames?.length && !fl.classNames.includes(chosenClass)) continue;
+        featFilters.push(fl);
+      }
     }
     const matchesFilter = sp => featFilters.some(fl =>
       (!fl.levels || fl.levels.includes(sp.level)) &&
@@ -221,6 +231,20 @@ class DataRepository {
       || (sp.classes ?? []).some(cn => names.has(cn))
       || extraNames.has(sp.name.toLowerCase())
       || matchesFilter(sp));
+  }
+
+  /** Distinct class-list options a feat's spells can be drawn from
+   *  (e.g. Magic Initiate: ['bard','cleric',...]). Empty if the feat
+   *  has no class-restricted spell filters, meaning there is nothing
+   *  to choose between (fixed named spells, or a school/level-only
+   *  filter that isn't tied to picking one class). */
+  featSpellClassOptions(featName) {
+    const f = this.findFeat(featName);
+    const names = new Set();
+    for (const fl of f?.spells?.filters ?? []) {
+      for (const cn of fl.classNames ?? []) names.add(cn);
+    }
+    return [...names];
   }
 
   /** Find a spell case-insensitively (subclass data is lowercase) */

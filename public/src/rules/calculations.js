@@ -333,13 +333,16 @@ export function hitDiceSummary(classes) {
 }
 
 /**
- * Maximum HP per the average rule (PHB):
- *  • level 1 of the first class: full hit die maximum
- *  • every further level: average (die/2 + 1)
- *  • + CON mod per character level (effective CON incl. bonuses)
- * Additionally: the "Tough" feat grants +2 HP per level.
+ * Maximum HP, per one of three methods (PHB "Average" is the default):
+ *  • 'average': every level but the very first uses the average (die/2 + 1)
+ *  • 'max':     every level uses the full hit die
+ *  • 'roll':    every level but the very first rolls the hit die
+ *  In all three, the very first level of the very first class is always
+ *  the full hit die maximum (RAW) regardless of method.
+ *  + CON mod per character level (effective CON incl. bonuses).
+ *  Additionally: the "Tough" feat grants +2 HP per level.
  */
-export function calcMaxHP(state) {
+export function calcMaxHP(state, method = 'average') {
   const classes = state.classes ?? [];
   const total = classes.reduce((s, c) => s + (+c.level || 0), 0);
   if (total < 1) return 1;
@@ -350,8 +353,10 @@ export function calcMaxHP(state) {
     const die = +(repo.getClass(c.name)?.hitDie?.slice(1) ?? 8);
     const avg = Math.floor(die / 2) + 1;
     for (let l = 0; l < (+c.level || 0); l++) {
-      // very first character level → maximum, otherwise average
-      hp += (ci === 0 && l === 0) ? die : avg;
+      if (ci === 0 && l === 0) hp += die; // very first character level → always maximum
+      else if (method === 'max') hp += die;
+      else if (method === 'roll') hp += 1 + Math.floor(Math.random() * die);
+      else hp += avg; // 'average' (default)
       levelsCounted++;
     }
   });

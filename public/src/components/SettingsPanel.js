@@ -11,6 +11,7 @@ import { repo }    from '../core/DataRepository.js';
 import { bus, EV } from '../core/EventBus.js';
 import { t, getLang, setLang, LANGS } from '../core/i18n.js';
 import { getTheme, setTheme, resetTheme, PRESETS, FONTS, CUSTOM_VARS } from '../core/theme.js';
+import { getHpMethod, setHpMethod, HP_METHODS } from '../core/hpSettings.js';
 
 export function mountSettings() {
   render();
@@ -86,6 +87,15 @@ function render() {
         <div class="panel__hint">${t('settings.advancedHint')}</div>
       </span>
     </label>
+  </div>
+
+  <div class="panel">
+    <div class="panel__title">${t('settings.hpMethod')}</div>
+    <p class="panel__hint" style="margin-bottom:10px">${t('settings.hpMethodHint')}</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${HP_METHODS.map(m => `
+        <button class="btn ${getHpMethod() === m ? 'btn--primary' : ''}" data-hpm="${m}">${t('settings.hpMethod_' + m)}</button>`).join('')}
+    </div>
   </div>
 
   <div class="panel">
@@ -187,6 +197,10 @@ function render() {
   });
   const adv = el.querySelector('#setAdvanced');
   if (adv) adv.onchange = () => repo.setAdvanced(adv.checked);
+
+  el.querySelectorAll('[data-hpm]').forEach(b => {
+    b.onclick = () => { setHpMethod(b.dataset.hpm); render(); };
+  });
 
   // update at the push of a button: streams progress live into the log window
   const startUpdate = async force => {

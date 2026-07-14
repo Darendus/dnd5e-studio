@@ -10,6 +10,8 @@ import { calcMod, calcProfBonus, fmtMod, ABILITY_IDS, effectiveAbilities, itemBo
          effectiveInitiative, carryCapacity, featEffects, calcMaxHP } from '../rules/calculations.js';
 import { featBonusFor } from '../rules/bonuses.js';
 import { ALIGNMENTS } from '../rules/progression.js';
+import { pickFeatSpellClass } from './FeatSpellChoice.js';
+import { getHpMethod } from '../core/hpSettings.js';
 
 
 
@@ -119,11 +121,13 @@ function render() {
       const lib = repo.findFeat(name);
       const desc = lib?.description ?? '';
       const lvl = (s.featLevels ?? [])[i];
+      const chosenClass = (s.featChoices ?? [])[i]?.class;
       return `
       <div class="lib-entry lib-entry--expandable" data-expand>
         <div class="lib-entry__top">
           <span class="lib-entry__name"><b>${name}</b></span>
           ${lvl ? `<span class="tag" title="${t('feats.takenAt')}">${t('app.level')} ${lvl}</span>` : ''}
+          ${chosenClass ? `<span class="tag tag--magic">${chosenClass.charAt(0).toUpperCase() + chosenClass.slice(1)}</span>` : ''}
           ${lib?.source ? `<span class="tag tag--src">${lib.source}</span>` : ''}
           <button class="btn-icon" data-feat-rm="${i}">×</button>
         </div>
@@ -191,9 +195,11 @@ function render() {
       const i = +b.dataset.featRm;
       const feats = [...(store.field('feats') ?? [])];
       const featLevels = [...(store.field('featLevels') ?? [])];
+      const featChoices = [...(store.field('featChoices') ?? [])];
       feats.splice(i, 1);
       featLevels.splice(i, 1);
-      store.update({ feats, featLevels, featBonus: featBonusFor(feats) });
+      featChoices.splice(i, 1);
+      store.update({ feats, featLevels, featChoices, featBonus: featBonusFor(feats) });
       resyncMaxHP();
     };
   });
@@ -207,7 +213,7 @@ function render() {
 /** Adjust max HP after a feat change (Tough, Boon of Fortitude …).
  *  If the character was at full health, it stays that way. */
 function resyncMaxHP() {
-  const newMax = calcMaxHP(store.get());
+  const newMax = calcMaxHP(store.get(), getHpMethod());
   if (newMax === store.field('maxHP')) return;
   const wasFull = store.field('currHP') >= store.field('maxHP');
   store.update({ maxHP: newMax, currHP: wasFull ? newMax : Math.min(store.field('currHP'), newMax) });
@@ -246,10 +252,20 @@ function renderFeatLibrary() {
   list.onclick = toggleExpand;
 
   list.querySelectorAll('[data-flib-add]').forEach(b => {
-    b.onclick = () => {
-      const feats = [...(store.field('feats') ?? []), b.dataset.flibAdd];
+    b.onclick = async () => {
+      const name = b.dataset.flibAdd;
+      // some feats (Magic Initiate, ...) grant spells from one of several
+      // class lists; ask which one before adding, so the Spell Library
+      // and casting stats can be scoped to it
+      const feat = repo.findFeat(name);
+      const options = repo.featSpellClassOptions(name);
+      const picked = await pickFeatSpellClass(feat, options);
+      if (picked === undefined) return; // cancelled
+
+      const feats = [...(store.field('feats') ?? []), name];
       const featLevels = [...(store.field('featLevels') ?? []), store.totalLevel()];
-      store.update({ feats, featLevels, featBonus: featBonusFor(feats) });
+      const featChoices = [...(store.field('featChoices') ?? []), picked ? { class: picked } : null];
+      store.update({ feats, featLevels, featChoices, featBonus: featBonusFor(feats) });
       resyncMaxHP();
       renderFeatLibrary();
     };
@@ -259,9 +275,10 @@ function renderFeatLibrary() {
       // removes the LAST occurrence (for repeatable feats)
       const feats = [...(store.field('feats') ?? [])];
       const featLevels = [...(store.field('featLevels') ?? [])];
+      const featChoices = [...(store.field('featChoices') ?? [])];
       const i = feats.lastIndexOf(b.dataset.flibRm);
-      if (i >= 0) { feats.splice(i, 1); featLevels.splice(i, 1); }
-      store.update({ feats, featLevels, featBonus: featBonusFor(feats) });
+      if (i >= 0) { feats.splice(i, 1); featLevels.splice(i, 1); featChoices.splice(i, 1); }
+      store.update({ feats, featLevels, featChoices, featBonus: featBonusFor(feats) });
       resyncMaxHP();
       renderFeatLibrary();
     };

@@ -169,12 +169,23 @@ function parseAbilityChoose(abilityArr) {
   return variants.length ? variants : null;
 }
 
+// 5etools ships the 2014 PHB/SRD "Human" entry with NO "ability" field at
+// all (it's marked reprintedAs "Human|XPHB" and left as a stub upstream),
+// even though the 2014 rule text still grants +1 to all six scores. Fill
+// that specific gap explicitly; every other 2014 race carries its bonus
+// normally and needs no fallback.
+const HUMAN_FALLBACK_SOURCES = new Set(['PHB', 'SRD']);
+const HUMAN_ALL_SIX = { str: 1, dex: 1, con: 1, int: 1, wis: 1, cha: 1 };
+
 function normRace(r) {
   // ability bonuses: fixed numeric values only; keep "choose" separate
   const ab = r.ability?.[0] ?? {};
   const fixed = {};
   for (const k of ['str','dex','con','int','wis','cha']) {
     if (typeof ab[k] === 'number') fixed[k] = ab[k];
+  }
+  if (r.name === 'Human' && HUMAN_FALLBACK_SOURCES.has(r.source) && !r.ability?.length) {
+    Object.assign(fixed, HUMAN_ALL_SIX);
   }
   return {
     name: r.name, source: r.source,
@@ -232,7 +243,55 @@ function normAdditionalSpells(addl) {
   return { auto, extra: [...extra] };
 }
 
-function normClass(c, subclasses) {
+// == Class features and per-level progression tables ==========
+// Combat abilities like Sneak Attack, Rage, Bardic Inspiration, etc.
+// come from two places in the same per-class file already fetched
+// for normClass():
+//  • classFeature/subclassFeature: flat lists of ALL feature text,
+//    one entry per (name, level), tagged with className and,
+//    for subclasses, subclassShortName.
+//  • class.classTableGroups: optional per-level numeric/dice columns
+//    (e.g. Rogue's "Sneak Attack" column: 1d6 at level 1, up to 10d6
+//    at level 20) — extracted so the app can show a live value
+//    instead of only prose.
+
+/** A single progression-table cell → a short display string. */
+function tableCellToText(cell) {
+  if (cell == null) return null;
+  if (typeof cell === 'string' || typeof cell === 'number') return String(cell);
+  if (cell.type === 'dice' && Array.isArray(cell.toRoll)) {
+    return cell.toRoll.map(d => `${d.number}d${d.faces}`).join(' + ');
+  }
+  if (typeof cell.value === 'number') return (cell.value >= 0 ? '+' : '') + cell.value;
+  return null;
+}
+
+/** { columnLabel: [level1..level20 display strings] } */
+function normProgressionTable(classTableGroups) {
+  const out = {};
+  for (const g of classTableGroups ?? []) {
+    const labels = g.colLabels ?? [];
+    (g.rows ?? []).forEach((row, levelIdx) => {
+      labels.forEach((label, colIdx) => {
+        const val = tableCellToText(row?.[colIdx]);
+        if (val == null) return;
+        (out[label] ??= [])[levelIdx] = val;
+      });
+    });
+  }
+  return out;
+}
+
+/** Flatten one feature list (class or subclass) into {name, level, source, text} */
+function normFeatureList(rawFeatures, match) {
+  return (rawFeatures ?? [])
+    .filter(match)
+    .map(f => ({ name: f.name, level: f.level ?? 1, source: f.source, text: flattenEntries(f.entries, 1200) }))
+    .filter(f => f.text)
+    .sort((a, b) => a.level - b.level);
+}
+
+function normClass(c, subclasses, classFeatureRaw = [], subclassFeatureRaw = []) {
   // the class's skill choice ("choose 2 from: …")
   const skillEntry = (c.startingProficiencies?.skills ?? []).find(s => s.choose);
   const skillChoices = skillEntry
@@ -251,6 +310,10 @@ function normClass(c, subclasses) {
     spellAbility: c.spellcastingAbility ?? null,
     casterProgression: c.casterProgression ?? null,
     subclassTitle: c.subclassTitle ?? 'Subclass',
+    // full class feature text, all levels (Sneak Attack, Rage, Extra
+    // Attack, ...), plus any numeric/dice scaling table the class has
+    features: normFeatureList(classFeatureRaw, f => f.className === c.name && f.classSource === c.source),
+    progressionTable: normProgressionTable(c.classTableGroups),
     // Dedupe by (name, source): subclasses appear twice in the file,
     // once per class version (PHB/XPHB); the copy WITH additionalSpells
     // is preferred. BOTH editions stay in the pack; which one the user
@@ -260,9 +323,12 @@ function normClass(c, subclasses) {
       for (const sc of subclasses.filter(x => x.className === c.name)) {
         const key = sc.name + '|' + sc.source;
         const entry = { name: sc.name, source: sc.source, shortName: sc.shortName ?? sc.name,
-                        spells: normAdditionalSpells(sc.additionalSpells) };
+                        spells: normAdditionalSpells(sc.additionalSpells),
+                        features: normFeatureList(subclassFeatureRaw, f =>
+                          f.className === c.name && f.subclassShortName === (sc.shortName ?? sc.name)
+                          && f.subclassSource === sc.source) };
         const prev = map.get(key);
-        if (!prev || (!prev.spells && entry.spells)) map.set(key, entry);
+        if (!prev || (!prev.spells && entry.spells) || (!prev.features?.length && entry.features.length)) map.set(key, entry);
       }
       return [...map.values()];
     })(),
@@ -563,10 +629,10 @@ export async function runUpdate({ force = false, log = () => {} } = {}) {
               const key = c.name + '|' + c.source;
               if (seenClasses.has(key)) continue;
               seenClasses.add(key);
-              entries.push(normClass(c, data.subclass ?? []));
+              entries.push(normClass(c, data.subclass ?? [], data.classFeature ?? [], data.subclassFeature ?? []));
             }
             log(`  ${name} ✓`);
-          } catch (e) { log(`  ⚠ ${name} übersprungen (${e.message})`); }
+          } catch (e) { log(`  ⚠ ${name} skipped (${e.message})`); }
         }
       }
 

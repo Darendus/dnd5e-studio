@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-11T22:20:47.321Z",
+  "updatedAt": "2026-07-14T10:28:00.571Z",
   "origin": "https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/main/data",
   "sources": {
     "PHB": {
@@ -258,15 +258,15 @@
   "files": {
     "books.json": {
       "count": 63,
-      "at": "2026-07-11T22:20:43.531Z"
+      "at": "2026-07-14T10:27:27.483Z"
     },
     "classes.json": {
       "count": 30,
-      "at": "2026-07-11T22:20:45.547Z"
+      "at": "2026-07-14T10:27:31.032Z"
     },
     "races.json": {
       "count": 160,
-      "at": "2026-07-11T22:20:45.769Z"
+      "at": "2026-07-14T10:27:31.303Z"
     },
     "spells/spells-aag.json": {
       "count": 2,
@@ -338,19 +338,19 @@
     },
     "spells.json": {
       "count": 936,
-      "at": "2026-07-11T22:20:46.296Z"
+      "at": "2026-07-14T10:27:36.838Z"
     },
     "items.json": {
       "count": 2658,
-      "at": "2026-07-11T22:20:46.848Z"
+      "at": "2026-07-14T10:27:37.687Z"
     },
     "backgrounds.json": {
       "count": 161,
-      "at": "2026-07-11T22:20:47.033Z"
+      "at": "2026-07-14T10:27:37.966Z"
     },
     "feats.json": {
       "count": 276,
-      "at": "2026-07-11T22:20:47.321Z"
+      "at": "2026-07-14T10:28:00.571Z"
     },
     "spells/spells-aag.json@v2": {
       "count": 2,
@@ -490,71 +490,71 @@
     },
     "spells/spells-aag.json@v4": {
       "count": 2,
-      "at": "2026-07-04T08:14:42.158Z"
+      "at": "2026-07-14T10:27:31.917Z"
     },
     "spells/spells-ai.json@v4": {
       "count": 7,
-      "at": "2026-07-04T08:14:42.255Z"
+      "at": "2026-07-14T10:27:32.147Z"
     },
     "spells/spells-aitfr-avt.json@v4": {
       "count": 1,
-      "at": "2026-07-04T08:14:42.339Z"
+      "at": "2026-07-14T10:27:32.361Z"
     },
     "spells/spells-bmt.json@v4": {
       "count": 3,
-      "at": "2026-07-04T08:14:42.425Z"
+      "at": "2026-07-14T10:27:32.580Z"
     },
     "spells/spells-efa.json@v4": {
       "count": 1,
-      "at": "2026-07-04T08:14:42.512Z"
+      "at": "2026-07-14T10:27:32.769Z"
     },
     "spells/spells-egw.json@v4": {
       "count": 15,
-      "at": "2026-07-04T08:14:42.611Z"
+      "at": "2026-07-14T10:27:34.450Z"
     },
     "spells/spells-ftd.json@v4": {
       "count": 7,
-      "at": "2026-07-04T08:14:42.704Z"
+      "at": "2026-07-14T10:27:34.641Z"
     },
     "spells/spells-frhof.json@v4": {
       "count": 19,
-      "at": "2026-07-04T08:14:42.804Z"
+      "at": "2026-07-14T10:27:34.833Z"
     },
     "spells/spells-ggr.json@v4": {
       "count": 1,
-      "at": "2026-07-04T08:14:42.893Z"
+      "at": "2026-07-14T10:27:35.013Z"
     },
     "spells/spells-idrotf.json@v4": {
       "count": 2,
-      "at": "2026-07-04T08:14:43.020Z"
+      "at": "2026-07-14T10:27:35.195Z"
     },
     "spells/spells-llk.json@v4": {
       "count": 3,
-      "at": "2026-07-04T08:14:43.118Z"
+      "at": "2026-07-14T10:27:35.396Z"
     },
     "spells/spells-phb.json@v4": {
       "count": 361,
-      "at": "2026-07-04T08:14:43.265Z"
+      "at": "2026-07-14T10:27:35.766Z"
     },
     "spells/spells-sato.json@v4": {
       "count": 2,
-      "at": "2026-07-04T08:14:43.352Z"
+      "at": "2026-07-14T10:27:35.948Z"
     },
     "spells/spells-scc.json@v4": {
       "count": 5,
-      "at": "2026-07-04T08:14:43.461Z"
+      "at": "2026-07-14T10:27:36.134Z"
     },
     "spells/spells-tce.json@v4": {
       "count": 21,
-      "at": "2026-07-04T08:14:43.530Z"
+      "at": "2026-07-14T10:27:36.326Z"
     },
     "spells/spells-xge.json@v4": {
       "count": 95,
-      "at": "2026-07-04T08:14:43.639Z"
+      "at": "2026-07-14T10:27:36.572Z"
     },
     "spells/spells-xphb.json@v4": {
       "count": 391,
-      "at": "2026-07-04T08:14:43.900Z"
+      "at": "2026-07-14T10:27:36.830Z"
     },
     "bestiary/bestiary-aatm.json@v1": {
       "count": 0,
@@ -986,7 +986,7 @@
     },
     "beasts.json": {
       "count": 299,
-      "at": "2026-07-11T22:20:47.190Z"
+      "at": "2026-07-14T10:28:00.273Z"
     },
     "bestiary/bestiary-aatm.json@v2": {
       "count": 0,
@@ -1418,431 +1418,431 @@
     },
     "bestiary/bestiary-aatm.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:29.433Z"
+      "at": "2026-07-14T10:27:38.360Z"
     },
     "bestiary/bestiary-abh.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:29.495Z"
+      "at": "2026-07-14T10:27:38.545Z"
     },
     "bestiary/bestiary-ai.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:29.557Z"
+      "at": "2026-07-14T10:27:38.773Z"
     },
     "bestiary/bestiary-aitfr-isf.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:29.621Z"
+      "at": "2026-07-14T10:27:38.952Z"
     },
     "bestiary/bestiary-aitfr-thp.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:29.690Z"
+      "at": "2026-07-14T10:27:39.122Z"
     },
     "bestiary/bestiary-aitfr-dn.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:29.752Z"
+      "at": "2026-07-14T10:27:39.294Z"
     },
     "bestiary/bestiary-aitfr-fcd.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:29.818Z"
+      "at": "2026-07-14T10:27:39.487Z"
     },
     "bestiary/bestiary-awm.json@v3": {
       "count": 2,
-      "at": "2026-07-05T04:48:29.882Z"
+      "at": "2026-07-14T10:27:39.687Z"
     },
     "bestiary/bestiary-bam.json@v3": {
       "count": 5,
-      "at": "2026-07-05T04:48:29.948Z"
+      "at": "2026-07-14T10:27:39.884Z"
     },
     "bestiary/bestiary-bgdia.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:30.030Z"
+      "at": "2026-07-14T10:27:40.099Z"
     },
     "bestiary/bestiary-bgg.json@v3": {
       "count": 2,
-      "at": "2026-07-05T04:48:30.094Z"
+      "at": "2026-07-14T10:27:40.360Z"
     },
     "bestiary/bestiary-bmt.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:30.169Z"
+      "at": "2026-07-14T10:27:40.590Z"
     },
     "bestiary/bestiary-cm.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:30.230Z"
+      "at": "2026-07-14T10:27:40.803Z"
     },
     "bestiary/bestiary-coa.json@v3": {
       "count": 1,
-      "at": "2026-07-05T04:48:30.298Z"
+      "at": "2026-07-14T10:27:41.020Z"
     },
     "bestiary/bestiary-cos.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:30.361Z"
+      "at": "2026-07-14T10:27:41.189Z"
     },
     "bestiary/bestiary-crcotn.json@v3": {
       "count": 1,
-      "at": "2026-07-05T04:48:30.422Z"
+      "at": "2026-07-14T10:27:41.422Z"
     },
     "bestiary/bestiary-dc.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:30.493Z"
+      "at": "2026-07-14T10:27:41.605Z"
     },
     "bestiary/bestiary-dip.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:30.551Z"
+      "at": "2026-07-14T10:27:41.783Z"
     },
     "bestiary/bestiary-ditlcot.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:30.613Z"
+      "at": "2026-07-14T10:27:41.986Z"
     },
     "bestiary/bestiary-dmg.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:30.682Z"
+      "at": "2026-07-14T10:27:42.179Z"
     },
     "bestiary/bestiary-dod.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:30.744Z"
+      "at": "2026-07-14T10:27:42.365Z"
     },
     "bestiary/bestiary-dosi.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:30.809Z"
+      "at": "2026-07-14T10:27:42.578Z"
     },
     "bestiary/bestiary-dsotdq.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:30.875Z"
+      "at": "2026-07-14T10:27:42.812Z"
     },
     "bestiary/bestiary-efa.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:30.947Z"
+      "at": "2026-07-14T10:27:43.011Z"
     },
     "bestiary/bestiary-egw.json@v3": {
       "count": 2,
-      "at": "2026-07-05T04:48:31.010Z"
+      "at": "2026-07-14T10:27:43.219Z"
     },
     "bestiary/bestiary-erlw.json@v3": {
       "count": 2,
-      "at": "2026-07-05T04:48:31.078Z"
+      "at": "2026-07-14T10:27:43.413Z"
     },
     "bestiary/bestiary-esk.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:31.138Z"
+      "at": "2026-07-14T10:27:43.632Z"
     },
     "bestiary/bestiary-fraif.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:31.205Z"
+      "at": "2026-07-14T10:27:43.837Z"
     },
     "bestiary/bestiary-ftd.json@v3": {
       "count": 1,
-      "at": "2026-07-05T04:48:31.295Z"
+      "at": "2026-07-14T10:27:44.059Z"
     },
     "bestiary/bestiary-ggr.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:31.360Z"
+      "at": "2026-07-14T10:27:44.245Z"
     },
     "bestiary/bestiary-gos.json@v3": {
       "count": 3,
-      "at": "2026-07-05T04:48:31.430Z"
+      "at": "2026-07-14T10:27:44.443Z"
     },
     "bestiary/bestiary-gotsf.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:31.506Z"
+      "at": "2026-07-14T10:27:44.601Z"
     },
     "bestiary/bestiary-hat-tg.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:31.569Z"
+      "at": "2026-07-14T10:27:44.849Z"
     },
     "bestiary/bestiary-hftt.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:31.631Z"
+      "at": "2026-07-14T10:27:45.047Z"
     },
     "bestiary/bestiary-hol.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:31.697Z"
+      "at": "2026-07-14T10:27:45.285Z"
     },
     "bestiary/bestiary-hotb.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:31.757Z"
+      "at": "2026-07-14T10:27:45.497Z"
     },
     "bestiary/bestiary-hotdq.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:31.822Z"
+      "at": "2026-07-14T10:27:45.693Z"
     },
     "bestiary/bestiary-idrotf.json@v3": {
       "count": 10,
-      "at": "2026-07-05T04:48:31.882Z"
+      "at": "2026-07-14T10:27:45.936Z"
     },
     "bestiary/bestiary-imr.json@v3": {
       "count": 1,
-      "at": "2026-07-05T04:48:31.948Z"
+      "at": "2026-07-14T10:27:46.147Z"
     },
     "bestiary/bestiary-jttrc.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:32.016Z"
+      "at": "2026-07-14T10:27:46.351Z"
     },
     "bestiary/bestiary-kftgv.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:32.084Z"
+      "at": "2026-07-14T10:27:46.548Z"
     },
     "bestiary/bestiary-kkw.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:32.150Z"
+      "at": "2026-07-14T10:27:46.709Z"
     },
     "bestiary/bestiary-lfl.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:32.210Z"
+      "at": "2026-07-14T10:27:46.901Z"
     },
     "bestiary/bestiary-llk.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:32.269Z"
+      "at": "2026-07-14T10:27:47.087Z"
     },
     "bestiary/bestiary-lmop.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:32.335Z"
+      "at": "2026-07-14T10:27:47.264Z"
     },
     "bestiary/bestiary-lox.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:32.396Z"
+      "at": "2026-07-14T10:27:47.492Z"
     },
     "bestiary/bestiary-lr.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:32.455Z"
+      "at": "2026-07-14T10:27:47.680Z"
     },
     "bestiary/bestiary-lrdt.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:32.517Z"
+      "at": "2026-07-14T10:27:47.843Z"
     },
     "bestiary/bestiary-mabjov.json@v3": {
       "count": 3,
-      "at": "2026-07-05T04:48:32.577Z"
+      "at": "2026-07-14T10:27:48.050Z"
     },
     "bestiary/bestiary-mcv1sc.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:32.642Z"
+      "at": "2026-07-14T10:27:48.234Z"
     },
     "bestiary/bestiary-mcv2dc.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:32.713Z"
+      "at": "2026-07-14T10:27:48.454Z"
     },
     "bestiary/bestiary-mcv3mc.json@v3": {
       "count": 1,
-      "at": "2026-07-05T04:48:32.772Z"
+      "at": "2026-07-14T10:27:48.659Z"
     },
     "bestiary/bestiary-mcv4ec.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:32.832Z"
+      "at": "2026-07-14T10:27:48.858Z"
     },
     "bestiary/bestiary-mismv1.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:32.892Z"
+      "at": "2026-07-14T10:27:49.013Z"
     },
     "bestiary/bestiary-mff.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:32.953Z"
+      "at": "2026-07-14T10:27:49.233Z"
     },
     "bestiary/bestiary-mgelft.json@v3": {
       "count": 1,
-      "at": "2026-07-05T04:48:33.014Z"
+      "at": "2026-07-14T10:27:49.421Z"
     },
     "bestiary/bestiary-mm.json@v3": {
       "count": 104,
-      "at": "2026-07-05T04:48:33.144Z"
+      "at": "2026-07-14T10:27:49.746Z"
     },
     "bestiary/bestiary-mpmm.json@v3": {
       "count": 12,
-      "at": "2026-07-05T04:48:33.231Z"
+      "at": "2026-07-14T10:27:50.082Z"
     },
     "bestiary/bestiary-mpp.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:33.300Z"
+      "at": "2026-07-14T10:27:50.287Z"
     },
     "bestiary/bestiary-mot.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:33.362Z"
+      "at": "2026-07-14T10:27:50.541Z"
     },
     "bestiary/bestiary-mtf.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:33.428Z"
+      "at": "2026-07-14T10:27:50.791Z"
     },
     "bestiary/bestiary-nf.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:33.488Z"
+      "at": "2026-07-14T10:27:50.998Z"
     },
     "bestiary/bestiary-nrh-tcmc.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:33.547Z"
+      "at": "2026-07-14T10:27:51.172Z"
     },
     "bestiary/bestiary-nrh-avitw.json@v3": {
       "count": 1,
-      "at": "2026-07-05T04:48:33.615Z"
+      "at": "2026-07-14T10:27:51.331Z"
     },
     "bestiary/bestiary-nrh-ass.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:33.675Z"
+      "at": "2026-07-14T10:27:51.517Z"
     },
     "bestiary/bestiary-nrh-coi.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:33.735Z"
+      "at": "2026-07-14T10:27:51.707Z"
     },
     "bestiary/bestiary-nrh-tlt.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:33.803Z"
+      "at": "2026-07-14T10:27:51.887Z"
     },
     "bestiary/bestiary-nrh-awol.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:33.860Z"
+      "at": "2026-07-14T10:27:52.078Z"
     },
     "bestiary/bestiary-nrh-at.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:33.921Z"
+      "at": "2026-07-14T10:27:52.245Z"
     },
     "bestiary/bestiary-oota.json@v3": {
       "count": 3,
-      "at": "2026-07-05T04:48:33.986Z"
+      "at": "2026-07-14T10:27:52.469Z"
     },
     "bestiary/bestiary-oow.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:34.052Z"
+      "at": "2026-07-14T10:27:52.711Z"
     },
     "bestiary/bestiary-pabtso.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:34.118Z"
+      "at": "2026-07-14T10:27:52.922Z"
     },
     "bestiary/bestiary-ps-a.json@v3": {
       "count": 1,
-      "at": "2026-07-05T04:48:34.187Z"
+      "at": "2026-07-14T10:27:53.125Z"
     },
     "bestiary/bestiary-ps-d.json@v3": {
       "count": 2,
-      "at": "2026-07-05T04:48:34.250Z"
+      "at": "2026-07-14T10:27:53.324Z"
     },
     "bestiary/bestiary-ps-i.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:34.319Z"
+      "at": "2026-07-14T10:27:53.515Z"
     },
     "bestiary/bestiary-ps-k.json@v3": {
       "count": 2,
-      "at": "2026-07-05T04:48:34.382Z"
+      "at": "2026-07-14T10:27:53.712Z"
     },
     "bestiary/bestiary-ps-x.json@v3": {
       "count": 2,
-      "at": "2026-07-05T04:48:34.447Z"
+      "at": "2026-07-14T10:27:53.923Z"
     },
     "bestiary/bestiary-ps-z.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:34.510Z"
+      "at": "2026-07-14T10:27:54.125Z"
     },
     "bestiary/bestiary-phb.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:34.570Z"
+      "at": "2026-07-14T10:27:54.302Z"
     },
     "bestiary/bestiary-pota.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:34.632Z"
+      "at": "2026-07-14T10:27:54.518Z"
     },
     "bestiary/bestiary-qftis.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:34.692Z"
+      "at": "2026-07-14T10:27:54.732Z"
     },
     "bestiary/bestiary-rhw.json@v3": {
       "count": 2,
-      "at": "2026-07-05T04:48:34.785Z"
+      "at": "2026-07-14T10:27:54.959Z"
     },
     "bestiary/bestiary-rmbre.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:34.849Z"
+      "at": "2026-07-14T10:27:55.119Z"
     },
     "bestiary/bestiary-rot.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:34.912Z"
+      "at": "2026-07-14T10:27:55.354Z"
     },
     "bestiary/bestiary-rtg.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:34.972Z"
+      "at": "2026-07-14T10:27:55.549Z"
     },
     "bestiary/bestiary-sads.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:35.040Z"
+      "at": "2026-07-14T10:27:55.730Z"
     },
     "bestiary/bestiary-scc.json@v3": {
       "count": 1,
-      "at": "2026-07-05T04:48:35.100Z"
+      "at": "2026-07-14T10:27:55.941Z"
     },
     "bestiary/bestiary-sdw.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:35.160Z"
+      "at": "2026-07-14T10:27:56.156Z"
     },
     "bestiary/bestiary-skt.json@v3": {
       "count": 1,
-      "at": "2026-07-05T04:48:35.227Z"
+      "at": "2026-07-14T10:27:56.344Z"
     },
     "bestiary/bestiary-slw.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:35.292Z"
+      "at": "2026-07-14T10:27:56.615Z"
     },
     "bestiary/bestiary-tce.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:35.353Z"
+      "at": "2026-07-14T10:27:56.792Z"
     },
     "bestiary/bestiary-ttp.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:35.418Z"
+      "at": "2026-07-14T10:27:56.986Z"
     },
     "bestiary/bestiary-tftyp.json@v3": {
       "count": 5,
-      "at": "2026-07-05T04:48:35.486Z"
+      "at": "2026-07-14T10:27:57.210Z"
     },
     "bestiary/bestiary-toa.json@v3": {
       "count": 4,
-      "at": "2026-07-05T04:48:35.553Z"
+      "at": "2026-07-14T10:27:57.480Z"
     },
     "bestiary/bestiary-tofw.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:35.616Z"
+      "at": "2026-07-14T10:27:57.675Z"
     },
     "bestiary/bestiary-vd.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:35.674Z"
+      "at": "2026-07-14T10:27:57.858Z"
     },
     "bestiary/bestiary-veor.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:35.743Z"
+      "at": "2026-07-14T10:27:58.043Z"
     },
     "bestiary/bestiary-vgm.json@v3": {
       "count": 17,
-      "at": "2026-07-05T04:48:35.815Z"
+      "at": "2026-07-14T10:27:58.308Z"
     },
     "bestiary/bestiary-vrgr.json@v3": {
       "count": 2,
-      "at": "2026-07-05T04:48:35.880Z"
+      "at": "2026-07-14T10:27:58.546Z"
     },
     "bestiary/bestiary-xge.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:35.945Z"
+      "at": "2026-07-14T10:27:58.726Z"
     },
     "bestiary/bestiary-wbtw.json@v3": {
       "count": 4,
-      "at": "2026-07-05T04:48:36.021Z"
+      "at": "2026-07-14T10:27:58.917Z"
     },
     "bestiary/bestiary-wdh.json@v3": {
       "count": 4,
-      "at": "2026-07-05T04:48:36.093Z"
+      "at": "2026-07-14T10:27:59.155Z"
     },
     "bestiary/bestiary-wdmm.json@v3": {
       "count": 1,
-      "at": "2026-07-05T04:48:36.162Z"
+      "at": "2026-07-14T10:27:59.335Z"
     },
     "bestiary/bestiary-wtthc.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:36.225Z"
+      "at": "2026-07-14T10:27:59.537Z"
     },
     "bestiary/bestiary-xdmg.json@v3": {
       "count": 1,
-      "at": "2026-07-05T04:48:36.285Z"
+      "at": "2026-07-14T10:27:59.750Z"
     },
     "bestiary/bestiary-xmm.json@v3": {
       "count": 95,
-      "at": "2026-07-05T04:48:36.364Z"
+      "at": "2026-07-14T10:28:00.110Z"
     },
     "bestiary/bestiary-xphb.json@v3": {
       "count": 0,
-      "at": "2026-07-05T04:48:36.493Z"
+      "at": "2026-07-14T10:28:00.270Z"
     }
   }
 }

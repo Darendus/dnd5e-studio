@@ -1,1 +1,380 @@
-[{"id":"PHB","name":"Player's Handbook (2014)","group":"core","published":"2014-08-19"},{"id":"MM","name":"Monster Manual (2014)","group":"core","published":"2014-09-30"},{"id":"DMG","name":"Dungeon Master's Guide (2014)","group":"core","published":"2014-12-09"},{"id":"Screen","name":"Dungeon Master's Screen","group":"screen","published":"2015-01-20"},{"id":"SCAG","name":"Sword Coast Adventurer's Guide","group":"setting","published":"2015-11-03"},{"id":"PS-Z","name":"Plane Shift: Zendikar","group":"setting-alt","published":"2016-04-27"},{"id":"PS-I","name":"Plane Shift: Innistrad","group":"setting-alt","published":"2016-07-12"},{"id":"AL","name":"Adventurers League","group":"organized-play","published":"2016-08-26"},{"id":"VGM","name":"Volo's Guide to Monsters","group":"supplement","published":"2016-11-15"},{"id":"PS-K","name":"Plane Shift: Kaladesh","group":"setting-alt","published":"2017-02-16"},{"id":"PS-A","name":"Plane Shift: Amonkhet","group":"setting-alt","published":"2017-07-06"},{"id":"OGA","name":"One Grung Above","group":"supplement-alt","published":"2017-10-11"},{"id":"XGE","name":"Xanathar's Guide to Everything","group":"supplement","published":"2017-11-21"},{"id":"PS-X","name":"Plane Shift: Ixalan","group":"setting-alt","published":"2018-01-09"},{"id":"MTF","name":"Mordenkainen's Tome of Foes","group":"supplement","published":"2018-05-29"},{"id":"PS-D","name":"Plane Shift: Dominaria","group":"setting-alt","published":"2018-07-31"},{"id":"GGR","name":"Guildmasters' Guide to Ravnica","group":"setting","published":"2018-11-20"},{"id":"SAC","name":"Sage Advice Compendium (2014)","group":"other","published":"2019-01-31"},{"id":"AI","name":"Acquisitions Incorporated","group":"supplement","published":"2019-06-18"},{"id":"AWM","name":"Adventure with Muk","group":"supplement-alt","published":"2019-11-12"},{"id":"RMR","name":"Dungeons & Dragons vs. Rick and Morty: Basic Rules","group":"supplement-alt","published":"2019-11-19"},{"id":"ERLW","name":"Eberron: Rising from the Last War","group":"setting","published":"2019-11-19"},{"id":"EGW","name":"Explorer's Guide to Wildemount","group":"setting","published":"2020-03-17"},{"id":"MOT","name":"Mythic Odysseys of Theros","group":"setting","published":"2020-06-02"},{"id":"ScreenDungeonKit","name":"Dungeon Master's Screen: Dungeon Kit","group":"screen","published":"2020-09-21"},{"id":"HF","name":"Heroes' Feast","group":"recipe","published":"2020-10-27"},{"id":"ScreenWildernessKit","name":"Dungeon Master's Screen: Wilderness Kit","group":"screen","published":"2020-11-17"},{"id":"TCE","name":"Tasha's Cauldron of Everything","group":"supplement","published":"2020-11-17"},{"id":"MGELFT","name":"Muk's Guide to Everything He Learned From Tasha","group":"supplement-alt","published":"2020-12-01"},{"id":"VRGR","name":"Van Richten's Guide to Ravenloft","group":"setting","published":"2021-05-18"},{"id":"DoD","name":"Domains of Delight","group":"supplement-alt","published":"2021-09-21"},{"id":"MaBJoV","name":"Minsc and Boo's Journal of Villainy","group":"supplement-alt","published":"2021-10-05"},{"id":"FTD","name":"Fizban's Treasury of Dragons","group":"supplement","published":"2021-10-26"},{"id":"SCC","name":"Strixhaven: A Curriculum of Chaos","group":"setting","published":"2021-12-07"},{"id":"MPMM","name":"Mordenkainen Presents: Monsters of the Multiverse","group":"supplement","published":"2022-01-25"},{"id":"TD","name":"Tarot Deck","group":"supplement-alt","published":"2022-05-24"},{"id":"ScreenSpelljammer","name":"Dungeon Master's Screen: Spelljammer","group":"screen","published":"2022-08-16"},{"id":"AAG","name":"Astral Adventurer's Guide","group":"setting","published":"2022-08-16"},{"id":"BAM","name":"Boo's Astral Menagerie","group":"setting","published":"2022-08-16"},{"id":"HAT-TG","name":"Thieves' Gallery","group":"supplement-alt","published":"2023-03-06"},{"id":"BGG","name":"Bigby Presents: Glory of the Giants","group":"supplement","published":"2023-08-15"},{"id":"MCV4EC","name":"Monstrous Compendium Volume 4: Eldraine Creatures","group":"supplement-alt","published":"2023-09-21"},{"id":"MPP","name":"Morte's Planar Parade","group":"setting","published":"2023-10-07"},{"id":"SatO","name":"Sigil and the Outlands","group":"setting","published":"2023-10-07"},{"id":"AATM","name":"Adventure Atlas: The Mortuary","group":"supplement-alt","published":"2023-10-17"},{"id":"HFFotM","name":"Heroes' Feast Flavors of the Multiverse","group":"recipe","published":"2023-11-07"},{"id":"BMT","name":"The Book of Many Things","group":"supplement","published":"2023-11-14"},{"id":"DMTCRG","name":"The Deck of Many Things: Card Reference Guide","group":"supplement","published":"2023-11-14"},{"id":"PaF","name":"Puncheons and Flagons","group":"recipe","published":"2024-08-27"},{"id":"XPHB","name":"Player's Handbook (2024)","group":"core","published":"2024-09-17"},{"id":"XDMG","name":"Dungeon Master's Guide (2024)","group":"core","published":"2024-11-12"},{"id":"XScreen","name":"Dungeon Master's Screen (2024)","group":"screen","published":"2024-11-12"},{"id":"XMM","name":"Monster Manual (2025)","group":"core","published":"2025-02-18"},{"id":"XSAC","name":"Sage Advice Compendium (2025)","group":"other","published":"2025-04-30"},{"id":"ABH","name":"Astarion's Book of Hungers","group":"supplement-alt","published":"2025-11-11"},{"id":"FRAiF","name":"Forgotten Realms: Adventures in Faerûn","group":"setting","published":"2025-11-11"},{"id":"FRHoF","name":"Forgotten Realms: Heroes of Faerûn","group":"setting","published":"2025-11-11"},{"id":"NF","name":"Netheril's Fall","group":"setting-alt","published":"2025-11-11"},{"id":"LFL","name":"Lorwyn: First Light","group":"setting-alt","published":"2025-11-18"},{"id":"EFA","name":"Eberron: Forge of the Artificer","group":"setting","published":"2025-12-09"},{"id":"CaBoMP","name":"Crochet: A Book of Many Patterns","group":"homecraft","published":"2026-03-31"},{"id":"XScreenRHW","name":"Dungeon Master's Screen; Ravenloft: The Horrors Within","group":"screen","published":"2026-06-16"},{"id":"RHW","name":"Ravenloft: The Horrors Within","group":"setting","published":"2026-06-16"}]
+[
+    {
+        "id": "PHB",
+        "name": "Player's Handbook (2014)",
+        "group": "core",
+        "published": "2014-08-19"
+    },
+    {
+        "id": "MM",
+        "name": "Monster Manual (2014)",
+        "group": "core",
+        "published": "2014-09-30"
+    },
+    {
+        "id": "DMG",
+        "name": "Dungeon Master's Guide (2014)",
+        "group": "core",
+        "published": "2014-12-09"
+    },
+    {
+        "id": "Screen",
+        "name": "Dungeon Master's Screen",
+        "group": "screen",
+        "published": "2015-01-20"
+    },
+    {
+        "id": "SCAG",
+        "name": "Sword Coast Adventurer's Guide",
+        "group": "setting",
+        "published": "2015-11-03"
+    },
+    {
+        "id": "PS-Z",
+        "name": "Plane Shift: Zendikar",
+        "group": "setting-alt",
+        "published": "2016-04-27"
+    },
+    {
+        "id": "PS-I",
+        "name": "Plane Shift: Innistrad",
+        "group": "setting-alt",
+        "published": "2016-07-12"
+    },
+    {
+        "id": "AL",
+        "name": "Adventurers League",
+        "group": "organized-play",
+        "published": "2016-08-26"
+    },
+    {
+        "id": "VGM",
+        "name": "Volo's Guide to Monsters",
+        "group": "supplement",
+        "published": "2016-11-15"
+    },
+    {
+        "id": "PS-K",
+        "name": "Plane Shift: Kaladesh",
+        "group": "setting-alt",
+        "published": "2017-02-16"
+    },
+    {
+        "id": "PS-A",
+        "name": "Plane Shift: Amonkhet",
+        "group": "setting-alt",
+        "published": "2017-07-06"
+    },
+    {
+        "id": "OGA",
+        "name": "One Grung Above",
+        "group": "supplement-alt",
+        "published": "2017-10-11"
+    },
+    {
+        "id": "XGE",
+        "name": "Xanathar's Guide to Everything",
+        "group": "supplement",
+        "published": "2017-11-21"
+    },
+    {
+        "id": "PS-X",
+        "name": "Plane Shift: Ixalan",
+        "group": "setting-alt",
+        "published": "2018-01-09"
+    },
+    {
+        "id": "MTF",
+        "name": "Mordenkainen's Tome of Foes",
+        "group": "supplement",
+        "published": "2018-05-29"
+    },
+    {
+        "id": "PS-D",
+        "name": "Plane Shift: Dominaria",
+        "group": "setting-alt",
+        "published": "2018-07-31"
+    },
+    {
+        "id": "GGR",
+        "name": "Guildmasters' Guide to Ravnica",
+        "group": "setting",
+        "published": "2018-11-20"
+    },
+    {
+        "id": "SAC",
+        "name": "Sage Advice Compendium (2014)",
+        "group": "other",
+        "published": "2019-01-31"
+    },
+    {
+        "id": "AI",
+        "name": "Acquisitions Incorporated",
+        "group": "supplement",
+        "published": "2019-06-18"
+    },
+    {
+        "id": "AWM",
+        "name": "Adventure with Muk",
+        "group": "supplement-alt",
+        "published": "2019-11-12"
+    },
+    {
+        "id": "RMR",
+        "name": "Dungeons & Dragons vs. Rick and Morty: Basic Rules",
+        "group": "supplement-alt",
+        "published": "2019-11-19"
+    },
+    {
+        "id": "ERLW",
+        "name": "Eberron: Rising from the Last War",
+        "group": "setting",
+        "published": "2019-11-19"
+    },
+    {
+        "id": "EGW",
+        "name": "Explorer's Guide to Wildemount",
+        "group": "setting",
+        "published": "2020-03-17"
+    },
+    {
+        "id": "MOT",
+        "name": "Mythic Odysseys of Theros",
+        "group": "setting",
+        "published": "2020-06-02"
+    },
+    {
+        "id": "ScreenDungeonKit",
+        "name": "Dungeon Master's Screen: Dungeon Kit",
+        "group": "screen",
+        "published": "2020-09-21"
+    },
+    {
+        "id": "HF",
+        "name": "Heroes' Feast",
+        "group": "recipe",
+        "published": "2020-10-27"
+    },
+    {
+        "id": "ScreenWildernessKit",
+        "name": "Dungeon Master's Screen: Wilderness Kit",
+        "group": "screen",
+        "published": "2020-11-17"
+    },
+    {
+        "id": "TCE",
+        "name": "Tasha's Cauldron of Everything",
+        "group": "supplement",
+        "published": "2020-11-17"
+    },
+    {
+        "id": "MGELFT",
+        "name": "Muk's Guide to Everything He Learned From Tasha",
+        "group": "supplement-alt",
+        "published": "2020-12-01"
+    },
+    {
+        "id": "VRGR",
+        "name": "Van Richten's Guide to Ravenloft",
+        "group": "setting",
+        "published": "2021-05-18"
+    },
+    {
+        "id": "DoD",
+        "name": "Domains of Delight",
+        "group": "supplement-alt",
+        "published": "2021-09-21"
+    },
+    {
+        "id": "MaBJoV",
+        "name": "Minsc and Boo's Journal of Villainy",
+        "group": "supplement-alt",
+        "published": "2021-10-05"
+    },
+    {
+        "id": "FTD",
+        "name": "Fizban's Treasury of Dragons",
+        "group": "supplement",
+        "published": "2021-10-26"
+    },
+    {
+        "id": "SCC",
+        "name": "Strixhaven: A Curriculum of Chaos",
+        "group": "setting",
+        "published": "2021-12-07"
+    },
+    {
+        "id": "MPMM",
+        "name": "Mordenkainen Presents: Monsters of the Multiverse",
+        "group": "supplement",
+        "published": "2022-01-25"
+    },
+    {
+        "id": "TD",
+        "name": "Tarot Deck",
+        "group": "supplement-alt",
+        "published": "2022-05-24"
+    },
+    {
+        "id": "ScreenSpelljammer",
+        "name": "Dungeon Master's Screen: Spelljammer",
+        "group": "screen",
+        "published": "2022-08-16"
+    },
+    {
+        "id": "AAG",
+        "name": "Astral Adventurer's Guide",
+        "group": "setting",
+        "published": "2022-08-16"
+    },
+    {
+        "id": "BAM",
+        "name": "Boo's Astral Menagerie",
+        "group": "setting",
+        "published": "2022-08-16"
+    },
+    {
+        "id": "HAT-TG",
+        "name": "Thieves' Gallery",
+        "group": "supplement-alt",
+        "published": "2023-03-06"
+    },
+    {
+        "id": "BGG",
+        "name": "Bigby Presents: Glory of the Giants",
+        "group": "supplement",
+        "published": "2023-08-15"
+    },
+    {
+        "id": "MCV4EC",
+        "name": "Monstrous Compendium Volume 4: Eldraine Creatures",
+        "group": "supplement-alt",
+        "published": "2023-09-21"
+    },
+    {
+        "id": "MPP",
+        "name": "Morte's Planar Parade",
+        "group": "setting",
+        "published": "2023-10-07"
+    },
+    {
+        "id": "SatO",
+        "name": "Sigil and the Outlands",
+        "group": "setting",
+        "published": "2023-10-07"
+    },
+    {
+        "id": "AATM",
+        "name": "Adventure Atlas: The Mortuary",
+        "group": "supplement-alt",
+        "published": "2023-10-17"
+    },
+    {
+        "id": "HFFotM",
+        "name": "Heroes' Feast Flavors of the Multiverse",
+        "group": "recipe",
+        "published": "2023-11-07"
+    },
+    {
+        "id": "BMT",
+        "name": "The Book of Many Things",
+        "group": "supplement",
+        "published": "2023-11-14"
+    },
+    {
+        "id": "DMTCRG",
+        "name": "The Deck of Many Things: Card Reference Guide",
+        "group": "supplement",
+        "published": "2023-11-14"
+    },
+    {
+        "id": "PaF",
+        "name": "Puncheons and Flagons",
+        "group": "recipe",
+        "published": "2024-08-27"
+    },
+    {
+        "id": "XPHB",
+        "name": "Player's Handbook (2024)",
+        "group": "core",
+        "published": "2024-09-17"
+    },
+    {
+        "id": "XDMG",
+        "name": "Dungeon Master's Guide (2024)",
+        "group": "core",
+        "published": "2024-11-12"
+    },
+    {
+        "id": "XScreen",
+        "name": "Dungeon Master's Screen (2024)",
+        "group": "screen",
+        "published": "2024-11-12"
+    },
+    {
+        "id": "XMM",
+        "name": "Monster Manual (2025)",
+        "group": "core",
+        "published": "2025-02-18"
+    },
+    {
+        "id": "XSAC",
+        "name": "Sage Advice Compendium (2025)",
+        "group": "other",
+        "published": "2025-04-30"
+    },
+    {
+        "id": "ABH",
+        "name": "Astarion's Book of Hungers",
+        "group": "supplement-alt",
+        "published": "2025-11-11"
+    },
+    {
+        "id": "FRAiF",
+        "name": "Forgotten Realms: Adventures in Faerûn",
+        "group": "setting",
+        "published": "2025-11-11"
+    },
+    {
+        "id": "FRHoF",
+        "name": "Forgotten Realms: Heroes of Faerûn",
+        "group": "setting",
+        "published": "2025-11-11"
+    },
+    {
+        "id": "NF",
+        "name": "Netheril's Fall",
+        "group": "setting-alt",
+        "published": "2025-11-11"
+    },
+    {
+        "id": "LFL",
+        "name": "Lorwyn: First Light",
+        "group": "setting-alt",
+        "published": "2025-11-18"
+    },
+    {
+        "id": "EFA",
+        "name": "Eberron: Forge of the Artificer",
+        "group": "setting",
+        "published": "2025-12-09"
+    },
+    {
+        "id": "CaBoMP",
+        "name": "Crochet: A Book of Many Patterns",
+        "group": "homecraft",
+        "published": "2026-03-31"
+    },
+    {
+        "id": "XScreenRHW",
+        "name": "Dungeon Master's Screen; Ravenloft: The Horrors Within",
+        "group": "screen",
+        "published": "2026-06-16"
+    },
+    {
+        "id": "RHW",
+        "name": "Ravenloft: The Horrors Within",
+        "group": "setting",
+        "published": "2026-06-16"
+    }
+]

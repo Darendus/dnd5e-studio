@@ -18,11 +18,12 @@ import { store, blankCharacter } from '../core/Store.js';
 import { repo }    from '../core/DataRepository.js';
 import { bus, EV } from '../core/EventBus.js';
 import { t }       from '../core/i18n.js';
-import { calcMod, calcSpellSlots, ABILITY_IDS, fmtMod, calcAC } from '../rules/calculations.js';
+import { calcMod, calcSpellSlots, ABILITY_IDS, fmtMod, calcAC, calcMaxHP } from '../rules/calculations.js';
 import { roll }    from '../rules/dice.js';
 import { exportToPdf } from '../utils/pdfExport.js';
 import { combinedBonus } from '../rules/bonuses.js';
 import { ALIGNMENTS, asiLevels, subclassEntryLevel } from '../rules/progression.js';
+import { getHpMethod } from '../core/hpSettings.js';
 
 const NAMES = ['Aelindra', 'Tharok', 'Miriel', 'Borgrim', 'Kaelen', 'Sylvara',
                'Dorn', 'Elowen', 'Grimjaw', 'Lyra', 'Fenwick', 'Zara'];
@@ -211,12 +212,10 @@ function generate({ level, method, race: raceName, cls: className, bg: bgName })
   }
   char.skillProficiencies = [...skills];
 
-  // 5) HP: level 1 = maximum, then average (PHB standard)
-  // CON incl. race/background bonuses
-  const die = +(cls?.hitDie?.slice(1) ?? 8);
-  const conMod = calcMod(effA('con'));
-  char.maxHP = Math.max(1, die + conMod +
-    (level - 1) * Math.max(1, Math.floor(die / 2) + 1 + conMod));
+  // 5) HP: level 1 = maximum, then per the globally configured method
+  // (average/max/roll); shares the same logic as the rest of the app,
+  // so it also picks up feat HP bonuses (Tough, Boon of Fortitude, ...).
+  char.maxHP = calcMaxHP(char, getHpMethod());
   char.currHP = char.maxHP;
   char.hitDiceLeft = level;
 
