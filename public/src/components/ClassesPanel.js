@@ -14,8 +14,9 @@ import { calcSpellSlots, hitDiceSummary, calcMaxHP, calcMod, effectiveAbilities,
 import { featBonusFor } from '../rules/bonuses.js';
 import { asiLevels, subclassEntryLevel } from '../rules/progression.js';
 import { pickFeatSpellClass } from './FeatSpellChoice.js';
-import { getHpMethod } from '../core/hpSettings.js';
+import { getAutoHpMethod } from '../core/hpSettings.js';
 import { toggleExpand } from './InventoryPanel.js';
+import { featEntries } from '../rules/featCasting.js';
 
 export function mountClasses() {
   render();
@@ -261,7 +262,7 @@ function showLevelUp(idx) {
   // Feat-granted spells (Magic Initiate etc.) aren't level/slot-based, so
   // they aren't offered here even for a caster; that's handled through the
   // Spells tab's Library once the feat's class choice is picked.
-  const featSpellEntries = (s.feats ?? []).map((name, i) => ({ name, choice: (s.featChoices ?? [])[i] ?? null }));
+  const featSpellEntries = featEntries(s);
   const learnable = isCaster
     ? repo.getSpellsForClasses(newClasses, featSpellEntries)
         .filter(sp => sp.level > 0 && sp.level <= newMax && !known.has(sp.name.toLowerCase()))
@@ -285,6 +286,7 @@ function showLevelUp(idx) {
         <b>${t('levelup.hp')}</b> <span class="row-dim">(W${die} ${conMod >= 0 ? '+' : ''}${conMod} KON${perLvl ? ` +${perLvl} ${t('levelup.fromFeats')}` : ''})</span>
         <div style="display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap">
           <label><input type="radio" name="luHp" value="avg" checked> ${t('levelup.hpAvg')} (${Math.max(1, avg + conMod + perLvl)})</label>
+          <label><input type="radio" name="luHp" value="max"> ${t('levelup.hpMax')} (${Math.max(1, die + conMod + perLvl)})</label>
           <label><input type="radio" name="luHp" value="roll"> ${t('levelup.hpRoll')}</label>
           <button class="btn btn--sm" id="luRollBtn" style="display:none">🎲 W${die}</button>
           <b id="luRollOut" style="color:var(--gold)"></b>
@@ -384,9 +386,28 @@ function showLevelUp(idx) {
   // == Apply ==
   q('#luApply').onclick = async () => {
     // HP gain (min. 1)
-    const useRoll = dlg.querySelector('input[name="luHp"]:checked')?.value === 'roll';
-    if (useRoll && rolled == null) { q('#luRollBtn').click(); }
-    const gain = Math.max(1, (useRoll ? rolled : avg) + conMod + perLvl);
+    const hpMode = dlg.querySelector('input[name="luHp"]:checked')?.value;
+    if (hpMode === 'roll' && rolled == null) { q('#luRollBtn').click(); }
+    const hpBase = hpMode === 'roll' ? rolled : hpMode === 'max' ? die : avg;
+    const gain = Math.max(1, hpBase + conMod + perLvl);
+
+    // Resolve any async choice (a feat's spell-list class) BEFORE
+    // committing the level/HP below: if the user cancels it, the whole
+    // level-up is aborted instead of silently applying the level/HP
+    // while dropping the ASI/feat the player picked.
+    const asiMode = isASI ? dlg.querySelector('input[name="luAsi"]:checked')?.value : null;
+    let asiFeatName = null, asiFeatPick = null;
+    if (isASI && asiMode !== 'attr') {
+      asiFeatName = q('#luFeat').value;
+      if (asiFeatName) {
+        // some feats (Magic Initiate, ...) grant spells from one of
+        // several class lists; ask which one before adding
+        const feat = repo.findFeat(asiFeatName);
+        const options = repo.featSpellClassOptions(asiFeatName);
+        asiFeatPick = await pickFeatSpellClass(feat, options);
+        if (asiFeatPick === undefined) return; // cancelled -> abort the whole level-up
+      }
+    }
 
     // level (+ subclass if applicable)
     const patch = { level: newLevel };
@@ -405,8 +426,7 @@ function showLevelUp(idx) {
 
     // ASI: abilities or feat
     if (isASI) {
-      const mode = dlg.querySelector('input[name="luAsi"]:checked')?.value;
-      if (mode === 'attr') {
+      if (asiMode === 'attr') {
         const bonusOf = a => (store.field('raceBonus')?.[a] ?? 0)
           + (store.field('bgBonus')?.[a] ?? 0) + (store.field('featBonus')?.[a] ?? 0);
         const bump = (a, n) => {
@@ -423,29 +443,19 @@ function showLevelUp(idx) {
           bump(a2, 1);
           summary.push(`+1 ${t('abilities.' + q('#luA1').value)}, +1 ${t('abilities.' + a2)}`);
         }
-      } else {
-        const featName = q('#luFeat').value;
-        if (featName) {
-          // some feats (Magic Initiate, ...) grant spells from one of
-          // several class lists; ask which one before adding
-          const feat = repo.findFeat(featName);
-          const options = repo.featSpellClassOptions(featName);
-          const picked = await pickFeatSpellClass(feat, options);
-          if (picked !== undefined) {
-            const feats = [...(store.field('feats') ?? []), featName];
-            const featLevels = [...(store.field('featLevels') ?? []), newLevel];
-            const featChoices = [...(store.field('featChoices') ?? []), picked ? { class: picked } : null];
-            store.update({ feats, featLevels, featChoices, featBonus: featBonusFor(feats) });
-            // apply fixed/per-level HP bonuses of the NEW feat directly
-            const fx = repo.findFeat(featName)?.effects ?? {};
-            const featHp = (fx.hpFlat ?? 0) + (fx.hpPerLevel ?? 0) * store.totalLevel();
-            if (featHp) store.update({
-              maxHP: store.field('maxHP') + featHp,
-              currHP: store.field('currHP') + featHp,
-            });
-            summary.push(featName);
-          }
-        }
+      } else if (asiFeatName) {
+        const feats = [...(store.field('feats') ?? []), asiFeatName];
+        const featLevels = [...(store.field('featLevels') ?? []), newLevel];
+        const featChoices = [...(store.field('featChoices') ?? []), asiFeatPick ? { class: asiFeatPick } : null];
+        store.update({ feats, featLevels, featChoices, featBonus: featBonusFor(feats) });
+        // apply fixed/per-level HP bonuses of the NEW feat directly
+        const fx = repo.findFeat(asiFeatName)?.effects ?? {};
+        const featHp = (fx.hpFlat ?? 0) + (fx.hpPerLevel ?? 0) * store.totalLevel();
+        if (featHp) store.update({
+          maxHP: store.field('maxHP') + featHp,
+          currHP: store.field('currHP') + featHp,
+        });
+        summary.push(asiFeatName);
       }
     }
 
@@ -522,7 +532,7 @@ function syncSubclassSpells() {
  *  new maximum; otherwise only maxHP is adjusted (currHP capped). */
 function syncHP() {
   const s = store.get();
-  const newMax = calcMaxHP(s, getHpMethod());
+  const newMax = calcMaxHP(s, getAutoHpMethod());
   if (newMax === s.maxHP) return;
   const wasFull = s.currHP >= s.maxHP;
   store.update({

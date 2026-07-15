@@ -11,9 +11,15 @@ import { calcMod, calcProfBonus, fmtMod, ABILITY_IDS, effectiveAbilities, itemBo
 import { featBonusFor } from '../rules/bonuses.js';
 import { ALIGNMENTS } from '../rules/progression.js';
 import { pickFeatSpellClass } from './FeatSpellChoice.js';
-import { getHpMethod } from '../core/hpSettings.js';
+import { getAutoHpMethod } from '../core/hpSettings.js';
 
 
+
+// Persisted across render() calls: any store.update() (e.g. adding a
+// feat) re-renders this whole tab from scratch, which would otherwise
+// reset the feat library overlay to its default closed/empty state.
+let featLibOpen = false;
+let featLibSearch = '';
 
 export function mountCore() {
   render();
@@ -204,16 +210,25 @@ function render() {
     };
   });
   const ov = el.querySelector('#featOverlay');
-  el.querySelector('#featLib').onclick   = () => { ov.style.display = 'flex'; renderFeatLibrary(); };
-  el.querySelector('#featClose').onclick = () => ov.style.display = 'none';
-  ov.onclick = e => { if (e.target === ov) ov.style.display = 'none'; };
-  el.querySelector('#featSearch').oninput = renderFeatLibrary;
+  el.querySelector('#featLib').onclick   = () => { featLibOpen = true; ov.style.display = 'flex'; renderFeatLibrary(); };
+  el.querySelector('#featClose').onclick = () => { featLibOpen = false; ov.style.display = 'none'; };
+  ov.onclick = e => { if (e.target === ov) { featLibOpen = false; ov.style.display = 'none'; } };
+  el.querySelector('#featSearch').oninput = e => { featLibSearch = e.target.value; renderFeatLibrary(); };
+
+  // this render() may have been triggered by a feat add/remove while the
+  // library was open (store.update -> CHAR_CHANGED -> full re-render);
+  // restore it instead of leaving the user staring at a closed modal
+  if (featLibOpen) {
+    ov.style.display = 'flex';
+    el.querySelector('#featSearch').value = featLibSearch;
+    renderFeatLibrary();
+  }
 }
 
 /** Adjust max HP after a feat change (Tough, Boon of Fortitude …).
  *  If the character was at full health, it stays that way. */
 function resyncMaxHP() {
-  const newMax = calcMaxHP(store.get(), getHpMethod());
+  const newMax = calcMaxHP(store.get(), getAutoHpMethod());
   if (newMax === store.field('maxHP')) return;
   const wasFull = store.field('currHP') >= store.field('maxHP');
   store.update({ maxHP: newMax, currHP: wasFull ? newMax : Math.min(store.field('currHP'), newMax) });

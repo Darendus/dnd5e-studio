@@ -17,3 +17,9 @@ const ABILITY_BY_CLASS = {
 export function abilityForFeatClass(className) {
   return ABILITY_BY_CLASS[String(className ?? '').toLowerCase()] ?? 'int';
 }
+
+/** feats + their chosen spell-list class, zipped from the parallel
+ *  feats/featChoices arrays (choice is null for feats without one) */
+export function featEntries(s) {
+  return (s.feats ?? []).map((name, i) => ({ name, choice: (s.featChoices ?? [])[i] ?? null }));
+}

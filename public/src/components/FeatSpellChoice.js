@@ -16,6 +16,9 @@
 import { t } from '../core/i18n.js';
 
 let overlay = null;
+// resolves the previous still-open prompt (as cancelled) so its promise
+// never hangs once a second call reuses the shared overlay/handlers
+let cancelPending = null;
 
 /** @returns {Promise<string|null|undefined>}
  *    string    = chosen class name
@@ -25,11 +28,18 @@ let overlay = null;
 export function pickFeatSpellClass(feat, options) {
   if (!options?.length || options.length < 2) return Promise.resolve(null);
 
+  cancelPending?.();
+
   return new Promise(resolve => {
+    cancelPending = () => { cancelPending = null; resolve(undefined); };
     if (!overlay) {
       overlay = document.createElement('div');
       overlay.id = 'featSpellChoice';
       overlay.className = 'overlay';
+      // this prompt can be opened from within the Level-Up dialog, which
+      // sets its own overlay to z-index 10000 — without this it would be
+      // painted (and click-hit-tested) BEHIND that dialog and be unusable
+      overlay.style.zIndex = '10010';
       document.body.appendChild(overlay);
     }
     overlay.innerHTML = `
@@ -50,7 +60,7 @@ export function pickFeatSpellClass(feat, options) {
       </div>`;
     overlay.style.display = 'flex';
 
-    const done = value => { overlay.style.display = 'none'; resolve(value); };
+    const done = value => { cancelPending = null; overlay.style.display = 'none'; resolve(value); };
     overlay.onclick = e => {
       if (e.target === overlay || e.target.closest('[data-fsc="cancel"]')) return done(undefined);
       const btn = e.target.closest('[data-fsc-pick]');

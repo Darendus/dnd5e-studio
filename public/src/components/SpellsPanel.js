@@ -18,7 +18,7 @@ import {
   calcMod, calcProfBonus, fmtMod, calcSpellSlots, ABILITY_IDS, effectiveAbilities,
 } from '../rules/calculations.js';
 import { d20, parseAndRoll, describeParts } from '../rules/dice.js';
-import { abilityForFeatClass } from '../rules/featCasting.js';
+import { abilityForFeatClass, featEntries } from '../rules/featCasting.js';
 
 export function mountSpells() {
   render();
@@ -29,12 +29,6 @@ export function mountSpells() {
   });
   bus.on(EV.LANG_CHANGED, render);
   bus.on(EV.SOURCES_CHANGED, render);
-}
-
-/** feats + their chosen spell-list class, zipped from the parallel
- *  feats/featChoices arrays (choice is null for feats without one) */
-function featEntries(s) {
-  return (s.feats ?? []).map((name, i) => ({ name, choice: (s.featChoices ?? [])[i] ?? null }));
 }
 
 // == Spellcasting stats per class ===============================

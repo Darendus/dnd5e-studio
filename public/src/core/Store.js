@@ -103,6 +103,18 @@ class Store {
 
   constructor() { this.#loadRoster(); }
 
+  /** Keeps featChoices parallel to feats/featLevels (same length,
+   *  padded with null). Characters saved before featChoices existed
+   *  have feats but no (or a shorter) featChoices array; without this,
+   *  a newly added feat's choice would land at the wrong index and
+   *  get attributed to an unrelated, pre-existing feat. */
+  #normalizeFeatChoices(state) {
+    const feats = state.feats ?? [];
+    const fc = state.featChoices ?? [];
+    if (fc.length !== feats.length) state.featChoices = feats.map((_, i) => fc[i] ?? null);
+    return state;
+  }
+
   // == Reading ==
   get()      { return structuredClone(this.#state); }
   /** true as long as the character was freshly opened via "New" and is
@@ -135,7 +147,7 @@ class Store {
   loadCharacter(id) {
     const c = this.#roster.characters[id];
     if (!c) return false;
-    this.#state = { ...blankCharacter(), ...structuredClone(c), id };
+    this.#state = this.#normalizeFeatChoices({ ...blankCharacter(), ...structuredClone(c), id });
     this.#roster.activeId = id;
     this.#dirty = true; // already exists in the roster
     this.#undoStack = [];
@@ -336,7 +348,7 @@ class Store {
     // load the active character into the state (if present)
     const active = this.#roster.characters[this.#roster.activeId];
     if (active) {
-      this.#state = { ...blankCharacter(), ...structuredClone(active) };
+      this.#state = this.#normalizeFeatChoices({ ...blankCharacter(), ...structuredClone(active) });
       this.#dirty = true;
     }
   }
@@ -354,7 +366,7 @@ class Store {
       // existing character is not overwritten.
       const fresh = blankCharacter();
       this.#pushUndo();
-      this.#state = { ...fresh, ...parsed, id: fresh.id, updatedAt: null };
+      this.#state = this.#normalizeFeatChoices({ ...fresh, ...parsed, id: fresh.id, updatedAt: null });
       this.#dirty = false;
       this.#persist(); // writes to the roster under the new ID
       bus.emit(EV.CHAR_LOADED);
@@ -365,7 +377,7 @@ class Store {
 
   replace(character) {
     this.#pushUndo();
-    this.#state = { ...blankCharacter(), ...structuredClone(character) };
+    this.#state = this.#normalizeFeatChoices({ ...blankCharacter(), ...structuredClone(character) });
     this.#persist();
     bus.emit(EV.CHAR_CHANGED, { changed: ['*'] });
   }

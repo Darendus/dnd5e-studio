@@ -21,3 +21,14 @@ export function setHpMethod(method) {
   if (!HP_METHODS.includes(method)) return;
   try { localStorage.setItem(KEY, method); } catch {}
 }
+
+/** For the AUTOMATIC resyncs (feat add/remove, class/level/subclass
+ *  edits) rather than an explicit "recalc"/generate action: calcMaxHP()
+ *  re-derives every level's HP from scratch on each call, so with
+ *  'roll' it would silently re-roll already-rolled levels every time
+ *  something unrelated changes. Falls back to 'average' there; the
+ *  Generator and the explicit "recalc HP" button still honor 'roll'. */
+export function getAutoHpMethod() {
+  const m = getHpMethod();
+  return m === 'roll' ? 'average' : m;
+}
