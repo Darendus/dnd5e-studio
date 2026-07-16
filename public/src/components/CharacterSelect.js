@@ -10,8 +10,8 @@
 // ============================================================
 import { store }   from '../core/Store.js';
 import { repo }    from '../core/DataRepository.js';
-import { bus, EV } from '../core/EventBus.js';
 import { t }       from '../core/i18n.js';
+import { escapeHtml } from '../utils/format.js';
 
 let overlay = null;
 
@@ -105,8 +105,8 @@ function render() {
             ? `<img src="${c.portrait}" alt="">`
             : `<span class="select-card__initial">${(c.name || '?').charAt(0).toUpperCase()}</span>`}
         </div>
-        <span class="select-card__name">${esc(c.name) || '-'}</span>
-        <span class="select-card__meta">${esc(c.classes)} · ${t('app.level')} ${c.level}</span>
+        <span class="select-card__name">${escapeHtml(c.name) || '-'}</span>
+        <span class="select-card__meta">${escapeHtml(c.classes)} · ${t('app.level')} ${c.level}</span>
         <span class="select-card__meta select-card__date">${c.updatedAt
           ? new Date(c.updatedAt).toLocaleDateString() : ''}</span>
         <button class="btn-icon select-card__delete" data-sel-del="${c.id}" title="${t('app.remove')}">×</button>
@@ -139,8 +139,4 @@ function render() {
       }
     };
   });
-}
-
-function esc(str) {
-  return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
 }

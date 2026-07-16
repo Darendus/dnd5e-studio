@@ -11,7 +11,7 @@
 // ============================================================
 import http from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { extname, join, normalize } from 'node:path';
+import { extname, join, normalize, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runUpdate } from './tools/updater.js';
 
@@ -24,7 +24,7 @@ const MIME = {
   '.pdf': 'application/pdf', '.webp': 'image/webp',
 };
 
-let updateRunning = false; // prevent double start
+let updateRunning = false;
 
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
@@ -44,14 +44,20 @@ const server = http.createServer(async (req, res) => {
       'X-Content-Type-Options': 'nosniff',
     });
 
+    // if the client disconnects mid-update, writing to the dead socket
+    // would emit an unhandled 'error' (EPIPE) and could take the server
+    // down — swallow it and guard each write.
+    res.on('error', () => {});
+    const write = line => { if (!res.writableEnded && !res.destroyed) res.write(line + '\n'); };
+
     try {
       const result = await runUpdate({
         force: url.searchParams.get('force') === '1',
-        log: line => res.write(line + '\n'),
+        log: write,
       });
-      res.write('RESULT ' + JSON.stringify(result) + '\n');
+      write('RESULT ' + JSON.stringify(result));
     } catch (e) {
-      res.write('✗ Schwerer Fehler: ' + e.message + '\n');
+      write('✗ Schwerer Fehler: ' + e.message);
     } finally {
       updateRunning = false;
       res.end();
@@ -75,7 +81,9 @@ const server = http.createServer(async (req, res) => {
     let path = normalize(decodeURIComponent(url.pathname));
     if (path === '/' || path === '\\') path = '/index.html';
     const file = join(ROOT, path);
-    if (!file.startsWith(ROOT)) { res.writeHead(403); return res.end(); }
+    // must stay inside ROOT: compare against ROOT + separator so a sibling
+    // directory whose name merely starts with "public" can't slip through
+    if (file !== ROOT && !file.startsWith(ROOT + sep)) { res.writeHead(403); return res.end(); }
 
     const data = await readFile(file);
     res.writeHead(200, { 'Content-Type': MIME[extname(file)] ?? 'application/octet-stream' });

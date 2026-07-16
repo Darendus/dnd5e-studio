@@ -12,6 +12,7 @@ import { askRollMode } from './RollPrompt.js';
 import { formatSpeed } from '../rules/wildshape.js';
 import { d20, parseAndRoll, describeParts } from '../rules/dice.js';
 import { getHpMethod } from '../core/hpSettings.js';
+import { escapeHtml } from '../utils/format.js';
 
 export function mountCombat() {
   render();
@@ -37,20 +38,20 @@ function render() {
     <div class="panel__title">${t('combat.hp')}</div>
     <div class="stat-row" style="margin-bottom:10px">
       <div class="stat-box"><input type="number" id="cbMaxHP" value="${s.maxHP}" min="1"
-        style="width:70px;text-align:center;font-size:18px;font-weight:600;border:none;background:none;color:var(--ink)">
+        class="stat-box__input">
         <span class="stat-box__lbl">${t('combat.maxHP')}${(() => {
           const fe = featEffects(s);
           const bonus = fe.hpFlat + fe.hpPerLevel * store.totalLevel();
           return bonus ? ` <span style="color:var(--gold)" title="+${bonus} ${t('combat.hpFromFeats')}">✦+${bonus}</span>` : '';
         })()}</span></div>
       <div class="stat-box"><input type="number" id="cbCurrHP" value="${s.currHP}" min="0"
-        style="width:70px;text-align:center;font-size:18px;font-weight:600;border:none;background:none;color:var(--ink)">
+        class="stat-box__input">
         <span class="stat-box__lbl">${t('combat.currHP')}</span></div>
       <div class="stat-box"><input type="number" id="cbTempHP" value="${s.tempHP}" min="0"
-        style="width:70px;text-align:center;font-size:18px;font-weight:600;border:none;background:none;color:var(--ink)">
+        class="stat-box__input">
         <span class="stat-box__lbl">${t('combat.tempHP')}</span></div>
       <div class="stat-box"><input type="number" id="cbAC" value="${s.ac}" min="0"
-        style="width:70px;text-align:center;font-size:18px;font-weight:600;border:none;background:none;color:var(--ink)">
+        class="stat-box__input">
         <span class="stat-box__lbl">${t('combat.ac')}</span></div>
     </div>
     <div class="hp-bar"><div class="hp-fill ${pct <= 25 ? 'hp-fill--low' : pct <= 50 ? 'hp-fill--mid' : ''}" style="width:${pct}%"></div></div>
@@ -155,8 +156,8 @@ function renderWeaponRows(s) {
         <span class="tag tag--src">${w.ranged ? t('combat.ranged') : t('combat.melee')}</span>
       </span>
       <span class="row-dim">${w.lib.dmg1}${w.dmgMod ? fmtMod(w.dmgMod) : ''} ${w.lib.dmgType ?? ''}</span>
-      <button class="btn btn--sm btn--gold" data-wpn-hit="${esc(w.lib.name)}">${t('combat.hitRoll')} ${fmtMod(w.atkBonus)}</button>
-      <button class="btn btn--sm btn--danger" data-wpn-dmg="${esc(w.lib.name)}">${t('combat.dmgRoll')}</button>
+      <button class="btn btn--sm btn--gold" data-wpn-hit="${escapeHtml(w.lib.name)}">${t('combat.hitRoll')} ${fmtMod(w.atkBonus)}</button>
+      <button class="btn btn--sm btn--danger" data-wpn-dmg="${escapeHtml(w.lib.name)}">${t('combat.dmgRoll')}</button>
     </div>`).join('');
 }
 
@@ -194,11 +195,11 @@ function renderSpellRows(s) {
       </span>
       <span class="row-dim">${sp.lib.damage} ${sp.lib.damageType ?? ''}</span>
       ${sp.lib.attackRoll
-        ? `<button class="btn btn--sm btn--gold" data-sp-hit="${esc(sp.lib.name)}">${t('combat.hitRoll')} ${fmtMod(sp.atkBonus)}</button>`
+        ? `<button class="btn btn--sm btn--gold" data-sp-hit="${escapeHtml(sp.lib.name)}">${t('combat.hitRoll')} ${fmtMod(sp.atkBonus)}</button>`
         : sp.lib.saveType
           ? `<span class="tag tag--save">${sp.lib.saveType.toUpperCase()} DC ${sp.dc}</span>`
           : ''}
-      <button class="btn btn--sm btn--danger" data-sp-dmg="${esc(sp.lib.name)}">${t('combat.dmgRoll')}</button>
+      <button class="btn btn--sm btn--danger" data-sp-dmg="${escapeHtml(sp.lib.name)}">${t('combat.dmgRoll')}</button>
     </div>`).join('');
 }
 
@@ -221,7 +222,7 @@ function renderWildshapeSection(s) {
         <span class="stat-box__lbl">${t('combat.ac')}</span></div>
       <div class="stat-box">
         <input type="number" id="cwsHP" value="${s.wildshape.currHP}" min="0" max="${beast.hp}"
-               style="width:64px;text-align:center;font-size:18px;font-weight:600;border:none;background:none;color:var(--ink)">
+               class="stat-box__input" style="width:64px">
         <span class="stat-box__lbl">${t('wildshape.formHP')} / ${beast.hp}</span>
       </div>
       <div class="stat-box"><span class="stat-box__val" style="font-size:13px">${formatSpeed(beast.speed)}</span>
@@ -239,7 +240,6 @@ function renderWildshapeSection(s) {
   </div>`;
 }
 
-function esc(str) { return String(str ?? '').replace(/"/g, '&quot;'); }
 
 // == Roll logic: separate hit and damage roll ==================
 // After a critical hit, lastCrit remembers the entry - the next

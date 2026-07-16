@@ -8,10 +8,10 @@ import { bus, EV } from '../core/EventBus.js';
 import { t }       from '../core/i18n.js';
 import { calcMod, calcProfBonus, fmtMod, ABILITY_IDS, effectiveAbilities, itemBonuses,
          effectiveInitiative, carryCapacity, featEffects, calcMaxHP } from '../rules/calculations.js';
-import { featBonusFor } from '../rules/bonuses.js';
 import { ALIGNMENTS } from '../rules/progression.js';
 import { pickFeatSpellClass } from './FeatSpellChoice.js';
 import { getAutoHpMethod } from '../core/hpSettings.js';
+import { escapeHtml, capitalize } from '../utils/format.js';
 
 
 
@@ -46,7 +46,7 @@ function render() {
     <div class="panel__title">${t('core.details')}</div>
     <div class="meta-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
       <label class="meta-field"><span>${t('core.playerName')}</span>
-        <input type="text" data-core-field="playerName" value="${esc(s.playerName ?? '')}"></label>
+        <input type="text" data-core-field="playerName" value="${escapeHtml(s.playerName ?? '')}"></label>
       <label class="meta-field"><span>${t('core.alignment')}</span>
         <select data-core-field="alignment">
           <option value="">-</option>
@@ -57,7 +57,7 @@ function render() {
       ${[['age','core.age'],['height','core.height'],['weight','core.weight'],
          ['eyes','core.eyes'],['skin','core.skin'],['hair','core.hair']].map(([f, key]) => `
         <label class="meta-field"><span>${t(key)}</span>
-          <input type="text" data-core-field="${f}" value="${esc(s[f] ?? '')}"></label>`).join('')}
+          <input type="text" data-core-field="${f}" value="${escapeHtml(s[f] ?? '')}"></label>`).join('')}
     </div>
   </div>
 
@@ -98,7 +98,7 @@ function render() {
       <div class="stat-row">
         <div class="stat-box">
           <input type="number" id="coreSpeed" value="${s.speed}" min="0"
-                 style="width:70px;text-align:center;font-size:18px;font-weight:600;border:none;background:none;color:var(--ink)">
+                 class="stat-box__input">
           <span class="stat-box__lbl">${t('abilities.speed')} (ft)${featEff.speed ? ` (+${featEff.speed})` : ''}</span>
         </div>
         <div class="stat-box">
@@ -133,7 +133,7 @@ function render() {
         <div class="lib-entry__top">
           <span class="lib-entry__name"><b>${name}</b></span>
           ${lvl ? `<span class="tag" title="${t('feats.takenAt')}">${t('app.level')} ${lvl}</span>` : ''}
-          ${chosenClass ? `<span class="tag tag--magic">${chosenClass.charAt(0).toUpperCase() + chosenClass.slice(1)}</span>` : ''}
+          ${chosenClass ? `<span class="tag tag--magic">${capitalize(chosenClass)}</span>` : ''}
           ${lib?.source ? `<span class="tag tag--src">${lib.source}</span>` : ''}
           <button class="btn-icon" data-feat-rm="${i}">×</button>
         </div>
@@ -198,14 +198,7 @@ function render() {
   // feats: remove + library (recompute feat bonuses)
   el.querySelectorAll('[data-feat-rm]').forEach(b => {
     b.onclick = () => {
-      const i = +b.dataset.featRm;
-      const feats = [...(store.field('feats') ?? [])];
-      const featLevels = [...(store.field('featLevels') ?? [])];
-      const featChoices = [...(store.field('featChoices') ?? [])];
-      feats.splice(i, 1);
-      featLevels.splice(i, 1);
-      featChoices.splice(i, 1);
-      store.update({ feats, featLevels, featChoices, featBonus: featBonusFor(feats) });
+      store.removeFeatAt(+b.dataset.featRm);
       resyncMaxHP();
     };
   });
@@ -217,7 +210,7 @@ function render() {
 
   // this render() may have been triggered by a feat add/remove while the
   // library was open (store.update -> CHAR_CHANGED -> full re-render);
-  // restore it instead of leaving the user staring at a closed modal
+  // restore its open state and search text
   if (featLibOpen) {
     ov.style.display = 'flex';
     el.querySelector('#featSearch').value = featLibSearch;
@@ -239,7 +232,11 @@ function renderFeatLibrary() {
   const list = document.getElementById('featList');
   if (!list) return;
   const search = (document.getElementById('featSearch')?.value ?? '').toLowerCase();
-  const known = new Set(store.field('feats') ?? []);
+  const myFeats = store.field('feats') ?? [];
+  const known = new Set(myFeats);
+  // how many of each feat the character already has (for repeatable feats
+  // and the "+add"/"remove" toggle)
+  const counts = myFeats.reduce((m, n) => (m[n] = (m[n] ?? 0) + 1, m), {});
 
   let feats = repo.getFeats();
   if (search) feats = feats.filter(f => f.name.toLowerCase().includes(search));
@@ -251,13 +248,13 @@ function renderFeatLibrary() {
         <span class="lib-entry__name">${f.name}</span>
         <span class="tag tag--src">${f.source}</span>
         ${(() => {
-          const count = (store.field('feats') ?? []).filter(n => n === f.name).length;
+          const count = counts[f.name] ?? 0;
           if (count && f.repeatable) return `
             <span class="tag tag--magic">×${count}</span>
-            <button class="btn btn--sm" data-flib-add="${esc(f.name)}">+ ${t('feats.again')}</button>
-            <button class="btn btn--sm btn--danger" data-flib-rm="${esc(f.name)}">${t('app.remove')}</button>`;
-          if (count) return `<button class="btn btn--sm btn--danger" data-flib-rm="${esc(f.name)}">${t('app.remove')}</button>`;
-          return `<button class="btn btn--sm" data-flib-add="${esc(f.name)}">+ ${t('app.add')}</button>`;
+            <button class="btn btn--sm" data-flib-add="${escapeHtml(f.name)}">+ ${t('feats.again')}</button>
+            <button class="btn btn--sm btn--danger" data-flib-rm="${escapeHtml(f.name)}">${t('app.remove')}</button>`;
+          if (count) return `<button class="btn btn--sm btn--danger" data-flib-rm="${escapeHtml(f.name)}">${t('app.remove')}</button>`;
+          return `<button class="btn btn--sm" data-flib-add="${escapeHtml(f.name)}">+ ${t('app.add')}</button>`;
         })()}
       </div>
       ${f.prerequisite ? `<div class="lib-entry__meta">${t('feats.prerequisite')}: ${f.prerequisite}</div>` : ''}
@@ -277,10 +274,7 @@ function renderFeatLibrary() {
       const picked = await pickFeatSpellClass(feat, options);
       if (picked === undefined) return; // cancelled
 
-      const feats = [...(store.field('feats') ?? []), name];
-      const featLevels = [...(store.field('featLevels') ?? []), store.totalLevel()];
-      const featChoices = [...(store.field('featChoices') ?? []), picked ? { class: picked } : null];
-      store.update({ feats, featLevels, featChoices, featBonus: featBonusFor(feats) });
+      store.addFeat(name, store.totalLevel(), picked ? { class: picked } : null);
       resyncMaxHP();
       renderFeatLibrary();
     };
@@ -288,18 +282,11 @@ function renderFeatLibrary() {
   list.querySelectorAll('[data-flib-rm]').forEach(b => {
     b.onclick = () => {
       // removes the LAST occurrence (for repeatable feats)
-      const feats = [...(store.field('feats') ?? [])];
-      const featLevels = [...(store.field('featLevels') ?? [])];
-      const featChoices = [...(store.field('featChoices') ?? [])];
-      const i = feats.lastIndexOf(b.dataset.flibRm);
-      if (i >= 0) { feats.splice(i, 1); featLevels.splice(i, 1); featChoices.splice(i, 1); }
-      store.update({ feats, featLevels, featChoices, featBonus: featBonusFor(feats) });
+      const i = (store.field('feats') ?? []).lastIndexOf(b.dataset.flibRm);
+      store.removeFeatAt(i);
       resyncMaxHP();
       renderFeatLibrary();
     };
   });
 }
 
-function esc(str) {
-  return String(str ?? '').replace(/"/g, '&quot;');
-}

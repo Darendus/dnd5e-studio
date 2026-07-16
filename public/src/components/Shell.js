@@ -63,7 +63,6 @@ function renderTabs() {
       p.classList.toggle('active', p.id === 'tab-' + activeTab));
   };
 
-  // activate the first tab
   document.querySelectorAll('.tab-panel').forEach(p =>
     p.classList.toggle('active', p.id === 'tab-' + activeTab));
 }

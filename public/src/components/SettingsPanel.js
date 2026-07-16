@@ -12,6 +12,7 @@ import { bus, EV } from '../core/EventBus.js';
 import { t, getLang, setLang, LANGS } from '../core/i18n.js';
 import { getTheme, setTheme, resetTheme, PRESETS, FONTS, CUSTOM_VARS } from '../core/theme.js';
 import { getHpMethod, setHpMethod, HP_METHODS } from '../core/hpSettings.js';
+import { escapeHtml, capitalize } from '../utils/format.js';
 
 export function mountSettings() {
   render();
@@ -39,7 +40,7 @@ function render() {
     <div class="mode-toggle" style="display:inline-flex;margin-bottom:14px">
       ${['auto','light','dark'].map(m => `
         <button class="btn btn--sm ${theme.mode === m ? 'active' : ''}" data-app-mode="${m}">
-          ${t('appearance.mode' + m.charAt(0).toUpperCase() + m.slice(1))}
+          ${t('appearance.mode' + capitalize(m))}
         </button>`).join('')}
     </div>
 
@@ -160,7 +161,7 @@ function render() {
         ${entries.map(e => `
           <div class="list-row">
             <span class="row-grow">${e.name}</span>
-            <button class="btn-icon" data-hb-rm="${kind}|${e.name.replace(/"/g, '&quot;')}">×</button>
+            <button class="btn-icon" data-hb-kind="${kind}" data-hb-name="${escapeHtml(e.name)}">×</button>
           </div>`).join('')}`;
     }).join('') || `<p class="panel__hint">-</p>`}
   </div>
@@ -246,11 +247,8 @@ function render() {
       </div>`;
   };
 
-  el.querySelectorAll('[data-hb-rm]').forEach(b => {
-    b.onclick = () => {
-      const [kind, name] = b.dataset.hbRm.split('|');
-      repo.removeHomebrew(kind, name);
-    };
+  el.querySelectorAll('[data-hb-name]').forEach(b => {
+    b.onclick = () => repo.removeHomebrew(b.dataset.hbKind, b.dataset.hbName);
   });
 }
 

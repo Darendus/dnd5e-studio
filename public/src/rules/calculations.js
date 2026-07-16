@@ -83,7 +83,7 @@ export function effectiveAbilities(state) {
   }
 
   for (const it of state.items ?? []) {
-    if (!it.equipped) continue;                 // only EQUIPPED items take effect
+    if (!it.equipped) continue;
     const lib = repo.findItem(it.name);
     const ab  = lib?.ability;
     if (!ab) continue;
@@ -106,11 +106,6 @@ export function effectiveAbilities(state) {
     }
   }
   return { scores, sources };
-}
-
-/** Shorthand: effective modifier of an ability */
-export function effMod(state, attr) {
-  return calcMod(effectiveAbilities(state).scores[attr]);
 }
 
 // == Weapon attacks (from equipped items) ======================
@@ -195,6 +190,10 @@ export function calcSpellSlots(classes) {
   const single = classes.length === 1;
   const half  = lvl => single ? (lvl < 2 ? 0 : Math.ceil(lvl / 2)) : Math.floor(lvl / 2);
   const third = lvl => single ? (lvl < 3 ? 0 : Math.ceil(lvl / 3)) : Math.floor(lvl / 3);
+  // Artificer is a half caster that (unlike Paladin/Ranger) already has
+  // slots at level 1; per TCE it rounds UP in both single- and
+  // multiclass, so half the level rounded up in every case.
+  const artificer = lvl => Math.ceil(lvl / 2);
 
   for (const c of classes) {
     const lvl  = +c.level || 0;
@@ -202,6 +201,7 @@ export function calcSpellSlots(classes) {
     if (prog === 'full') casterLevel += lvl;
     else if (prog === '1/2') casterLevel += half(lvl);
     else if (prog === '1/3') casterLevel += third(lvl);
+    else if (prog === 'artificer') casterLevel += artificer(lvl);
     else if (prog === 'pact') {
       const wl = Math.min(20, lvl);
       const p = PACT_TABLE[wl];
@@ -229,20 +229,6 @@ export function calcSpellSlots(classes) {
 }
 
 /**
- * Primary spellcasting ability: takes that of the first casting class.
- * (With true multiclassing each class has its own; we display the
- *  most important one; rolls per spell use the class assignment.)
- */
-export function primarySpellAbility(classes) {
-  for (const c of classes) {
-    const cls = repo.getClass(c.name);
-    if (cls?.spellAbility) return cls.spellAbility;
-  }
-  return null;
-}
-
-/** Hit dice summary: "5d10 + 1d8" for multiclassing */
-/**
  * Armor class from worn armor + shield + DEX:
  *  light armor = AC + DEX, medium armor = AC + min(DEX,2), heavy armor = fixed;
  *  +2 (or more) per shield. Magic armor/shields fold their bonusAc into
@@ -260,7 +246,7 @@ export function calcAC(state) {
     if (!lib?.ac) continue;
     // bonusAc of a magic armor/shield counts toward ITS OWN AC
     const bonus = lib.bonusAc ?? 0;
-    if (lib.type === 'S') { shield += lib.ac + bonus; continue; } // shield base usually 2
+    if (lib.type === 'S') { shield += lib.ac + bonus; continue; }
     base = lib.type === 'LA' ? lib.ac + dexMod + bonus
          : lib.type === 'MA' ? lib.ac + Math.min(dexMod, 2) + bonus
          : lib.ac + bonus; // heavy armor and everything else: fixed value + bonus

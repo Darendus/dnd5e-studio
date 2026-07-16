@@ -17,7 +17,8 @@
 //  • descriptionBlocks: free-text blocks for the character description
 // ============================================================
 import { bus, EV } from './EventBus.js';
-import { t } from './i18n.js';
+import { druidLevel } from '../rules/wildshape.js';
+import { featBonusFor } from '../rules/bonuses.js';
 
 /** Blank / default character (always with a fresh ID) */
 export function blankCharacter() {
@@ -103,16 +104,26 @@ class Store {
 
   constructor() { this.#loadRoster(); }
 
-  /** Keeps featChoices parallel to feats/featLevels (same length,
-   *  padded with null). Characters saved before featChoices existed
-   *  have feats but no (or a shorter) featChoices array; without this,
-   *  a newly added feat's choice would land at the wrong index and
+  /** Keeps featLevels and featChoices parallel to feats (same length,
+   *  padded with null). Characters saved before these fields existed
+   *  have feats but a shorter/absent parallel array; without this, a
+   *  newly added feat's level/choice would land at the wrong index and
    *  get attributed to an unrelated, pre-existing feat. */
   #normalizeFeatChoices(state) {
-    const feats = state.feats ?? [];
-    const fc = state.featChoices ?? [];
-    if (fc.length !== feats.length) state.featChoices = feats.map((_, i) => fc[i] ?? null);
+    const n = (state.feats ?? []).length;
+    const pad = arr => (arr ?? []).length === n
+      ? (arr ?? [])
+      : Array.from({ length: n }, (_, i) => (arr ?? [])[i] ?? null);
+    state.featLevels  = pad(state.featLevels);
+    state.featChoices = pad(state.featChoices);
     return state;
+  }
+
+  /** Unique id for sections/blocks: timestamp + random suffix so two
+   *  created in the same millisecond don't collide (a bare Date.now()
+   *  would, and remove/update match by id). */
+  #uid(prefix) {
+    return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
   }
 
   // == Reading ==
@@ -208,9 +219,7 @@ class Store {
    *  the druid level (2 from lvl 2, 3 from lvl 6, 4 from lvl 17). */
   wildshapeMax() {
     const s = this.#state;
-    const lvl = (s.classes ?? [])
-      .filter(c => /^druid$|^druide$/i.test(c.name ?? ''))
-      .reduce((a, c) => a + (+c.level || 0), 0);
+    const lvl = druidLevel(s.classes);
     if (s.ruleset === 'phb24') return lvl >= 17 ? 4 : lvl >= 6 ? 3 : 2;
     return 2;
   }
@@ -224,9 +233,7 @@ class Store {
   shortRest() {
     const s = this.#state;
     const patch = { pactSlotsUsed: 0 };
-    const druidLvl = (s.classes ?? [])
-      .filter(c => /^druid$|^druide$/i.test(c.name ?? ''))
-      .reduce((a, c) => a + (+c.level || 0), 0);
+    const druidLvl = druidLevel(s.classes);
     if (druidLvl >= 2) {
       const max = this.wildshapeMax();
       patch.wildshapeUses = s.ruleset === 'phb24'
@@ -274,15 +281,40 @@ class Store {
     this.update({ classes });
   }
 
+  /** Add a feat (optionally with a chosen spell-list class for feats
+   *  like Magic Initiate), keeping feats/featLevels/featChoices in
+   *  lockstep and recomputing featBonus. */
+  addFeat(name, level, choice = null) {
+    const feats = [...this.field('feats'), name];
+    const featLevels = [...this.field('featLevels'), level];
+    const featChoices = [...this.field('featChoices'), choice];
+    this.update({ feats, featLevels, featChoices, featBonus: featBonusFor(feats) });
+  }
+  /** Remove the feat at `index` (no-op if out of range), keeping
+   *  feats/featLevels/featChoices in lockstep. */
+  removeFeatAt(index) {
+    const feats = this.field('feats');
+    if (index < 0 || index >= feats.length) return;
+    const featLevels = this.field('featLevels');
+    const featChoices = this.field('featChoices');
+    feats.splice(index, 1);
+    featLevels.splice(index, 1);
+    featChoices.splice(index, 1);
+    this.update({ feats, featLevels, featChoices, featBonus: featBonusFor(feats) });
+  }
+
   /** Manage sections */
   addSection(title) {
     const sections = this.field('sections');
-    sections.push({ id: 'sec_' + Date.now(), title, content: '' });
+    sections.push({ id: this.#uid('sec'), title, content: '' });
     this.update({ sections });
   }
   updateSection(id, patch) {
     const sections = this.field('sections').map(s => s.id === id ? { ...s, ...patch } : s);
-    this.update({ sections });
+    // content/title edits fire on every keystroke; persist quietly so
+    // the undo stack isn't flooded with one snapshot per character and
+    // no re-render is broadcast mid-typing.
+    this.quietUpdate({ sections });
   }
   removeSection(id) {
     this.update({ sections: this.field('sections').filter(s => s.id !== id) });
@@ -291,13 +323,14 @@ class Store {
   /** Manage description blocks (DescriptionPanel) */
   addDescriptionBlock(title) {
     const blocks = this.field('descriptionBlocks') ?? [];
-    blocks.push({ id: 'db_' + Date.now(), title, content: '' });
+    blocks.push({ id: this.#uid('db'), title, content: '' });
     this.update({ descriptionBlocks: blocks });
   }
   updateDescriptionBlock(id, patch) {
     const blocks = (this.field('descriptionBlocks') ?? [])
       .map(b => b.id === id ? { ...b, ...patch } : b);
-    this.update({ descriptionBlocks: blocks });
+    // save quietly (per-keystroke; no undo flooding, no re-render)
+    this.quietUpdate({ descriptionBlocks: blocks });
   }
   removeDescriptionBlock(id) {
     this.update({ descriptionBlocks: (this.field('descriptionBlocks') ?? []).filter(b => b.id !== id) });
@@ -359,8 +392,19 @@ class Store {
   importJson(json) {
     try {
       const parsed = JSON.parse(json);
+      // reject non-object payloads (bare number/string/array) so they
+      // can't be spread into a half-formed "successful" character
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return false;
       if (!parsed.classes && parsed.class) { // migration schema v1
         parsed.classes = [{ name: parsed.class, level: parsed.level ?? 1, subclass: parsed.subclass ?? null }];
+      }
+      // drop any field that must be an array but isn't present as one
+      // (null, wrong type, …), so a malformed file can't overwrite a
+      // required array and brick the persisted (and reloaded) character.
+      // Deleting the key falls the field back to blankCharacter()'s default.
+      for (const k of ['classes','sections','descriptionBlocks','skillProficiencies','skillExpertise',
+                       'saveProficiencies','feats','featLevels','featChoices','spells','items','attacks']) {
+        if (k in parsed && !Array.isArray(parsed[k])) delete parsed[k];
       }
       // Import ALWAYS creates a new record (fresh ID) so an
       // existing character is not overwritten.

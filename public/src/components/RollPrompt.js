@@ -12,6 +12,7 @@
 //   rollSkill('stealth', mode);   // 'normal' | 'adv' | 'dis'
 // ============================================================
 import { t } from '../core/i18n.js';
+import { escapeHtml } from '../utils/format.js';
 
 let overlay = null;
 let cleanup = null;
@@ -31,7 +32,7 @@ export function askRollMode(label = '') {
     overlay.innerHTML = `
       <div class="modal roll-prompt">
         <div class="modal__head">
-          <b>${esc(label) || t('dice.howToRoll')}</b>
+          <b>${escapeHtml(label) || t('dice.howToRoll')}</b>
           <button class="btn-icon" data-rp="cancel">×</button>
         </div>
         <div class="roll-prompt__body">
@@ -68,6 +69,3 @@ export function askRollMode(label = '') {
   });
 }
 
-function esc(str) {
-  return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
-}

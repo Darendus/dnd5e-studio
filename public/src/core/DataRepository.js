@@ -20,16 +20,20 @@ class DataRepository {
 
   // == Initial load ===========================================
   async load() {
-    // prefer packs (GitHub repo data), otherwise seed
-    this.classes     = await this.#loadFirst(['data/packs/classes.json',     'data/seed/classes.json']);
-    this.races       = await this.#loadFirst(['data/packs/races.json',       'data/seed/races.json']);
-    this.spells      = await this.#loadFirst(['data/packs/spells.json',      'data/seed/spells.json']);
-    this.items       = await this.#loadFirst(['data/packs/items.json',       'data/seed/items.json']);
-    this.books       = await this.#loadFirst(['data/packs/books.json',       'data/seed/books.json']);
-    this.backgrounds = await this.#loadFirst(['data/packs/backgrounds.json', 'data/seed/backgrounds.json']);
-    this.feats       = await this.#loadFirst(['data/packs/feats.json',       'data/seed/feats.json']);
-    this.beasts      = await this.#loadFirst(['data/packs/beasts.json',      'data/seed/beasts.json']);
-    this.manifest    = await this.#tryFetch('data/manifest.json');
+    // prefer packs (GitHub repo data), otherwise seed; none of these
+    // depend on each other, so fetch them all concurrently
+    [this.classes, this.races, this.spells, this.items, this.books,
+     this.backgrounds, this.feats, this.beasts, this.manifest] = await Promise.all([
+      this.#loadFirst(['data/packs/classes.json',     'data/seed/classes.json']),
+      this.#loadFirst(['data/packs/races.json',       'data/seed/races.json']),
+      this.#loadFirst(['data/packs/spells.json',      'data/seed/spells.json']),
+      this.#loadFirst(['data/packs/items.json',       'data/seed/items.json']),
+      this.#loadFirst(['data/packs/books.json',       'data/seed/books.json']),
+      this.#loadFirst(['data/packs/backgrounds.json', 'data/seed/backgrounds.json']),
+      this.#loadFirst(['data/packs/feats.json',       'data/seed/feats.json']),
+      this.#loadFirst(['data/packs/beasts.json',      'data/seed/beasts.json']),
+      this.#tryFetch('data/manifest.json'),
+    ]);
 
     this.#loadEnabledSources();
     this.#mergeHomebrew();

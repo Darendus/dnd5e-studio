@@ -21,7 +21,7 @@ import { t } from '../core/i18n.js';
 import {
   calcMod, calcProfBonus, fmtMod, effectiveAbilities, weaponAttack,
   calcSkillBonus, SKILL_DEFS, ABILITY_IDS, hitDiceSummary, calcSpellSlots,
-  effectiveInitiative, effectiveSpeed,
+  effectiveInitiative, effectiveSpeed, itemBonuses,
 } from '../rules/calculations.js';
 
 // == Page 1: checkbox and field names (official sheet) ========
@@ -120,9 +120,10 @@ export async function exportToPdf(s) {
   setText('ProfBonus', fmtMod(pb));
   if (s.inspiration) setText('Inspiration', '1');
 
+  const saveBonus = itemBonuses(s).save; // Ring/Cloak of Protection etc.
   for (const a of ABILITY_IDS) {
     const prof = (s.saveProficiencies ?? []).includes(a);
-    setText(SAVE_FIELDS[a], fmtMod(calcMod(eff[a]) + (prof ? pb : 0)));
+    setText(SAVE_FIELDS[a], fmtMod(calcMod(eff[a]) + (prof ? pb : 0) + saveBonus));
     if (prof) check(SAVE_BOXES[a]);
   }
 
@@ -142,7 +143,7 @@ export async function exportToPdf(s) {
   setText('HPMax', s.maxHP);
   setText('HPCurrent', s.currHP);
   setText('HPTemp', s.tempHP || '');
-  setText('HDTotal', hitDiceSummary(s.classes));
+  setText('HDTotal', hitDiceSummary(s.classes ?? []));
   setText('HD', s.hitDiceLeft ?? '');
 
   // weapons (max. 3 from equipped gear), damage type spelled out

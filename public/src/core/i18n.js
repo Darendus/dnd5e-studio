@@ -353,7 +353,13 @@ const DICT = {
   },
 };
 
-let currentLang = localStorage.getItem('dnd5e_lang') ?? 'de';
+// validate the stored language against the dictionary: an unknown value
+// (stale/hand-edited) would make DICT[currentLang] undefined and every
+// t() return the raw key path, degrading the whole UI to key strings.
+let currentLang = (() => {
+  try { const v = localStorage.getItem('dnd5e_lang'); return DICT[v] ? v : 'de'; }
+  catch { return 'de'; }
+})();
 
 /** Get a translation: t('spells.cast') */
 export function t(path) {

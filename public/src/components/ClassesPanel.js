@@ -9,14 +9,14 @@ import { store }   from '../core/Store.js';
 import { repo }    from '../core/DataRepository.js';
 import { bus, EV } from '../core/EventBus.js';
 import { t }       from '../core/i18n.js';
-import { calcSpellSlots, hitDiceSummary, calcMaxHP, calcMod, effectiveAbilities,
+import { calcSpellSlots, hitDiceSummary, calcMaxHP, calcMod, fmtMod, effectiveAbilities,
          featEffects, ABILITY_IDS } from '../rules/calculations.js';
-import { featBonusFor } from '../rules/bonuses.js';
 import { asiLevels, subclassEntryLevel } from '../rules/progression.js';
 import { pickFeatSpellClass } from './FeatSpellChoice.js';
 import { getAutoHpMethod } from '../core/hpSettings.js';
 import { toggleExpand } from './InventoryPanel.js';
 import { featEntries } from '../rules/featCasting.js';
+import { escapeHtml } from '../utils/format.js';
 
 export function mountClasses() {
   render();
@@ -45,12 +45,13 @@ function progressionAt(classData, level) {
 }
 
 /** All base-class + subclass features unlocked so far, across every
- *  class the character has, sorted by level then name. */
-function unlockedFeatures(s) {
+ *  class the character has, sorted by level then name. `clsDataByName`
+ *  is the render()-level cache so each class is resolved only once. */
+function unlockedFeatures(s, clsDataByName) {
   const rows = [];
   for (const c of s.classes ?? []) {
     const level = +c.level || 0;
-    const data = repo.getClass(c.name);
+    const data = clsDataByName.get(c.name);
     for (const f of data?.features ?? []) {
       if (f.level <= level) rows.push({ ...f, cls: c.name });
     }
@@ -67,14 +68,17 @@ function unlockedFeatures(s) {
 function render() {
   const el = document.getElementById('tab-classes');
   const s  = store.get();
-  const allClasses = dedupeByName(repo.getClasses());
+  const allClasses = repo.getClasses();
   const { casterLevel, pact } = calcSpellSlots(s.classes);
 
+  // resolve each of the character's classes once and reuse below
+  const clsDataByName = new Map(s.classes.map(c => [c.name, repo.getClass(c.name)]));
+
   const progressionRows = s.classes.flatMap(c => {
-    const entries = Object.entries(progressionAt(repo.getClass(c.name), +c.level || 0));
+    const entries = Object.entries(progressionAt(clsDataByName.get(c.name), +c.level || 0));
     return entries.map(([label, val]) => ({ label, val, cls: c.name }));
   });
-  const features = unlockedFeatures(s);
+  const features = unlockedFeatures(s, clsDataByName);
 
   el.innerHTML = `
   <div class="panel">
@@ -85,8 +89,8 @@ function render() {
     <p class="panel__hint" style="margin-bottom:10px">${t('classes.multiHint')}</p>
 
     ${s.classes.map((c, i) => {
-      const clsData = repo.getClass(c.name);
-      const subs = dedupeByName(clsData?.subclasses ?? []);
+      const clsData = clsDataByName.get(c.name);
+      const subs = clsData?.subclasses ?? [];
       return `
       <div class="class-row">
         <select data-cls-name="${i}">
@@ -176,15 +180,17 @@ function render() {
       }
       // remove known spells that belonged only to the old class
       // (spells of other still-present classes are kept).
-      const remaining = store.field('classes').map(c => c.name);
-      const kept = (store.field('spells') ?? []).filter(sp => {
+      const classesNow = store.field('classes');
+      const remaining = classesNow.map(c => c.name);
+      const spellsNow = store.field('spells') ?? [];
+      const kept = spellsNow.filter(sp => {
         // subclass spells remain as long as the subclass exists
-        if (sp.fromSubclass && store.field('classes').some(c => c.subclass === sp.fromSubclass)) return true;
+        if (sp.fromSubclass && classesNow.some(c => c.subclass === sp.fromSubclass)) return true;
         const lib = repo.findSpell(sp.name);
         if (!lib || sp.source === 'HB') return true;
         return (lib.classes ?? []).some(cn => remaining.includes(cn));
       });
-      if (kept.length !== (store.field('spells') ?? []).length) {
+      if (kept.length !== spellsNow.length) {
         store.update({ spells: kept });
         bus.emit(EV.TOAST, { message: t('spells.clearedForClass') });
       }
@@ -283,7 +289,7 @@ function showLevelUp(idx) {
     <div class="modal__body" style="display:grid;gap:14px">
 
       <div>
-        <b>${t('levelup.hp')}</b> <span class="row-dim">(W${die} ${conMod >= 0 ? '+' : ''}${conMod} KON${perLvl ? ` +${perLvl} ${t('levelup.fromFeats')}` : ''})</span>
+        <b>${t('levelup.hp')}</b> <span class="row-dim">(W${die} ${fmtMod(conMod)} KON${perLvl ? ` +${perLvl} ${t('levelup.fromFeats')}` : ''})</span>
         <div style="display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap">
           <label><input type="radio" name="luHp" value="avg" checked> ${t('levelup.hpAvg')} (${Math.max(1, avg + conMod + perLvl)})</label>
           <label><input type="radio" name="luHp" value="max"> ${t('levelup.hpMax')} (${Math.max(1, die + conMod + perLvl)})</label>
@@ -334,7 +340,7 @@ function showLevelUp(idx) {
         <div id="luSpList" style="max-height:200px;overflow:auto;border:1px solid var(--border);border-radius:6px;padding:6px">
           ${learnable.map(sp => `
             <label style="display:flex;gap:8px;align-items:center;padding:2px 4px" data-lu-sp="${sp.name.toLowerCase()}">
-              <input type="checkbox" class="lib-select" value="${sp.name.replace(/"/g, '&quot;')}" data-lv="${sp.level}">
+              <input type="checkbox" class="lib-select" value="${escapeHtml(sp.name)}" data-lv="${sp.level}">
               <span>${sp.name}</span>
               <span class="row-dim" style="margin-left:auto">${sp.level}${t('spells.grade')}${sp.school ? ' · ' + t('spells.school_' + sp.school) : ''}</span>
             </label>`).join('')}
@@ -444,10 +450,7 @@ function showLevelUp(idx) {
           summary.push(`+1 ${t('abilities.' + q('#luA1').value)}, +1 ${t('abilities.' + a2)}`);
         }
       } else if (asiFeatName) {
-        const feats = [...(store.field('feats') ?? []), asiFeatName];
-        const featLevels = [...(store.field('featLevels') ?? []), newLevel];
-        const featChoices = [...(store.field('featChoices') ?? []), asiFeatPick ? { class: asiFeatPick } : null];
-        store.update({ feats, featLevels, featChoices, featBonus: featBonusFor(feats) });
+        store.addFeat(asiFeatName, newLevel, asiFeatPick ? { class: asiFeatPick } : null);
         // apply fixed/per-level HP bonuses of the NEW feat directly
         const fx = repo.findFeat(asiFeatName)?.effects ?? {};
         const featHp = (fx.hpFlat ?? 0) + (fx.hpPerLevel ?? 0) * store.totalLevel();
@@ -540,10 +543,4 @@ function syncHP() {
     currHP: wasFull ? newMax : Math.min(s.currHP, newMax),
   });
   bus.emit(EV.TOAST, { message: `${t('combat.maxHP')}: ${newMax}` });
-}
-
-
-/** Show duplicate entries (same name, e.g. PHB + XPHB) only once */
-function dedupeByName(arr) {
-  return [...new Map(arr.map(e => [e.name, e])).values()];
 }

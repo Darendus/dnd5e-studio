@@ -205,10 +205,7 @@ function generate({ level, method, race: raceName, cls: className, bg: bgName })
   (bg?.skills ?? []).map(toSkillId).filter(s => VALID_SKILLS.has(s)).forEach(s => skills.add(s));
   if (cls?.skillChoices) {
     const pool = cls.skillChoices.from.filter(s => VALID_SKILLS.has(s) && !skills.has(s));
-    for (let i = 0; i < cls.skillChoices.count && pool.length; i++) {
-      const idx = Math.floor(Math.random() * pool.length);
-      skills.add(pool.splice(idx, 1)[0]);
-    }
+    pickN(pool, cls.skillChoices.count).forEach(s => skills.add(s));
   }
   char.skillProficiencies = [...skills];
 
@@ -315,7 +312,7 @@ function classPriority(name) {
     Wizard:    ['int','con','dex','wis','cha','str'],
     Artificer: ['int','con','dex','wis','str','cha'],
   };
-  return P[name] ?? ['str','dex','con','int','wis','cha'];
+  return P[name] ?? ABILITY_IDS;
 }
 
 function pointBuyRandom() {

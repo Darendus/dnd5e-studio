@@ -13,8 +13,7 @@
 // and is combined here with the fixed bonuses into the total bonus.
 // ============================================================
 import { repo } from '../core/DataRepository.js';
-
-const ABILITY_IDS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+import { ABILITY_IDS } from './calculations.js';
 
 function fixedFrom(entry) {
   const out = {};

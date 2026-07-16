@@ -1,1 +1,2681 @@
-[{"name":"Aarakocra","source":"DMG","speed":20,"abilityBonuses":{"dex":2,"wis":2},"abilityChoose":null,"size":"M","traits":["Dive Attack","Talons","Language"]},{"name":"Aarakocra","source":"EEPC","speed":25,"abilityBonuses":{"dex":2,"wis":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Flight","Talons","Language"]},{"name":"Aarakocra","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Flight","Talons","Wind Caller"]},{"name":"Aasimar","source":"DMG","speed":30,"abilityBonuses":{"wis":1,"cha":2},"abilityChoose":null,"size":"M","traits":["Age","Size","Darkvision","Celestial Resistance","Celestial Legacy","Language"]},{"name":"Aasimar","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Size","Celestial Resistance","Darkvision","Healing Hands","Light Bearer","Celestial Revelation"]},{"name":"Aasimar","source":"VGM","speed":30,"abilityBonuses":{"cha":2},"abilityChoose":null,"size":"M","traits":["Age","Size","Darkvision","Celestial Resistance","Healing Hands","Light Bearer","Languages"]},{"name":"Aasimar","source":"XPHB","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Celestial Resistance","Darkvision","Healing Hands","Light Bearer","Celestial Revelation"]},{"name":"Aetherborn","source":"PSK","speed":30,"abilityBonuses":{"cha":2},"abilityChoose":[{"from":["str","dex","con","int","wis"],"weights":[1,1]}],"size":"M","traits":["Age","Alignment","Size","Darkvision","Born of Aether","Menacing","Languages","Gift of the Aetherborn"]},{"name":"Astral Elf","source":"AAG","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Creature Type","Astral Fire","Darkvision","Fey Ancestry","Keen Senses","Starlight Step","Astral Trance"]},{"name":"Autognome","source":"AAG","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Creature Type","Armored Casing","Built for Success","Healing Machine","Mechanical Nature","Sentry's Rest","Specialized Design"]},{"name":"Aven","source":"PSA","speed":25,"abilityBonuses":{"dex":2},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Flight","Languages"]},{"name":"Aven","source":"PSD","speed":25,"abilityBonuses":{"dex":2,"wis":2},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Flight","Languages","Hawkeyed"]},{"name":"Boggart","source":"LFL","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":[]},{"name":"Bugbear","source":"ERLW","speed":30,"abilityBonuses":{"str":2,"dex":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Darkvision","Long-Limbed","Powerful Build","Sneaky","Surprise Attack","Languages"]},{"name":"Bugbear","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Creature Type","Darkvision","Fey Ancestry","Long-Limbed","Powerful Build","Sneaky","Surprise Attack"]},{"name":"Bugbear","source":"VGM","speed":30,"abilityBonuses":{"str":2,"dex":1},"abilityChoose":null,"size":"M","traits":["Age","Size","Darkvision","Long-Limbed","Powerful Build","Sneaky","Surprise Attack","Languages"]},{"name":"Bullywug","source":"DMG","speed":20,"abilityBonuses":{"int":-2,"cha":-2},"abilityChoose":null,"size":"M","traits":["Amphibious","Speak with Frogs and Toads","Swamp Camouflage","Standing Leap","Languages"]},{"name":"Centaur","source":"GGR","speed":40,"abilityBonuses":{"str":2,"wis":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Fey","Charge","Hooves","Equine Build","Survivor","Languages"]},{"name":"Centaur","source":"MOT","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":[]},{"name":"Centaur","source":"MPMM","speed":40,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Creature Type","Charge","Equine Build","Hooves","Natural Affinity"]},{"name":"Changeling","source":"EFA","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Changeling Instincts","Shape-Shifter"]},{"name":"Changeling","source":"ERLW","speed":30,"abilityBonuses":{"cha":2},"abilityChoose":[{"from":["str","dex","con","int","wis"],"weights":[1]}],"size":"M","traits":["Age","Alignment","Size","Shapechanger","Changeling Instincts","Languages"]},{"name":"Changeling","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Creature Type","Size","Changeling Instincts","Shapechanger"]},{"name":"Custom Lineage","source":"TCE","speed":30,"abilityBonuses":{},"abilityChoose":[{"from":["str","dex","con","int","wis","cha"],"weights":[2]}],"size":"S","traits":["Creature Type","Size","Feat","Variable Trait","Languages"]},{"name":"Deep Gnome","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Creature Type","Darkvision","Gift of the Svirfneblin","Gnomish Magic Resistance","Svirfneblin Camouflage"]},{"name":"Dhampir","source":"RHW","speed":35,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Darkvision","Spider Climb","Trace of Undeath","Vampiric Bite"]},{"name":"Dhampir","source":"VRGR","speed":35,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Size","Ancestral Legacy","Darkvision","Deathless Nature","Spider Climb","Vampiric Bite"]},{"name":"Dragonborn","source":"PHB","speed":30,"abilityBonuses":{"str":2,"cha":1},"abilityChoose":null,"size":"M","traits":["Age","Size","Draconic Ancestry","Breath Weapon","Damage Resistance","Languages"]},{"name":"Dragonborn","source":"XPHB","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Draconic Ancestry","Breath Weapon","Damage Resistance","Darkvision","Draconic Flight"]},{"name":"Dragonborn (Chromatic)","source":"FTD","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Chromatic Ancestry","Breath Weapon","Draconic Resistance","Chromatic Warding"]},{"name":"Dragonborn (Gem)","source":"FTD","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Gem Ancestry","Breath Weapon","Draconic Resistance","Psionic Mind","Gem Flight"]},{"name":"Dragonborn (Metallic)","source":"FTD","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Metallic Ancestry","Breath Weapon","Draconic Resistance","Metallic Breath Weapon"]},{"name":"Duergar","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Creature Type","Darkvision","Duergar Magic","Dwarven Resilience","Psionic Fortitude"]},{"name":"Dwarf","source":"PHB","speed":25,"abilityBonuses":{"con":2},"abilityChoose":null,"size":"M","traits":["Age","Size","Speed","Darkvision","Dwarven Resilience","Dwarven Combat Training","Tool Proficiency","Stonecunning","Languages"]},{"name":"Dwarf","source":"XPHB","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Darkvision","Dwarven Resilience","Dwarven Toughness","Stonecunning"]},{"name":"Dwarf (Kaladesh)","source":"PSK","speed":25,"abilityBonuses":{"con":2,"wis":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Speed","Darkvision","Dwarven Resilience","Dwarven Toughness","Artisan's Expertise","Languages"]},{"name":"Eladrin","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Creature Type","Darkvision","Fey Ancestry","Fey Step","Keen Senses","Trance"]},{"name":"Elf","source":"LFL","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":[]},{"name":"Elf","source":"PHB","speed":30,"abilityBonuses":{"dex":2},"abilityChoose":null,"size":"M","traits":["Age","Size","Darkvision","Keen Senses","Fey Ancestry","Trance","Languages"]},{"name":"Elf","source":"XPHB","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Darkvision","Elven Lineage","Fey Ancestry","Keen Senses","Trance"]},{"name":"Elf (Kaladesh)","source":"PSK","speed":30,"abilityBonuses":{"dex":2,"wis":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Darkvision","Keen Senses","Elf Weapon Training","Fey Ancestry","Trance","Languages","Elf Culture"]},{"name":"Elf (Zendikar)","source":"PSZ","speed":30,"abilityBonuses":{"wis":2},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Darkvision","Keen Senses","Fey Ancestry","Languages"]},{"name":"Faerie","source":"LFL","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":[]},{"name":"Fairy","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Creature Type","Fairy Magic","Flight"]},{"name":"Fairy","source":"WBtW","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Creature Type","Flight","Fairy Magic"]},{"name":"Firbolg","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Firbolg Magic","Hidden Step","Powerful Build","Speech of Beast and Leaf"]},{"name":"Firbolg","source":"VGM","speed":30,"abilityBonuses":{"str":1,"wis":2},"abilityChoose":null,"size":"M","traits":["Age","Size","Firbolg Magic","Hidden Step","Powerful Build","Speech of Beast and Leaf","Languages"]},{"name":"Flamekin","source":"LFL","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":[]},{"name":"Genasi","source":"EEPC","speed":30,"abilityBonuses":{"con":2},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Languages"]},{"name":"Genasi","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Size","Darkvision"]},{"name":"Giff","source":"AAG","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Astral Spark","Firearms Mastery","Hippo Build"]},{"name":"Gith","source":"MTF","speed":30,"abilityBonuses":{"int":1},"abilityChoose":null,"size":"M","traits":["Age","Size","Languages"]},{"name":"Githyanki","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Astral Knowledge","Githyanki Psionics","Psychic Resilience"]},{"name":"Githzerai","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Githzerai Psionics","Mental Discipline","Psychic Resilience"]},{"name":"Gnoll","source":"DMG","speed":30,"abilityBonuses":{"str":2,"int":-2},"abilityChoose":null,"size":"M","traits":["Bite","Darkvision","Rampage"]},{"name":"Gnome","source":"PHB","speed":25,"abilityBonuses":{"int":2},"abilityChoose":null,"size":"S","traits":["Age","Size","Darkvision","Gnome Cunning","Languages"]},{"name":"Gnome","source":"XPHB","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Darkvision","Gnomish Cunning","Gnomish Lineage"]},{"name":"Gnome (Deep)","source":"DMG","speed":20,"abilityBonuses":{"str":1,"dex":2},"abilityChoose":null,"size":"S","traits":["Innate Spellcasting","Stone Camouflage","Gnome Cunning","Superior Darkvision","Languages"]},{"name":"Goblin","source":"DMG","speed":30,"abilityBonuses":{"str":-2,"dex":2},"abilityChoose":null,"size":"S","traits":["Nimble Escape","Darkvision","Languages"]},{"name":"Goblin","source":"ERLW","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":[]},{"name":"Goblin","source":"GGR","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":[]},{"name":"Goblin","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Creature Type","Darkvision","Fey Ancestry","Fury of the Small","Nimble Escape"]},{"name":"Goblin","source":"PSZ","speed":25,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Age","Alignment","Size","Darkvision","Languages","Grit"]},{"name":"Goblin","source":"VGM","speed":30,"abilityBonuses":{"dex":2,"con":1},"abilityChoose":null,"size":"S","traits":["Age","Size","Darkvision","Fury of the Small","Nimble Escape","Languages"]},{"name":"Goblin (Dankwood)","source":"AWM","speed":30,"abilityBonuses":{"dex":2,"wis":1},"abilityChoose":null,"size":"M","traits":[]},{"name":"Goliath","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Little Giant","Mountain Born","Stone's Endurance"]},{"name":"Goliath","source":"VGM","speed":30,"abilityBonuses":{"str":2,"con":1},"abilityChoose":null,"size":"M","traits":["Age","Size","Natural Athlete","Stone's Endurance","Powerful Build","Mountain Born","Languages"]},{"name":"Goliath","source":"XPHB","speed":35,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Giant Ancestry","Large Form","Powerful Build"]},{"name":"Grimlock","source":"DMG","speed":30,"abilityBonuses":{"str":2,"cha":-2},"abilityChoose":null,"size":"M","traits":["Blindsight","Keen Hearing and Smell","Stone Camouflage","Languages"]},{"name":"Grung","source":"OGA","speed":25,"abilityBonuses":{"dex":2,"con":1},"abilityChoose":null,"size":"S","traits":["Age","Alignment","Size","Arboreal Alertness","Amphibious","Poison Immunity","Poisonous Skin","Standing Leap","Water Dependency","Languages"]},{"name":"Hadozee","source":"AAG","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Size","Dexterous Feet","Glide","Hadozee Dodge"]},{"name":"Half-Elf","source":"PHB","speed":30,"abilityBonuses":{"cha":2},"abilityChoose":[{"from":["str","dex","con","int","wis"],"weights":[1,1]}],"size":"M","traits":["Age","Size","Darkvision","Fey Ancestry","Skill Versatility","Languages"]},{"name":"Half-Orc","source":"PHB","speed":30,"abilityBonuses":{"str":2,"con":1},"abilityChoose":null,"size":"M","traits":["Age","Size","Darkvision","Menacing","Relentless Endurance","Savage Attacks","Languages"]},{"name":"Halfling","source":"PHB","speed":25,"abilityBonuses":{"dex":2},"abilityChoose":null,"size":"S","traits":["Age","Size","Lucky","Brave","Halfling Nimbleness","Languages"]},{"name":"Halfling","source":"XPHB","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Brave","Halfling Nimbleness","Luck","Naturally Stealthy"]},{"name":"Harengon","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Size","Hare-Trigger","Leporine Senses","Lucky Footwork","Rabbit Hop"]},{"name":"Harengon","source":"WBtW","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Size","Hare-Trigger","Leporine Senses","Lucky Footwork","Rabbit Hop"]},{"name":"Hexblood","source":"RHW","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Darkvision","Eerie Token"]},{"name":"Hexblood","source":"VRGR","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Creature Type","Size","Ancestral Legacy","Darkvision","Eerie Token","Hex Magic"]},{"name":"Hobgoblin","source":"DMG","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Martial Advantage","Darkvision","Languages"]},{"name":"Hobgoblin","source":"ERLW","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":[]},{"name":"Hobgoblin","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Creature Type","Darkvision","Fey Ancestry","Fey Gift","Fortune from the Many"]},{"name":"Hobgoblin","source":"VGM","speed":30,"abilityBonuses":{"con":2,"int":1},"abilityChoose":null,"size":"M","traits":["Age","Size","Darkvision","Martial Training","Saving Face","Languages"]},{"name":"Human","source":"PHB","speed":30,"abilityBonuses":{"str":1,"dex":1,"con":1,"int":1,"wis":1,"cha":1},"abilityChoose":null,"size":"M","traits":["Age","Size","Languages"]},{"name":"Human","source":"XPHB","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Resourceful","Skillful","Versatile"]},{"name":"Human (Innistrad)","source":"PSI","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Languages"]},{"name":"Human (Ixalan)","source":"PSX","speed":30,"abilityBonuses":{"str":1,"dex":1,"con":1,"int":1,"wis":1,"cha":1},"abilityChoose":null,"size":"M","traits":[]},{"name":"Human (Kaladesh)","source":"PSK","speed":30,"abilityBonuses":{"str":1,"dex":1,"con":1,"int":1,"wis":1,"cha":1},"abilityChoose":null,"size":"M","traits":[]},{"name":"Human (Zendikar)","source":"PSZ","speed":30,"abilityBonuses":{"str":1,"dex":1,"con":1,"int":1,"wis":1,"cha":1},"abilityChoose":null,"size":"M","traits":[]},{"name":"Kalashtar","source":"EFA","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Dual Mind","Mental Discipline","Mind Link","Severed from Dreams"]},{"name":"Kalashtar","source":"ERLW","speed":30,"abilityBonuses":{"wis":2,"cha":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Dual Mind","Mental Discipline","Mind Link","Severed from Dreams","Languages"]},{"name":"Kender","source":"DSotDQ","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Fearless","Kender Curiosity","Taunt"]},{"name":"Kenku","source":"DMG","speed":30,"abilityBonuses":{"dex":2},"abilityChoose":null,"size":"M","traits":["Ambusher","Mimicry","Languages"]},{"name":"Kenku","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Size","Expert Duplication","Kenku Recall","Mimicry"]},{"name":"Kenku","source":"VGM","speed":30,"abilityBonuses":{"dex":2,"wis":1},"abilityChoose":null,"size":"M","traits":["Age","Size","Expert Forgery","Kenku Training","Mimicry","Languages"]},{"name":"Khenra","source":"PSA","speed":35,"abilityBonuses":{"str":1,"dex":2},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Khenra Weapon Training","Khenra Twins","Languages"]},{"name":"Khoravar","source":"EFA","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Darkvision","Fey Ancestry","Fey Gift","Lethargy Resilience","Skill Versatility"]},{"name":"Kithkin","source":"LFL","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":[]},{"name":"Kobold","source":"DMG","speed":30,"abilityBonuses":{"str":-4,"dex":2},"abilityChoose":null,"size":"S","traits":["Pack Tactics","Sunlight Sensitivity","Darkvision","Languages"]},{"name":"Kobold","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Darkvision","Draconic Cry","Kobold Legacy"]},{"name":"Kobold","source":"VGM","speed":30,"abilityBonuses":{"dex":2},"abilityChoose":null,"size":"S","traits":["Age","Size","Darkvision","Grovel, Cower, and Beg","Pack Tactics","Sunlight Sensitivity","Languages"]},{"name":"Kor","source":"PSZ","speed":30,"abilityBonuses":{"dex":2,"wis":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Brave","Climbing","Kor Climbing","Languages","Lucky"]},{"name":"Kuo-Toa","source":"DMG","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Amphibious","Otherworldly Perception","Slippery","Sunlight Sensitivity","Superior Darkvision","Languages"]},{"name":"Leonin","source":"MOT","speed":35,"abilityBonuses":{"str":1,"con":2},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Darkvision","Claws","Hunter's Instincts","Daunting Roar","Languages"]},{"name":"Lizardfolk","source":"DMG","speed":30,"abilityBonuses":{"str":2,"int":-2},"abilityChoose":null,"size":"M","traits":["Hold Breath","Natural Armor","Languages"]},{"name":"Lizardfolk","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Speed","Bite","Hold Breath","Hungry Jaws","Natural Armor","Nature's Intuition"]},{"name":"Lizardfolk","source":"VGM","speed":30,"abilityBonuses":{"con":2,"wis":1},"abilityChoose":null,"size":"M","traits":["Age","Size","Swim Speed","Bite","Cunning Artisan","Hold Breath","Hunter's Lore","Natural Armor","Hungry Jaws","Languages"]},{"name":"Locathah","source":"LR","speed":30,"abilityBonuses":{"str":2,"dex":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Natural Armor","Observant & Athletic","Leviathan Will","Limited Amphibiousness","Size","Language"]},{"name":"Lorwyn Changeling","source":"LFL","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Shape Self","Darkvision","Delightful Imitator","Unpredictable Movement"]},{"name":"Loxodon","source":"GGR","speed":30,"abilityBonuses":{"con":2,"wis":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Powerful Build","Loxodon Serenity","Natural Armor","Trunk","Keen Smell","Languages"]},{"name":"Lupin","source":"RHW","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Darkvision","Feral Pounce","Howl","Werewolf Instincts"]},{"name":"Merfolk","source":"DMG","speed":10,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Amphibious","Languages"]},{"name":"Merfolk","source":"PSZ","speed":30,"abilityBonuses":{"cha":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Amphibious","Size","Swimming","Languages"]},{"name":"Minotaur","source":"GGR","speed":30,"abilityBonuses":{"str":2,"con":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Horns","Goring Rush","Hammering Horns","Imposing Presence","Languages"]},{"name":"Minotaur","source":"MOT","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":[]},{"name":"Minotaur","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Horns","Goring Rush","Hammering Horns","Labyrinthine Recall"]},{"name":"Minotaur (Amonkhet)","source":"PSA","speed":30,"abilityBonuses":{"str":2,"con":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Natural Weapon","Menacing","Relentless Endurance","Savage Attacks","Languages"]},{"name":"Naga","source":"PSA","speed":30,"abilityBonuses":{"con":2,"int":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Speed Burst","Natural Weapons","Poison Immunity","Poison Affinity","Languages"]},{"name":"Orc","source":"DMG","speed":30,"abilityBonuses":{"str":2,"int":-2},"abilityChoose":null,"size":"M","traits":["Aggressive","Darkvision","Languages"]},{"name":"Orc","source":"EGW","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":[]},{"name":"Orc","source":"ERLW","speed":30,"abilityBonuses":{"str":2,"con":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Darkvision","Aggressive","Primal Intuition","Powerful Build","Languages"]},{"name":"Orc","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Adrenaline Rush","Darkvision","Powerful Build","Relentless Endurance"]},{"name":"Orc","source":"VGM","speed":30,"abilityBonuses":{"str":2,"con":1},"abilityChoose":null,"size":"M","traits":["Age","Size","Darkvision","Aggressive","Primal Intuition","Powerful Build","Languages"]},{"name":"Orc","source":"XPHB","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Adrenaline Rush","Darkvision","Relentless Endurance"]},{"name":"Orc (Ixalan)","source":"PSX","speed":30,"abilityBonuses":{"str":2,"con":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Menacing","Relentless Endurance","Savage Attacks","Darkvision","Languages"]},{"name":"Owlin","source":"SCC","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Size","Darkvision","Flight","Silent Feathers"]},{"name":"Plasmoid","source":"AAG","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Creature Type","Size","Amorphous","Darkvision","Hold Breath","Natural Resilience","Shape Self"]},{"name":"Reborn","source":"RHW","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Escaped Death","Everlasting","Knowledge from a Past Life","Strange Endurance"]},{"name":"Reborn","source":"VRGR","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Size","Ancestral Legacy","Deathless Nature","Knowledge from a Past Life"]},{"name":"Rimekin","source":"LFL","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Cold Fire Magic","Cold Resistance","Darkvision"]},{"name":"Satyr","source":"MOT","speed":35,"abilityBonuses":{"dex":1,"cha":2},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Fey","Ram","Magic Resistance","Mirthful Leaps","Reveler","Languages"]},{"name":"Satyr","source":"MPMM","speed":35,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Creature Type","Ram","Magic Resistance","Mirthful Leaps","Reveler"]},{"name":"Sea Elf","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Creature Type","Speed","Child of the Sea","Darkvision","Fey Ancestry","Friend of the Sea","Keen Senses","Trance"]},{"name":"Shadar-Kai","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Creature Type","Blessing of the Raven Queen","Darkvision","Fey Ancestry","Keen Senses","Necrotic Resistance","Trance"]},{"name":"Shifter","source":"EFA","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Bestial Instincts","Darkvision","Shifting"]},{"name":"Shifter","source":"ERLW","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Speed","Darkvision","Shifting","Languages"]},{"name":"Shifter","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Bestial Instincts","Darkvision","Shifting"]},{"name":"Simic Hybrid","source":"GGR","speed":30,"abilityBonuses":{"con":2},"abilityChoose":[{"from":["str","dex","int","wis","cha"],"weights":[1]}],"size":"M","traits":["Age","Alignment","Size","Darkvision","Languages","Animal Enhancement"]},{"name":"Siren","source":"PSX","speed":25,"abilityBonuses":{"cha":2},"abilityChoose":null,"size":"M","traits":["Alignment","Size","Siren's Song","Flight","Languages"]},{"name":"Skeleton","source":"DMG","speed":30,"abilityBonuses":{"dex":2,"int":-4,"cha":-4},"abilityChoose":null,"size":"M","traits":["Creature Type","Brittle Bones","Undead Nature","Darkvision","Languages"]},{"name":"Tabaxi","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Size","Speed","Cat's Claws","Cat's Talent","Darkvision","Feline Agility"]},{"name":"Tabaxi","source":"VGM","speed":30,"abilityBonuses":{"dex":2,"cha":1},"abilityChoose":null,"size":"M","traits":["Age","Size","Darkvision","Feline Agility","Cat's Claws","Cat's Talents","Languages"]},{"name":"Thri-kreen","source":"AAG","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Creature Type","Size","Chameleon Carapace","Darkvision","Secondary Arms","Sleepless","Thri-kreen Telepathy"]},{"name":"Tiefling","source":"PHB","speed":30,"abilityBonuses":{"int":1,"cha":2},"abilityChoose":null,"size":"M","traits":["Age","Size","Darkvision","Hellish Resistance","Infernal Legacy","Languages"]},{"name":"Tiefling","source":"XPHB","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Darkvision","Fiendish Legacy","Otherworldly Presence"]},{"name":"Tortle","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Size","Claws","Hold Breath","Natural Armor","Nature's Intuition","Shell Defense"]},{"name":"Tortle","source":"TTP","speed":30,"abilityBonuses":{"str":2,"wis":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Claws","Hold Breath","Natural Armor","Shell Defense","Survival Instinct","Languages"]},{"name":"Triton","source":"MOT","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":[]},{"name":"Triton","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"M","traits":["Speed","Amphibious","Control Air and Water","Darkvision","Emissary of the Sea","Guardian of the Depths"]},{"name":"Triton","source":"VGM","speed":30,"abilityBonuses":{"str":1,"con":1,"cha":1},"abilityChoose":null,"size":"M","traits":["Age","Size","Swim Speed","Amphibious","Control Air and Water","Darkvision","Emissary of the Sea","Guardians of the Depths","Languages"]},{"name":"Troglodyte","source":"DMG","speed":30,"abilityBonuses":{"str":2,"con":2,"int":-4,"cha":-4},"abilityChoose":null,"size":"M","traits":["Chameleon Skin","Stench","Sunlight Sensitivity","Natural Armor","Darkvision","Languages"]},{"name":"Vampire","source":"PSZ","speed":30,"abilityBonuses":{"cha":2},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Blood Thirst","Darkvision","Languages","Vampiric Resistance"]},{"name":"Vedalken","source":"GGR","speed":30,"abilityBonuses":{"int":2,"wis":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Vedalken Dispassion","Tireless Precision","Partially Amphibious","Languages"]},{"name":"Vedalken","source":"PSK","speed":30,"abilityBonuses":{"int":2,"wis":1},"abilityChoose":null,"size":"M","traits":["Age","Alignment","Size","Languages","Vedalken Cunning","Aether Lore"]},{"name":"Verdan","source":"AI","speed":30,"abilityBonuses":{"con":1,"cha":2},"abilityChoose":null,"size":"V","traits":["Age","Alignment","Size","Black Blood Healing","Limited Telepathy","Persuasive","Telepathic Insight","Language"]},{"name":"Warforged","source":"EFA","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Construct Resilience","Integrated Protection","Sentry's Rest","Specialized Design","Tireless"]},{"name":"Warforged","source":"ERLW","speed":30,"abilityBonuses":{"con":2},"abilityChoose":[{"from":["str","dex","int","wis","cha"],"weights":[1]}],"size":"M","traits":["Age","Alignment","Size","Constructed Resilience","Sentry's Rest","Integrated Protection","Specialized Design","Languages"]},{"name":"Yuan-Ti","source":"MPMM","speed":30,"abilityBonuses":{},"abilityChoose":null,"size":"S","traits":["Size","Darkvision","Magic Resistance","Poison Resilience","Serpentine Spellcasting"]},{"name":"Yuan-ti Pureblood","source":"VGM","speed":30,"abilityBonuses":{"int":1,"cha":2},"abilityChoose":null,"size":"M","traits":["Age","Size","Darkvision","Innate Spellcasting","Magic Resistance","Poison Immunity","Languages"]},{"name":"Zombie","source":"DMG","speed":30,"abilityBonuses":{"str":1,"con":2,"int":-6,"wis":-4,"cha":-4},"abilityChoose":null,"size":"M","traits":["Creature Type","Undead Fortitude","Undead Nature","Darkvision","Languages"]}]
+[
+    {
+        "name": "Aarakocra",
+        "source": "DMG",
+        "speed": 20,
+        "abilityBonuses": {
+            "dex": 2,
+            "wis": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Dive Attack",
+            "Talons",
+            "Language"
+        ]
+    },
+    {
+        "name": "Aarakocra",
+        "source": "EEPC",
+        "speed": 25,
+        "abilityBonuses": {
+            "dex": 2,
+            "wis": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Flight",
+            "Talons",
+            "Language"
+        ]
+    },
+    {
+        "name": "Aarakocra",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Flight",
+            "Talons",
+            "Wind Caller"
+        ]
+    },
+    {
+        "name": "Aasimar",
+        "source": "DMG",
+        "speed": 30,
+        "abilityBonuses": {
+            "wis": 1,
+            "cha": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Darkvision",
+            "Celestial Resistance",
+            "Celestial Legacy",
+            "Language"
+        ]
+    },
+    {
+        "name": "Aasimar",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Size",
+            "Celestial Resistance",
+            "Darkvision",
+            "Healing Hands",
+            "Light Bearer",
+            "Celestial Revelation"
+        ]
+    },
+    {
+        "name": "Aasimar",
+        "source": "VGM",
+        "speed": 30,
+        "abilityBonuses": {
+            "cha": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Darkvision",
+            "Celestial Resistance",
+            "Healing Hands",
+            "Light Bearer",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Aasimar",
+        "source": "XPHB",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Celestial Resistance",
+            "Darkvision",
+            "Healing Hands",
+            "Light Bearer",
+            "Celestial Revelation"
+        ]
+    },
+    {
+        "name": "Aetherborn",
+        "source": "PSK",
+        "speed": 30,
+        "abilityBonuses": {
+            "cha": 2
+        },
+        "abilityChoose": [
+            {
+                "from": [
+                    "str",
+                    "dex",
+                    "con",
+                    "int",
+                    "wis"
+                ],
+                "weights": [
+                    1,
+                    1
+                ]
+            }
+        ],
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Darkvision",
+            "Born of Aether",
+            "Menacing",
+            "Languages",
+            "Gift of the Aetherborn"
+        ]
+    },
+    {
+        "name": "Astral Elf",
+        "source": "AAG",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Creature Type",
+            "Astral Fire",
+            "Darkvision",
+            "Fey Ancestry",
+            "Keen Senses",
+            "Starlight Step",
+            "Astral Trance"
+        ]
+    },
+    {
+        "name": "Autognome",
+        "source": "AAG",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Creature Type",
+            "Armored Casing",
+            "Built for Success",
+            "Healing Machine",
+            "Mechanical Nature",
+            "Sentry's Rest",
+            "Specialized Design"
+        ]
+    },
+    {
+        "name": "Aven",
+        "source": "PSA",
+        "speed": 25,
+        "abilityBonuses": {
+            "dex": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Flight",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Aven",
+        "source": "PSD",
+        "speed": 25,
+        "abilityBonuses": {
+            "dex": 2,
+            "wis": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Flight",
+            "Languages",
+            "Hawkeyed"
+        ]
+    },
+    {
+        "name": "Boggart",
+        "source": "LFL",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": []
+    },
+    {
+        "name": "Bugbear",
+        "source": "ERLW",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 2,
+            "dex": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Darkvision",
+            "Long-Limbed",
+            "Powerful Build",
+            "Sneaky",
+            "Surprise Attack",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Bugbear",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Creature Type",
+            "Darkvision",
+            "Fey Ancestry",
+            "Long-Limbed",
+            "Powerful Build",
+            "Sneaky",
+            "Surprise Attack"
+        ]
+    },
+    {
+        "name": "Bugbear",
+        "source": "VGM",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 2,
+            "dex": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Darkvision",
+            "Long-Limbed",
+            "Powerful Build",
+            "Sneaky",
+            "Surprise Attack",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Bullywug",
+        "source": "DMG",
+        "speed": 20,
+        "abilityBonuses": {
+            "int": -2,
+            "cha": -2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Amphibious",
+            "Speak with Frogs and Toads",
+            "Swamp Camouflage",
+            "Standing Leap",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Centaur",
+        "source": "GGR",
+        "speed": 40,
+        "abilityBonuses": {
+            "str": 2,
+            "wis": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Fey",
+            "Charge",
+            "Hooves",
+            "Equine Build",
+            "Survivor",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Centaur",
+        "source": "MOT",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": []
+    },
+    {
+        "name": "Centaur",
+        "source": "MPMM",
+        "speed": 40,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Creature Type",
+            "Charge",
+            "Equine Build",
+            "Hooves",
+            "Natural Affinity"
+        ]
+    },
+    {
+        "name": "Changeling",
+        "source": "EFA",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Changeling Instincts",
+            "Shape-Shifter"
+        ]
+    },
+    {
+        "name": "Changeling",
+        "source": "ERLW",
+        "speed": 30,
+        "abilityBonuses": {
+            "cha": 2
+        },
+        "abilityChoose": [
+            {
+                "from": [
+                    "str",
+                    "dex",
+                    "con",
+                    "int",
+                    "wis"
+                ],
+                "weights": [
+                    1
+                ]
+            }
+        ],
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Shapechanger",
+            "Changeling Instincts",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Changeling",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Creature Type",
+            "Size",
+            "Changeling Instincts",
+            "Shapechanger"
+        ]
+    },
+    {
+        "name": "Custom Lineage",
+        "source": "TCE",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": [
+            {
+                "from": [
+                    "str",
+                    "dex",
+                    "con",
+                    "int",
+                    "wis",
+                    "cha"
+                ],
+                "weights": [
+                    2
+                ]
+            }
+        ],
+        "size": "S",
+        "traits": [
+            "Creature Type",
+            "Size",
+            "Feat",
+            "Variable Trait",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Deep Gnome",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Creature Type",
+            "Darkvision",
+            "Gift of the Svirfneblin",
+            "Gnomish Magic Resistance",
+            "Svirfneblin Camouflage"
+        ]
+    },
+    {
+        "name": "Dhampir",
+        "source": "RHW",
+        "speed": 35,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Darkvision",
+            "Spider Climb",
+            "Trace of Undeath",
+            "Vampiric Bite"
+        ]
+    },
+    {
+        "name": "Dhampir",
+        "source": "VRGR",
+        "speed": 35,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Size",
+            "Ancestral Legacy",
+            "Darkvision",
+            "Deathless Nature",
+            "Spider Climb",
+            "Vampiric Bite"
+        ]
+    },
+    {
+        "name": "Dragonborn",
+        "source": "PHB",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 2,
+            "cha": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Draconic Ancestry",
+            "Breath Weapon",
+            "Damage Resistance",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Dragonborn",
+        "source": "XPHB",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Draconic Ancestry",
+            "Breath Weapon",
+            "Damage Resistance",
+            "Darkvision",
+            "Draconic Flight"
+        ]
+    },
+    {
+        "name": "Dragonborn (Chromatic)",
+        "source": "FTD",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Chromatic Ancestry",
+            "Breath Weapon",
+            "Draconic Resistance",
+            "Chromatic Warding"
+        ]
+    },
+    {
+        "name": "Dragonborn (Gem)",
+        "source": "FTD",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Gem Ancestry",
+            "Breath Weapon",
+            "Draconic Resistance",
+            "Psionic Mind",
+            "Gem Flight"
+        ]
+    },
+    {
+        "name": "Dragonborn (Metallic)",
+        "source": "FTD",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Metallic Ancestry",
+            "Breath Weapon",
+            "Draconic Resistance",
+            "Metallic Breath Weapon"
+        ]
+    },
+    {
+        "name": "Duergar",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Creature Type",
+            "Darkvision",
+            "Duergar Magic",
+            "Dwarven Resilience",
+            "Psionic Fortitude"
+        ]
+    },
+    {
+        "name": "Dwarf",
+        "source": "PHB",
+        "speed": 25,
+        "abilityBonuses": {
+            "con": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Speed",
+            "Darkvision",
+            "Dwarven Resilience",
+            "Dwarven Combat Training",
+            "Tool Proficiency",
+            "Stonecunning",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Dwarf",
+        "source": "XPHB",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Darkvision",
+            "Dwarven Resilience",
+            "Dwarven Toughness",
+            "Stonecunning"
+        ]
+    },
+    {
+        "name": "Dwarf (Kaladesh)",
+        "source": "PSK",
+        "speed": 25,
+        "abilityBonuses": {
+            "con": 2,
+            "wis": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Speed",
+            "Darkvision",
+            "Dwarven Resilience",
+            "Dwarven Toughness",
+            "Artisan's Expertise",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Eladrin",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Creature Type",
+            "Darkvision",
+            "Fey Ancestry",
+            "Fey Step",
+            "Keen Senses",
+            "Trance"
+        ]
+    },
+    {
+        "name": "Elf",
+        "source": "LFL",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": []
+    },
+    {
+        "name": "Elf",
+        "source": "PHB",
+        "speed": 30,
+        "abilityBonuses": {
+            "dex": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Darkvision",
+            "Keen Senses",
+            "Fey Ancestry",
+            "Trance",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Elf",
+        "source": "XPHB",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Darkvision",
+            "Elven Lineage",
+            "Fey Ancestry",
+            "Keen Senses",
+            "Trance"
+        ]
+    },
+    {
+        "name": "Elf (Kaladesh)",
+        "source": "PSK",
+        "speed": 30,
+        "abilityBonuses": {
+            "dex": 2,
+            "wis": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Darkvision",
+            "Keen Senses",
+            "Elf Weapon Training",
+            "Fey Ancestry",
+            "Trance",
+            "Languages",
+            "Elf Culture"
+        ]
+    },
+    {
+        "name": "Elf (Zendikar)",
+        "source": "PSZ",
+        "speed": 30,
+        "abilityBonuses": {
+            "wis": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Darkvision",
+            "Keen Senses",
+            "Fey Ancestry",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Faerie",
+        "source": "LFL",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": []
+    },
+    {
+        "name": "Fairy",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Creature Type",
+            "Fairy Magic",
+            "Flight"
+        ]
+    },
+    {
+        "name": "Fairy",
+        "source": "WBtW",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Creature Type",
+            "Flight",
+            "Fairy Magic"
+        ]
+    },
+    {
+        "name": "Firbolg",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Firbolg Magic",
+            "Hidden Step",
+            "Powerful Build",
+            "Speech of Beast and Leaf"
+        ]
+    },
+    {
+        "name": "Firbolg",
+        "source": "VGM",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 1,
+            "wis": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Firbolg Magic",
+            "Hidden Step",
+            "Powerful Build",
+            "Speech of Beast and Leaf",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Flamekin",
+        "source": "LFL",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": []
+    },
+    {
+        "name": "Genasi",
+        "source": "EEPC",
+        "speed": 30,
+        "abilityBonuses": {
+            "con": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Genasi",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Size",
+            "Darkvision"
+        ]
+    },
+    {
+        "name": "Giff",
+        "source": "AAG",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Astral Spark",
+            "Firearms Mastery",
+            "Hippo Build"
+        ]
+    },
+    {
+        "name": "Gith",
+        "source": "MTF",
+        "speed": 30,
+        "abilityBonuses": {
+            "int": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Githyanki",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Astral Knowledge",
+            "Githyanki Psionics",
+            "Psychic Resilience"
+        ]
+    },
+    {
+        "name": "Githzerai",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Githzerai Psionics",
+            "Mental Discipline",
+            "Psychic Resilience"
+        ]
+    },
+    {
+        "name": "Gnoll",
+        "source": "DMG",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 2,
+            "int": -2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Bite",
+            "Darkvision",
+            "Rampage"
+        ]
+    },
+    {
+        "name": "Gnome",
+        "source": "PHB",
+        "speed": 25,
+        "abilityBonuses": {
+            "int": 2
+        },
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Age",
+            "Size",
+            "Darkvision",
+            "Gnome Cunning",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Gnome",
+        "source": "XPHB",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Darkvision",
+            "Gnomish Cunning",
+            "Gnomish Lineage"
+        ]
+    },
+    {
+        "name": "Gnome (Deep)",
+        "source": "DMG",
+        "speed": 20,
+        "abilityBonuses": {
+            "str": 1,
+            "dex": 2
+        },
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Innate Spellcasting",
+            "Stone Camouflage",
+            "Gnome Cunning",
+            "Superior Darkvision",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Goblin",
+        "source": "DMG",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": -2,
+            "dex": 2
+        },
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Nimble Escape",
+            "Darkvision",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Goblin",
+        "source": "ERLW",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": []
+    },
+    {
+        "name": "Goblin",
+        "source": "GGR",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": []
+    },
+    {
+        "name": "Goblin",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Creature Type",
+            "Darkvision",
+            "Fey Ancestry",
+            "Fury of the Small",
+            "Nimble Escape"
+        ]
+    },
+    {
+        "name": "Goblin",
+        "source": "PSZ",
+        "speed": 25,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Darkvision",
+            "Languages",
+            "Grit"
+        ]
+    },
+    {
+        "name": "Goblin",
+        "source": "VGM",
+        "speed": 30,
+        "abilityBonuses": {
+            "dex": 2,
+            "con": 1
+        },
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Age",
+            "Size",
+            "Darkvision",
+            "Fury of the Small",
+            "Nimble Escape",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Goblin (Dankwood)",
+        "source": "AWM",
+        "speed": 30,
+        "abilityBonuses": {
+            "dex": 2,
+            "wis": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": []
+    },
+    {
+        "name": "Goliath",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Little Giant",
+            "Mountain Born",
+            "Stone's Endurance"
+        ]
+    },
+    {
+        "name": "Goliath",
+        "source": "VGM",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 2,
+            "con": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Natural Athlete",
+            "Stone's Endurance",
+            "Powerful Build",
+            "Mountain Born",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Goliath",
+        "source": "XPHB",
+        "speed": 35,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Giant Ancestry",
+            "Large Form",
+            "Powerful Build"
+        ]
+    },
+    {
+        "name": "Grimlock",
+        "source": "DMG",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 2,
+            "cha": -2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Blindsight",
+            "Keen Hearing and Smell",
+            "Stone Camouflage",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Grung",
+        "source": "OGA",
+        "speed": 25,
+        "abilityBonuses": {
+            "dex": 2,
+            "con": 1
+        },
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Arboreal Alertness",
+            "Amphibious",
+            "Poison Immunity",
+            "Poisonous Skin",
+            "Standing Leap",
+            "Water Dependency",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Hadozee",
+        "source": "AAG",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Size",
+            "Dexterous Feet",
+            "Glide",
+            "Hadozee Dodge"
+        ]
+    },
+    {
+        "name": "Half-Elf",
+        "source": "PHB",
+        "speed": 30,
+        "abilityBonuses": {
+            "cha": 2
+        },
+        "abilityChoose": [
+            {
+                "from": [
+                    "str",
+                    "dex",
+                    "con",
+                    "int",
+                    "wis"
+                ],
+                "weights": [
+                    1,
+                    1
+                ]
+            }
+        ],
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Darkvision",
+            "Fey Ancestry",
+            "Skill Versatility",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Half-Orc",
+        "source": "PHB",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 2,
+            "con": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Darkvision",
+            "Menacing",
+            "Relentless Endurance",
+            "Savage Attacks",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Halfling",
+        "source": "PHB",
+        "speed": 25,
+        "abilityBonuses": {
+            "dex": 2
+        },
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Age",
+            "Size",
+            "Lucky",
+            "Brave",
+            "Halfling Nimbleness",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Halfling",
+        "source": "XPHB",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Brave",
+            "Halfling Nimbleness",
+            "Luck",
+            "Naturally Stealthy"
+        ]
+    },
+    {
+        "name": "Harengon",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Size",
+            "Hare-Trigger",
+            "Leporine Senses",
+            "Lucky Footwork",
+            "Rabbit Hop"
+        ]
+    },
+    {
+        "name": "Harengon",
+        "source": "WBtW",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Size",
+            "Hare-Trigger",
+            "Leporine Senses",
+            "Lucky Footwork",
+            "Rabbit Hop"
+        ]
+    },
+    {
+        "name": "Hexblood",
+        "source": "RHW",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Darkvision",
+            "Eerie Token"
+        ]
+    },
+    {
+        "name": "Hexblood",
+        "source": "VRGR",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Creature Type",
+            "Size",
+            "Ancestral Legacy",
+            "Darkvision",
+            "Eerie Token",
+            "Hex Magic"
+        ]
+    },
+    {
+        "name": "Hobgoblin",
+        "source": "DMG",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Martial Advantage",
+            "Darkvision",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Hobgoblin",
+        "source": "ERLW",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": []
+    },
+    {
+        "name": "Hobgoblin",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Creature Type",
+            "Darkvision",
+            "Fey Ancestry",
+            "Fey Gift",
+            "Fortune from the Many"
+        ]
+    },
+    {
+        "name": "Hobgoblin",
+        "source": "VGM",
+        "speed": 30,
+        "abilityBonuses": {
+            "con": 2,
+            "int": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Darkvision",
+            "Martial Training",
+            "Saving Face",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Human",
+        "source": "PHB",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 1,
+            "dex": 1,
+            "con": 1,
+            "int": 1,
+            "wis": 1,
+            "cha": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Human",
+        "source": "XPHB",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Resourceful",
+            "Skillful",
+            "Versatile"
+        ]
+    },
+    {
+        "name": "Human (Innistrad)",
+        "source": "PSI",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Human (Ixalan)",
+        "source": "PSX",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 1,
+            "dex": 1,
+            "con": 1,
+            "int": 1,
+            "wis": 1,
+            "cha": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": []
+    },
+    {
+        "name": "Human (Kaladesh)",
+        "source": "PSK",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 1,
+            "dex": 1,
+            "con": 1,
+            "int": 1,
+            "wis": 1,
+            "cha": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": []
+    },
+    {
+        "name": "Human (Zendikar)",
+        "source": "PSZ",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 1,
+            "dex": 1,
+            "con": 1,
+            "int": 1,
+            "wis": 1,
+            "cha": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": []
+    },
+    {
+        "name": "Kalashtar",
+        "source": "EFA",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Dual Mind",
+            "Mental Discipline",
+            "Mind Link",
+            "Severed from Dreams"
+        ]
+    },
+    {
+        "name": "Kalashtar",
+        "source": "ERLW",
+        "speed": 30,
+        "abilityBonuses": {
+            "wis": 2,
+            "cha": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Dual Mind",
+            "Mental Discipline",
+            "Mind Link",
+            "Severed from Dreams",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Kender",
+        "source": "DSotDQ",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Fearless",
+            "Kender Curiosity",
+            "Taunt"
+        ]
+    },
+    {
+        "name": "Kenku",
+        "source": "DMG",
+        "speed": 30,
+        "abilityBonuses": {
+            "dex": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Ambusher",
+            "Mimicry",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Kenku",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Size",
+            "Expert Duplication",
+            "Kenku Recall",
+            "Mimicry"
+        ]
+    },
+    {
+        "name": "Kenku",
+        "source": "VGM",
+        "speed": 30,
+        "abilityBonuses": {
+            "dex": 2,
+            "wis": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Expert Forgery",
+            "Kenku Training",
+            "Mimicry",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Khenra",
+        "source": "PSA",
+        "speed": 35,
+        "abilityBonuses": {
+            "str": 1,
+            "dex": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Khenra Weapon Training",
+            "Khenra Twins",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Khoravar",
+        "source": "EFA",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Darkvision",
+            "Fey Ancestry",
+            "Fey Gift",
+            "Lethargy Resilience",
+            "Skill Versatility"
+        ]
+    },
+    {
+        "name": "Kithkin",
+        "source": "LFL",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": []
+    },
+    {
+        "name": "Kobold",
+        "source": "DMG",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": -4,
+            "dex": 2
+        },
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Pack Tactics",
+            "Sunlight Sensitivity",
+            "Darkvision",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Kobold",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Darkvision",
+            "Draconic Cry",
+            "Kobold Legacy"
+        ]
+    },
+    {
+        "name": "Kobold",
+        "source": "VGM",
+        "speed": 30,
+        "abilityBonuses": {
+            "dex": 2
+        },
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Age",
+            "Size",
+            "Darkvision",
+            "Grovel, Cower, and Beg",
+            "Pack Tactics",
+            "Sunlight Sensitivity",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Kor",
+        "source": "PSZ",
+        "speed": 30,
+        "abilityBonuses": {
+            "dex": 2,
+            "wis": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Brave",
+            "Climbing",
+            "Kor Climbing",
+            "Languages",
+            "Lucky"
+        ]
+    },
+    {
+        "name": "Kuo-Toa",
+        "source": "DMG",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Amphibious",
+            "Otherworldly Perception",
+            "Slippery",
+            "Sunlight Sensitivity",
+            "Superior Darkvision",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Leonin",
+        "source": "MOT",
+        "speed": 35,
+        "abilityBonuses": {
+            "str": 1,
+            "con": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Darkvision",
+            "Claws",
+            "Hunter's Instincts",
+            "Daunting Roar",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Lizardfolk",
+        "source": "DMG",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 2,
+            "int": -2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Hold Breath",
+            "Natural Armor",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Lizardfolk",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Speed",
+            "Bite",
+            "Hold Breath",
+            "Hungry Jaws",
+            "Natural Armor",
+            "Nature's Intuition"
+        ]
+    },
+    {
+        "name": "Lizardfolk",
+        "source": "VGM",
+        "speed": 30,
+        "abilityBonuses": {
+            "con": 2,
+            "wis": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Swim Speed",
+            "Bite",
+            "Cunning Artisan",
+            "Hold Breath",
+            "Hunter's Lore",
+            "Natural Armor",
+            "Hungry Jaws",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Locathah",
+        "source": "LR",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 2,
+            "dex": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Natural Armor",
+            "Observant & Athletic",
+            "Leviathan Will",
+            "Limited Amphibiousness",
+            "Size",
+            "Language"
+        ]
+    },
+    {
+        "name": "Lorwyn Changeling",
+        "source": "LFL",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Shape Self",
+            "Darkvision",
+            "Delightful Imitator",
+            "Unpredictable Movement"
+        ]
+    },
+    {
+        "name": "Loxodon",
+        "source": "GGR",
+        "speed": 30,
+        "abilityBonuses": {
+            "con": 2,
+            "wis": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Powerful Build",
+            "Loxodon Serenity",
+            "Natural Armor",
+            "Trunk",
+            "Keen Smell",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Lupin",
+        "source": "RHW",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Darkvision",
+            "Feral Pounce",
+            "Howl",
+            "Werewolf Instincts"
+        ]
+    },
+    {
+        "name": "Merfolk",
+        "source": "DMG",
+        "speed": 10,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Amphibious",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Merfolk",
+        "source": "PSZ",
+        "speed": 30,
+        "abilityBonuses": {
+            "cha": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Amphibious",
+            "Size",
+            "Swimming",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Minotaur",
+        "source": "GGR",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 2,
+            "con": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Horns",
+            "Goring Rush",
+            "Hammering Horns",
+            "Imposing Presence",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Minotaur",
+        "source": "MOT",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": []
+    },
+    {
+        "name": "Minotaur",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Horns",
+            "Goring Rush",
+            "Hammering Horns",
+            "Labyrinthine Recall"
+        ]
+    },
+    {
+        "name": "Minotaur (Amonkhet)",
+        "source": "PSA",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 2,
+            "con": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Natural Weapon",
+            "Menacing",
+            "Relentless Endurance",
+            "Savage Attacks",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Naga",
+        "source": "PSA",
+        "speed": 30,
+        "abilityBonuses": {
+            "con": 2,
+            "int": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Speed Burst",
+            "Natural Weapons",
+            "Poison Immunity",
+            "Poison Affinity",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Orc",
+        "source": "DMG",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 2,
+            "int": -2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Aggressive",
+            "Darkvision",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Orc",
+        "source": "EGW",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": []
+    },
+    {
+        "name": "Orc",
+        "source": "ERLW",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 2,
+            "con": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Darkvision",
+            "Aggressive",
+            "Primal Intuition",
+            "Powerful Build",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Orc",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Adrenaline Rush",
+            "Darkvision",
+            "Powerful Build",
+            "Relentless Endurance"
+        ]
+    },
+    {
+        "name": "Orc",
+        "source": "VGM",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 2,
+            "con": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Darkvision",
+            "Aggressive",
+            "Primal Intuition",
+            "Powerful Build",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Orc",
+        "source": "XPHB",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Adrenaline Rush",
+            "Darkvision",
+            "Relentless Endurance"
+        ]
+    },
+    {
+        "name": "Orc (Ixalan)",
+        "source": "PSX",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 2,
+            "con": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Menacing",
+            "Relentless Endurance",
+            "Savage Attacks",
+            "Darkvision",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Owlin",
+        "source": "SCC",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Size",
+            "Darkvision",
+            "Flight",
+            "Silent Feathers"
+        ]
+    },
+    {
+        "name": "Plasmoid",
+        "source": "AAG",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Creature Type",
+            "Size",
+            "Amorphous",
+            "Darkvision",
+            "Hold Breath",
+            "Natural Resilience",
+            "Shape Self"
+        ]
+    },
+    {
+        "name": "Reborn",
+        "source": "RHW",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Escaped Death",
+            "Everlasting",
+            "Knowledge from a Past Life",
+            "Strange Endurance"
+        ]
+    },
+    {
+        "name": "Reborn",
+        "source": "VRGR",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Size",
+            "Ancestral Legacy",
+            "Deathless Nature",
+            "Knowledge from a Past Life"
+        ]
+    },
+    {
+        "name": "Rimekin",
+        "source": "LFL",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Cold Fire Magic",
+            "Cold Resistance",
+            "Darkvision"
+        ]
+    },
+    {
+        "name": "Satyr",
+        "source": "MOT",
+        "speed": 35,
+        "abilityBonuses": {
+            "dex": 1,
+            "cha": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Fey",
+            "Ram",
+            "Magic Resistance",
+            "Mirthful Leaps",
+            "Reveler",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Satyr",
+        "source": "MPMM",
+        "speed": 35,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Creature Type",
+            "Ram",
+            "Magic Resistance",
+            "Mirthful Leaps",
+            "Reveler"
+        ]
+    },
+    {
+        "name": "Sea Elf",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Creature Type",
+            "Speed",
+            "Child of the Sea",
+            "Darkvision",
+            "Fey Ancestry",
+            "Friend of the Sea",
+            "Keen Senses",
+            "Trance"
+        ]
+    },
+    {
+        "name": "Shadar-Kai",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Creature Type",
+            "Blessing of the Raven Queen",
+            "Darkvision",
+            "Fey Ancestry",
+            "Keen Senses",
+            "Necrotic Resistance",
+            "Trance"
+        ]
+    },
+    {
+        "name": "Shifter",
+        "source": "EFA",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Bestial Instincts",
+            "Darkvision",
+            "Shifting"
+        ]
+    },
+    {
+        "name": "Shifter",
+        "source": "ERLW",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Speed",
+            "Darkvision",
+            "Shifting",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Shifter",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Bestial Instincts",
+            "Darkvision",
+            "Shifting"
+        ]
+    },
+    {
+        "name": "Simic Hybrid",
+        "source": "GGR",
+        "speed": 30,
+        "abilityBonuses": {
+            "con": 2
+        },
+        "abilityChoose": [
+            {
+                "from": [
+                    "str",
+                    "dex",
+                    "int",
+                    "wis",
+                    "cha"
+                ],
+                "weights": [
+                    1
+                ]
+            }
+        ],
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Darkvision",
+            "Languages",
+            "Animal Enhancement"
+        ]
+    },
+    {
+        "name": "Siren",
+        "source": "PSX",
+        "speed": 25,
+        "abilityBonuses": {
+            "cha": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Alignment",
+            "Size",
+            "Siren's Song",
+            "Flight",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Skeleton",
+        "source": "DMG",
+        "speed": 30,
+        "abilityBonuses": {
+            "dex": 2,
+            "int": -4,
+            "cha": -4
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Creature Type",
+            "Brittle Bones",
+            "Undead Nature",
+            "Darkvision",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Tabaxi",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Size",
+            "Speed",
+            "Cat's Claws",
+            "Cat's Talent",
+            "Darkvision",
+            "Feline Agility"
+        ]
+    },
+    {
+        "name": "Tabaxi",
+        "source": "VGM",
+        "speed": 30,
+        "abilityBonuses": {
+            "dex": 2,
+            "cha": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Darkvision",
+            "Feline Agility",
+            "Cat's Claws",
+            "Cat's Talents",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Thri-kreen",
+        "source": "AAG",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Creature Type",
+            "Size",
+            "Chameleon Carapace",
+            "Darkvision",
+            "Secondary Arms",
+            "Sleepless",
+            "Thri-kreen Telepathy"
+        ]
+    },
+    {
+        "name": "Tiefling",
+        "source": "PHB",
+        "speed": 30,
+        "abilityBonuses": {
+            "int": 1,
+            "cha": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Darkvision",
+            "Hellish Resistance",
+            "Infernal Legacy",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Tiefling",
+        "source": "XPHB",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Darkvision",
+            "Fiendish Legacy",
+            "Otherworldly Presence"
+        ]
+    },
+    {
+        "name": "Tortle",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Size",
+            "Claws",
+            "Hold Breath",
+            "Natural Armor",
+            "Nature's Intuition",
+            "Shell Defense"
+        ]
+    },
+    {
+        "name": "Tortle",
+        "source": "TTP",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 2,
+            "wis": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Claws",
+            "Hold Breath",
+            "Natural Armor",
+            "Shell Defense",
+            "Survival Instinct",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Triton",
+        "source": "MOT",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": []
+    },
+    {
+        "name": "Triton",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Speed",
+            "Amphibious",
+            "Control Air and Water",
+            "Darkvision",
+            "Emissary of the Sea",
+            "Guardian of the Depths"
+        ]
+    },
+    {
+        "name": "Triton",
+        "source": "VGM",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 1,
+            "con": 1,
+            "cha": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Swim Speed",
+            "Amphibious",
+            "Control Air and Water",
+            "Darkvision",
+            "Emissary of the Sea",
+            "Guardians of the Depths",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Troglodyte",
+        "source": "DMG",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 2,
+            "con": 2,
+            "int": -4,
+            "cha": -4
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Chameleon Skin",
+            "Stench",
+            "Sunlight Sensitivity",
+            "Natural Armor",
+            "Darkvision",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Vampire",
+        "source": "PSZ",
+        "speed": 30,
+        "abilityBonuses": {
+            "cha": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Blood Thirst",
+            "Darkvision",
+            "Languages",
+            "Vampiric Resistance"
+        ]
+    },
+    {
+        "name": "Vedalken",
+        "source": "GGR",
+        "speed": 30,
+        "abilityBonuses": {
+            "int": 2,
+            "wis": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Vedalken Dispassion",
+            "Tireless Precision",
+            "Partially Amphibious",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Vedalken",
+        "source": "PSK",
+        "speed": 30,
+        "abilityBonuses": {
+            "int": 2,
+            "wis": 1
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Languages",
+            "Vedalken Cunning",
+            "Aether Lore"
+        ]
+    },
+    {
+        "name": "Verdan",
+        "source": "AI",
+        "speed": 30,
+        "abilityBonuses": {
+            "con": 1,
+            "cha": 2
+        },
+        "abilityChoose": null,
+        "size": "V",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Black Blood Healing",
+            "Limited Telepathy",
+            "Persuasive",
+            "Telepathic Insight",
+            "Language"
+        ]
+    },
+    {
+        "name": "Warforged",
+        "source": "EFA",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Construct Resilience",
+            "Integrated Protection",
+            "Sentry's Rest",
+            "Specialized Design",
+            "Tireless"
+        ]
+    },
+    {
+        "name": "Warforged",
+        "source": "ERLW",
+        "speed": 30,
+        "abilityBonuses": {
+            "con": 2
+        },
+        "abilityChoose": [
+            {
+                "from": [
+                    "str",
+                    "dex",
+                    "int",
+                    "wis",
+                    "cha"
+                ],
+                "weights": [
+                    1
+                ]
+            }
+        ],
+        "size": "M",
+        "traits": [
+            "Age",
+            "Alignment",
+            "Size",
+            "Constructed Resilience",
+            "Sentry's Rest",
+            "Integrated Protection",
+            "Specialized Design",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Yuan-Ti",
+        "source": "MPMM",
+        "speed": 30,
+        "abilityBonuses": {},
+        "abilityChoose": null,
+        "size": "S",
+        "traits": [
+            "Size",
+            "Darkvision",
+            "Magic Resistance",
+            "Poison Resilience",
+            "Serpentine Spellcasting"
+        ]
+    },
+    {
+        "name": "Yuan-ti Pureblood",
+        "source": "VGM",
+        "speed": 30,
+        "abilityBonuses": {
+            "int": 1,
+            "cha": 2
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Age",
+            "Size",
+            "Darkvision",
+            "Innate Spellcasting",
+            "Magic Resistance",
+            "Poison Immunity",
+            "Languages"
+        ]
+    },
+    {
+        "name": "Zombie",
+        "source": "DMG",
+        "speed": 30,
+        "abilityBonuses": {
+            "str": 1,
+            "con": 2,
+            "int": -6,
+            "wis": -4,
+            "cha": -4
+        },
+        "abilityChoose": null,
+        "size": "M",
+        "traits": [
+            "Creature Type",
+            "Undead Fortitude",
+            "Undead Nature",
+            "Darkvision",
+            "Languages"
+        ]
+    }
+]

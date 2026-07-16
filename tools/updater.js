@@ -24,9 +24,22 @@ const PACK_DIR = join(OUT_DIR, 'packs');
 // == HTTP =====================================================
 async function fetchJson(path) {
   const url = `${RAW_BASE}/${path}`;
-  const res = await fetch(url, { headers: { 'User-Agent': 'dnd5e-studio-updater' } });
+  // time out a stalled connection so a single hung fetch can't hang the
+  // whole update forever (which would also leave the server's
+  // updateRunning latch stuck at true).
+  const res = await fetch(url, {
+    headers: { 'User-Agent': 'dnd5e-studio-updater' },
+    signal: AbortSignal.timeout(30000),
+  });
   if (!res.ok) throw new Error(`${res.status}, ${path}`);
   return res.json();
+}
+
+/** Strip 5etools display tags: {@tag Display|params} → Display */
+function stripTags(str) {
+  return String(str ?? '')
+    .replace(/\{@\w+ ([^}|]+)[^}]*\}/g, '$1')
+    .replace(/\{@\w+\}/g, '');
 }
 
 // == Shared normalization helpers =============================
@@ -34,10 +47,13 @@ async function fetchJson(path) {
 /** Convert 5e.tools entry trees to plain text, unpack tags like {@damage 2d6} */
 function flattenEntries(entries, limit = 400) {
   if (!entries) return '';
-  const walk = e => typeof e === 'string' ? e
+  const walk = e => typeof e === 'string' || typeof e === 'number' ? String(e)
     : Array.isArray(e) ? e.map(walk).join(' ')
     : e?.entries ? walk(e.entries)
-    : e?.items ? walk(e.items) : '';
+    : e?.items ? walk(e.items)
+    : e?.entry ? walk(e.entry)               // singular "entry" field
+    : e?.rows ? e.rows.map(walk).join(' ')   // {type:'table'} rows
+    : '';
   return walk(entries)
     // resolve combat tags with fixed meaning first
     .replace(/\{@atk mw,rw\}/g, 'Melee or Ranged Weapon Attack:')
@@ -53,9 +69,8 @@ function flattenEntries(entries, limit = 400) {
     .replace(/\{@actSave (\w+)\}/g, (m, a) => a.toUpperCase() + ' Saving Throw:')
     .replace(/\{@actSaveFail\}/g, 'Failure:')
     .replace(/\{@actSaveSuccess\}/g, 'Success:')
-    // generic: {@tag content|…} → content
+    // generic: {@tag content|…} → content, then drop empty tags
     .replace(/\{@\w+ ([^}|]+)[^}]*\}/g, '$1')
-    // remove leftover empty tags
     .replace(/\{@\w+\}/g, '')
     .slice(0, limit);
 }
@@ -109,7 +124,11 @@ function normSpell(sp, ctx) {
 // "+1" / "-2" → number (for flat bonuses of magic items)
 function parseBonus(v) {
   if (v == null) return null;
-  const n = parseInt(String(v).replace(/[^0-9+-]/g, ''), 10);
+  const str = String(v);
+  // a dice-valued bonus (e.g. "+1d4") is not a flat modifier — stripping
+  // the 'd' would turn "+1d4" into 14, so reject it outright
+  if (/\dd\d/.test(str)) return null;
+  const n = parseInt(str.replace(/[^0-9+-]/g, ''), 10);
   return Number.isFinite(n) ? n : null;
 }
 
@@ -270,7 +289,9 @@ function tableCellToText(cell) {
 function normProgressionTable(classTableGroups) {
   const out = {};
   for (const g of classTableGroups ?? []) {
-    const labels = g.colLabels ?? [];
+    // labels may carry 5etools tags, e.g. "{@filter Infusions Known|…}";
+    // strip them so the app shows a clean column header
+    const labels = (g.colLabels ?? []).map(stripTags);
     (g.rows ?? []).forEach((row, levelIdx) => {
       labels.forEach((label, colIdx) => {
         const val = tableCellToText(row?.[colIdx]);
@@ -328,7 +349,14 @@ function normClass(c, subclasses, classFeatureRaw = [], subclassFeatureRaw = [])
                           f.className === c.name && f.subclassShortName === (sc.shortName ?? sc.name)
                           && f.subclassSource === sc.source) };
         const prev = map.get(key);
-        if (!prev || (!prev.spells && entry.spells) || (!prev.features?.length && entry.features.length)) map.set(key, entry);
+        if (!prev) { map.set(key, entry); }
+        else {
+          // MERGE rather than replace: a reprint may carry the spells on
+          // one copy and the features on the other — take whichever the
+          // kept copy is missing so neither is lost.
+          if (!prev.spells && entry.spells) prev.spells = entry.spells;
+          if (!prev.features?.length && entry.features.length) prev.features = entry.features;
+        }
       }
       return [...map.values()];
     })(),
@@ -440,9 +468,12 @@ function parseChooseExpr(expr) {
     const [k, v] = part.split('=');
     if (!v) continue;
     const vals = v.split(';').map(x => x.trim()).filter(Boolean);
-    if (k === 'level')  out.levels = vals.map(Number).filter(Number.isFinite);
-    if (k === 'school') out.schools = vals.map(x => x.toUpperCase());
-    if (k === 'class')  out.classNames = vals.map(x => x.toLowerCase());
+    // only set a criterion when it has at least one valid value; an empty
+    // array (e.g. "level=X" → all NaN) is truthy and would otherwise
+    // produce a filter that silently matches ZERO spells downstream
+    if (k === 'level')  { const l = vals.map(Number).filter(Number.isFinite); if (l.length) out.levels = l; }
+    if (k === 'school') { if (vals.length) out.schools = vals.map(x => x.toUpperCase()); }
+    if (k === 'class')  { if (vals.length) out.classNames = vals.map(x => x.toLowerCase()); }
   }
   return (out.levels || out.schools || out.classNames) ? out : null;
 }
@@ -634,6 +665,17 @@ export async function runUpdate({ force = false, log = () => {} } = {}) {
             log(`  ${name} ✓`);
           } catch (e) { log(`  ⚠ ${name} skipped (${e.message})`); }
         }
+      }
+
+      // never overwrite a good pack with an empty result: if every fetch
+      // failed (network drop / rate limit with no cache), keep the
+      // existing pack rather than clobbering it with "[]".
+      const prevCount = manifest.files[`${type.id}.json`]?.count ?? 0;
+      if (entries.length === 0 && prevCount > 0) {
+        result.ok = false;
+        result.errors.push(`${type.id}: leeres Ergebnis, bestehendes Paket beibehalten`);
+        log(`  ⚠ ${type.id}: 0 Einträge geladen — bestehendes Paket wird beibehalten`);
+        continue;
       }
 
       await writeFile(join(PACK_DIR, `${type.id}.json`), JSON.stringify(entries));

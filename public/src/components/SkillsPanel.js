@@ -54,7 +54,6 @@ function render() {
   </div>`;
 
   // == Events ==
-  // cycle the proficiency state (click on the circle)
   el.querySelectorAll('[data-skill-cycle]').forEach(ind => {
     ind.onclick = e => {
       e.stopPropagation(); // don't roll at the same time

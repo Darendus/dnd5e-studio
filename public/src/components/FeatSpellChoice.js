@@ -14,6 +14,7 @@
 //   // choice is null if the feat doesn't need a choice at all
 // ============================================================
 import { t } from '../core/i18n.js';
+import { escapeHtml, capitalize } from '../utils/format.js';
 
 let overlay = null;
 // resolves the previous still-open prompt (as cancelled) so its promise
@@ -45,15 +46,15 @@ export function pickFeatSpellClass(feat, options) {
     overlay.innerHTML = `
       <div class="modal" style="max-width:420px">
         <div class="modal__head">
-          <b>${esc(feat.name)}: ${t('feats.spellClassTitle')}</b>
+          <b>${escapeHtml(feat.name)}: ${t('feats.spellClassTitle')}</b>
           <button class="btn-icon" data-fsc="cancel">×</button>
         </div>
         <div class="modal__body">
           <p class="panel__hint" style="margin-bottom:10px">${t('feats.spellClassHint')}</p>
           <div style="display:grid;gap:8px">
             ${options.map(cn => `
-              <button class="ruleset-option" data-fsc-pick="${esc(cn)}">
-                <b>${esc(cn.charAt(0).toUpperCase() + cn.slice(1))}</b>
+              <button class="ruleset-option" data-fsc-pick="${escapeHtml(cn)}">
+                <b>${escapeHtml(capitalize(cn))}</b>
               </button>`).join('')}
           </div>
         </div>
@@ -69,6 +70,3 @@ export function pickFeatSpellClass(feat, options) {
   });
 }
 
-function esc(str) {
-  return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-}

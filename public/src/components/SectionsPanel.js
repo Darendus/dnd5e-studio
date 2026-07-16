@@ -8,6 +8,7 @@
 import { store }   from '../core/Store.js';
 import { bus, EV } from '../core/EventBus.js';
 import { t }       from '../core/i18n.js';
+import { escapeHtml } from '../utils/format.js';
 
 export function mountSections() {
   render();
@@ -45,10 +46,10 @@ function render() {
   ${sections.map(sec => `
     <div class="panel section-card" data-sec="${sec.id}">
       <button class="btn-icon" data-sec-rm="${sec.id}" title="${t('app.remove')}">×</button>
-      <input class="section-title-input" type="text" value="${esc(sec.title)}"
+      <input class="section-title-input" type="text" value="${escapeHtml(sec.title)}"
              data-sec-title="${sec.id}" placeholder="${t('sections.sectionName')}">
       <textarea data-sec-content="${sec.id}" placeholder="${t('sections.placeholder')}"
-                style="margin-top:10px;min-height:120px">${esc(sec.content)}</textarea>
+                style="margin-top:10px;min-height:120px">${escapeHtml(sec.content)}</textarea>
     </div>`).join('')}`;
 
   // == Events ==
@@ -70,6 +71,3 @@ function render() {
   });
 }
 
-function esc(str) {
-  return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-}

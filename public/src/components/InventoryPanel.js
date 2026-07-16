@@ -13,6 +13,7 @@ import { repo }    from '../core/DataRepository.js';
 import { bus, EV } from '../core/EventBus.js';
 import { t }       from '../core/i18n.js';
 import { calcAC }  from '../rules/calculations.js';
+import { escapeHtml } from '../utils/format.js';
 
 const CURRENCIES = ['cp', 'sp', 'ep', 'gp', 'pp'];
 
@@ -287,13 +288,14 @@ function renderLibrary() {
   const rarity    = document.getElementById('invLibRarity')?.value ?? '';
 
   // without a filter: show ALL items of the database (no display limit)
-  let items = repo.getItems();
+  const allItems = repo.getItems();
+  let items = allItems;
   if (search)    items = items.filter(it => it.name.toLowerCase().includes(search));
   if (magicOnly) items = items.filter(isMagic);
   if (rarity)    items = items.filter(it => (it.rarity ?? 'none') === rarity);
 
   const countEl = document.getElementById('invLibCount');
-  if (countEl) countEl.textContent = `${items.length} / ${repo.getItems().length}`;
+  if (countEl) countEl.textContent = `${items.length} / ${allItems.length}`;
 
   // a single pass with array join, fast enough even for ~2700 entries
   list.innerHTML = items.map(it => `
@@ -306,7 +308,7 @@ function renderLibrary() {
         ${it.ac ? `<span class="tag tag--save">AC ${it.ac}</span>` : ''}
         ${it.reqAttune ? `<span class="tag tag--save">${t('inventory.attunement')}</span>` : ''}
         <span class="tag tag--src">${it.source}</span>
-        <button class="btn btn--sm" data-lib-it="${it.name.replace(/"/g, '&quot;')}">+ ${t('app.add')}</button>
+        <button class="btn btn--sm" data-lib-it="${escapeHtml(it.name)}">+ ${t('app.add')}</button>
       </div>
       ${it.weight ? `<div class="lib-entry__meta">${it.weight} lbs</div>` : ''}
       <div class="lib-entry__desc">${it.description ?? ''}</div>

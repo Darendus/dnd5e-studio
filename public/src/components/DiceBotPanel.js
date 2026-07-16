@@ -9,7 +9,7 @@
 import { store }   from '../core/Store.js';
 import { bus, EV } from '../core/EventBus.js';
 import { t }       from '../core/i18n.js';
-import { calcMod, calcProfBonus, calcSkillBonus, fmtMod, SKILL_DEFS, ABILITY_IDS, effectiveAbilities } from '../rules/calculations.js';
+import { calcMod, calcProfBonus, calcSkillBonus, fmtMod, SKILL_DEFS, ABILITY_IDS, effectiveAbilities, itemBonuses } from '../rules/calculations.js';
 import { rollAbility, rollSkill, rollSave, rollInitiative, rollFormula, roll } from '../rules/dice.js';
 import { askRollMode } from './RollPrompt.js';
 
@@ -44,7 +44,10 @@ function render() {
     return calcSkillBonus(calcMod(eff[def.attr]),
       s.skillProficiencies.includes(id), s.skillExpertise.includes(id), pb);
   };
-  const saveMod = a => calcMod(eff[a]) + (s.saveProficiencies.includes(a) ? pb : 0);
+  // include flat item save bonuses (Ring/Cloak of Protection) so the
+  // button label matches what rollSave() actually rolls
+  const saveItemBonus = itemBonuses(s).save || 0;
+  const saveMod = a => calcMod(eff[a]) + (s.saveProficiencies.includes(a) ? pb : 0) + saveItemBonus;
 
   el.innerHTML = `
   <div class="panel dice-result">
@@ -98,7 +101,6 @@ function render() {
 }
 
 function bindEvents(el) {
-  // quick rolls (single die, no modifier)
   el.querySelectorAll('[data-quick]').forEach(b => {
     b.onclick = () => {
       const sides = +b.dataset.quick;
@@ -155,7 +157,6 @@ function showResult({ total, detail, special }) {
     num.className = 'dice-result__num' + (special ? ' ' + special : '');
   }
   if (det) {
-    // NAT 20 / NAT 1 as a clear badge after the detail line
     const badge = special === 'crit'
       ? ' <span class="roll-nat roll-nat--20">NAT 20</span>'
       : special === 'fail'

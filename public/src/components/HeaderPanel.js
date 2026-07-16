@@ -9,6 +9,7 @@ import { bus, EV } from '../core/EventBus.js';
 import { t }       from '../core/i18n.js';
 import { calcMod, calcProfBonus, fmtMod, effectiveAbilities, effectiveInitiative, effectiveSpeed } from '../rules/calculations.js';
 import { raceBonusFor, bgBonusFor, raceEntry, bgEntry } from '../rules/bonuses.js';
+import { escapeHtml } from '../utils/format.js';
 
 export function mountHeader() {
   render();
@@ -31,12 +32,13 @@ function render() {
   const passive = 10 + calcMod(eff.wis)
     + (s.skillProficiencies.includes('perception') ? pb : 0)
     + (s.skillExpertise.includes('perception') ? pb : 0);
+  const backgrounds = repo.getBackgrounds();
 
   el.innerHTML = `
   <div class="panel">
     <div class="char-header">
       <div style="flex:1">
-        <input class="char-name" id="hdName" type="text" value="${esc(s.name)}" placeholder="${t('app.name')}…">
+        <input class="char-name" id="hdName" type="text" value="${escapeHtml(s.name)}" placeholder="${t('app.name')}…">
         <div class="meta-grid">
           <div class="meta-field">
             <label>${t('tabs.classes')}</label>
@@ -53,10 +55,10 @@ function render() {
             <label>Background</label>
             <select id="hdBackground">
               <option value="">-</option>
-              ${repo.getBackgrounds().map(b =>
+              ${backgrounds.map(b =>
                 `<option ${b.name === s.background ? 'selected' : ''}>${b.name}</option>`).join('')}
-              ${s.background && !repo.getBackgrounds().find(b => b.name === s.background)
-                ? `<option selected>${esc(s.background)}</option>` : ''}
+              ${s.background && !backgrounds.find(b => b.name === s.background)
+                ? `<option selected>${escapeHtml(s.background)}</option>` : ''}
             </select>
           </div>
           <div class="meta-field">
@@ -171,6 +173,3 @@ function quietUpdate(patch) {
   quiet = false;
 }
 
-function esc(str) {
-  return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-}

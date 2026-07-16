@@ -17,6 +17,7 @@ import {
   wildshapeLimits, availableForms, crToNumber, formatSpeed, druidLevel, elementalUnlocked,
 } from '../rules/wildshape.js';
 import { toggleExpand } from './InventoryPanel.js';
+import { escapeHtml } from '../utils/format.js';
 
 // Images from the 5etools image mirror (same organization as the data).
 // Missing images are simply hidden via onerror.
@@ -95,7 +96,7 @@ function render() {
         <span class="stat-box__lbl">${t('wildshape.formsAvailable')}</span></div>
       <div class="stat-box">
         <div style="display:flex;gap:5px;justify-content:center;padding:6px 0">
-          ${Array.from({ length: maxUses }).map(i => `
+          ${Array.from({ length: maxUses }).map((_, i) => `
             <button class="slot-bubble ${i < (maxUses - uses) ? 'slot-bubble--used' : ''}" data-ws-use="${i}"></button>`).join('')}
         </div>
         <span class="stat-box__lbl">${t('wildshape.uses')}</span>
@@ -113,7 +114,7 @@ function render() {
   <div class="panel">
     <div class="panel__title">${t('wildshape.forms')}</div>
     <div style="display:flex;gap:8px;margin-bottom:10px">
-      <input type="text" id="wsSearch" placeholder="${t('app.search')}" value="${esc(search)}" style="flex:1">
+      <input type="text" id="wsSearch" placeholder="${t('app.search')}" value="${escapeHtml(search)}" style="flex:1">
       <select id="wsCRFilter" title="${t('wildshape.filterCR')}">
         <option value="">${t('wildshape.allCRs')}</option>
         ${crValues.map(cr => `<option value="${cr}" ${crFilter === cr ? 'selected' : ''}>${t('wildshape.cr')} ${cr}</option>`).join('')}
@@ -169,7 +170,7 @@ function renderActiveForm(s) {
         <span class="stat-box__lbl">${t('combat.ac')}</span></div>
       <div class="stat-box">
         <input type="number" id="wsHP" value="${s.wildshape.currHP}" min="0" max="${beast.hp}"
-               style="width:64px;text-align:center;font-size:18px;font-weight:600;border:none;background:none;color:var(--ink)">
+               class="stat-box__input" style="width:64px">
         <span class="stat-box__lbl">${t('wildshape.formHP')} / ${beast.hp}</span>
       </div>
       <div class="stat-box"><span class="stat-box__val" style="font-size:14px">${formatSpeed(beast.speed, speedLabels())}</span>
@@ -187,7 +188,7 @@ function renderStatblock(b, s) {
   return `
   <div class="lib-entry lib-entry--expandable ws-block ${isActive ? 'lib-entry--known' : ''}" data-expand>
     <div class="lib-entry__top">
-      <button class="ws-fav ${favs.has(b.name) ? 'ws-fav--on' : ''}" data-ws-fav="${esc(b.name)}"
+      <button class="ws-fav ${favs.has(b.name) ? 'ws-fav--on' : ''}" data-ws-fav="${escapeHtml(b.name)}"
               title="${t('wildshape.toggleFav')}">${favs.has(b.name) ? '★' : '☆'}</button>
       <span class="lib-entry__name">${b.name}</span>
       <span class="tag tag--src">${t('wildshape.cr')} ${b.cr}</span>
@@ -197,7 +198,7 @@ function renderStatblock(b, s) {
       ${b.elemental ? `<span class="tag tag--magic">${t('wildshape.elemental')}</span>` : ''}
       ${isActive
         ? `<span class="tag tag--magic">${t('wildshape.active')}</span>`
-        : `<button class="btn btn--sm btn--gold" data-ws-transform="${esc(b.name)}"
+        : `<button class="btn btn--sm btn--gold" data-ws-transform="${escapeHtml(b.name)}"
                    title="${b.elemental ? t('wildshape.elementalCost') : ''}">${t('wildshape.transform')}${b.elemental ? ' (2)' : ''}</button>`}
     </div>
     <div class="lib-entry__meta">${sizeName(b.size)} · ${formatSpeed(b.speed, speedLabels())}${b.senses ? ' · ' + b.senses : ''}</div>
@@ -337,6 +338,3 @@ function speedLabels() {
            climb: t('wildshape.climb'), burrow: t('wildshape.burrow') };
 }
 
-function esc(str) {
-  return String(str ?? '').replace(/"/g, '&quot;');
-}

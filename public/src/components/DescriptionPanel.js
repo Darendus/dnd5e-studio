@@ -12,6 +12,7 @@
 import { store }   from '../core/Store.js';
 import { bus, EV } from '../core/EventBus.js';
 import { t }       from '../core/i18n.js';
+import { escapeHtml } from '../utils/format.js';
 
 
 // Default choices for the comboboxes (English game terms,
@@ -92,10 +93,10 @@ function render() {
       ${b.fixed
         ? `<div class="section-title-fixed">${t('desc.' + b.key)}</div>`
         : `<button class="btn-icon" data-desc-rm="${b.id}" title="${t('app.remove')}">×</button>
-           <input class="section-title-input" type="text" value="${esc(b.title ?? '')}"
+           <input class="section-title-input" type="text" value="${escapeHtml(b.title ?? '')}"
                   data-desc-title="${b.id}" placeholder="${t('desc.blockName')}">`}
       <textarea data-desc-content="${b.id}" placeholder="${t('desc.placeholder')}"
-                style="margin-top:10px;min-height:110px">${esc(b.content)}</textarea>
+                style="margin-top:10px;min-height:110px">${escapeHtml(b.content)}</textarea>
     </div>`).join('')}
 
   <!-- sheet details for the PDF export (pages 1 & 2) -->
@@ -105,7 +106,7 @@ function render() {
     <label class="meta-field" style="display:block">
       <span>${t('desc.languages')}</span>
       <div class="combo-row">
-        <input type="text" data-desc-field="languages" value="${esc(s.languages ?? '')}"
+        <input type="text" data-desc-field="languages" value="${escapeHtml(s.languages ?? '')}"
                placeholder="${t('desc.languagesPh')}">
         <select data-combo-add="languages" title="${t('desc.comboAdd')}">
           <option value="">+ ${t('desc.comboAdd')}</option>
@@ -116,7 +117,7 @@ function render() {
     <label class="meta-field" style="margin-top:10px;display:block">
       <span>${t('desc.otherProficiencies')}</span>
       <div class="combo-row">
-        <input type="text" data-desc-field="otherProficiencies" value="${esc(s.otherProficiencies ?? '')}"
+        <input type="text" data-desc-field="otherProficiencies" value="${escapeHtml(s.otherProficiencies ?? '')}"
                placeholder="${t('desc.otherProfPh')}">
         <select data-combo-add="otherProficiencies" title="${t('desc.comboAdd')}">
           <option value="">+ ${t('desc.comboAdd')}</option>
@@ -126,11 +127,11 @@ function render() {
     </label>
     <label class="meta-field" style="margin-top:10px;display:block">
       <span>${t('desc.allies')}</span>
-      <textarea data-desc-field="allies" style="min-height:60px">${esc(s.allies ?? '')}</textarea>
+      <textarea data-desc-field="allies" style="min-height:60px">${escapeHtml(s.allies ?? '')}</textarea>
     </label>
     <label class="meta-field" style="margin-top:10px;display:block">
       <span>${t('desc.treasure')}</span>
-      <textarea data-desc-field="treasure" style="min-height:60px">${esc(s.treasure ?? '')}</textarea>
+      <textarea data-desc-field="treasure" style="min-height:60px">${escapeHtml(s.treasure ?? '')}</textarea>
     </label>
   </div>`;
 
@@ -143,7 +144,6 @@ function bindEvents(el) {
   const drop = el.querySelector('#descDrop');
   const file = el.querySelector('#descFile');
 
-  // drop zone: click opens the file picker
   drop.onclick = () => file.click();
   drop.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') file.click(); };
 
@@ -217,7 +217,12 @@ function handleImage(fileObj) {
     const canvas = document.createElement('canvas');
     canvas.width  = Math.round(img.width * scale);
     canvas.height = Math.round(img.height * scale);
-    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+    const ctx = canvas.getContext('2d');
+    // JPEG has no alpha; paint white first so transparent PNG regions
+    // don't come out black on the saved portrait.
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     URL.revokeObjectURL(url);
     store.update({ portrait: canvas.toDataURL('image/jpeg', 0.85) });
     bus.emit(EV.TOAST, { message: '✓ ' + t('desc.portrait') });
@@ -227,8 +232,4 @@ function handleImage(fileObj) {
     bus.emit(EV.TOAST, { message: '✗ ' + t('desc.notAnImage') });
   };
   img.src = url;
-}
-
-function esc(str) {
-  return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 }

@@ -19,6 +19,7 @@ import {
 } from '../rules/calculations.js';
 import { d20, parseAndRoll, describeParts } from '../rules/dice.js';
 import { abilityForFeatClass, featEntries } from '../rules/featCasting.js';
+import { escapeHtml, capitalize } from '../utils/format.js';
 
 export function mountSpells() {
   render();
@@ -59,7 +60,7 @@ function spellStats(s) {
       const cls = f.choice.class;
       const ability = abilityForFeatClass(cls);
       return {
-        cls: cls.charAt(0).toUpperCase() + cls.slice(1),
+        cls: capitalize(cls),
         ability,
         mod: calcMod(eff[ability]),
         dc: 8 + pb + calcMod(eff[ability]),
@@ -70,9 +71,10 @@ function spellStats(s) {
   return [...classStats, ...featStats];
 }
 
-/** Best stats for a specific spell (class assignment) */
-function statsForSpell(spellName, allStats) {
-  const lib = repo.findSpell(spellName);
+/** Best stats for a specific spell (class assignment). `lib` is the
+ *  already-resolved spell entry (repo.findSpell), so callers that
+ *  looked it up already don't pay for a second lookup here. */
+function statsForSpell(lib, allStats) {
   if (lib && allStats.length > 1) {
     const match = allStats.find(st => (lib.classes ?? []).includes(st.cls));
     if (match) return match;
@@ -252,7 +254,7 @@ function knownList(spells, stats) {
     <div class="lib-group-head">${+lv === 0 ? t('spells.cantrips') : lv + t('spells.grade')}</div>
     ${byLevel[lv].map(sp => {
       const lib = repo.findSpell(sp.name);
-      const st  = statsForSpell(sp.name, stats);
+      const st  = statsForSpell(lib, stats);
       const tags = [];
       if (lib?.attackRoll) tags.push(`<span class="tag tag--atk">ATK ${fmtMod(st.atk)}</span>`);
       if (lib?.saveType)   tags.push(`<span class="tag tag--save">${lib.saveType.toUpperCase()} DC ${st.dc}</span>`);
@@ -263,17 +265,17 @@ function knownList(spells, stats) {
       return `
       <div class="list-row">
         <button class="prep-toggle ${sp.prepared ? 'prep-toggle--on' : ''}"
-                data-sp-prep="${esc(sp.name)}"
+                data-sp-prep="${escapeHtml(sp.name)}"
                 title="${sp.prepared ? t('spells.preparedOn') : t('spells.preparedOff')}">
           <span class="prep-toggle__dot"></span>
           <span class="prep-toggle__label">${sp.prepared ? t('spells.prep') : t('spells.notPrep')}</span>
         </button>
         <span class="row-grow">
-          ${sp.name}${sp.fromSubclass ? ` <span class="tag tag--magic" title="${esc(sp.fromSubclass)}">◈</span>` : ''}
+          ${sp.name}${sp.fromSubclass ? ` <span class="tag tag--magic" title="${escapeHtml(sp.fromSubclass)}">◈</span>` : ''}
           <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px">${tags.join('')}</div>
         </span>
-        ${castable ? `<button class="btn btn--sm btn--gold" data-sp-cast="${esc(sp.name)}">${t('spells.cast')}</button>` : ''}
-        <button class="btn-icon" data-sp-remove="${esc(sp.name)}">×</button>
+        ${castable ? `<button class="btn btn--sm btn--gold" data-sp-cast="${escapeHtml(sp.name)}">${t('spells.cast')}</button>` : ''}
+        <button class="btn-icon" data-sp-remove="${escapeHtml(sp.name)}">×</button>
       </div>`;
     }).join('')}`).join('');
 }
@@ -318,12 +320,12 @@ function renderLibrary(s) {
       return `
       <div class="lib-entry lib-entry--expandable ${isKnown ? 'lib-entry--known' : ''}" data-expand>
         <div class="lib-entry__top">
-          ${isKnown ? '' : `<input type="checkbox" class="lib-select" data-lib-sp-sel="${esc(sp.name)}" data-lv="${sp.level}" title="${t('spells.select')}">`}
+          ${isKnown ? '' : `<input type="checkbox" class="lib-select" data-lib-sp-sel="${escapeHtml(sp.name)}" data-lv="${sp.level}" title="${t('spells.select')}">`}
           <span class="lib-entry__name">${sp.name}</span>
           ${tags.join('')}
           ${isKnown
-            ? `<button class="btn btn--sm btn--danger" data-lib-sp-rm="${esc(sp.name)}">${t('app.remove')}</button>`
-            : `<button class="btn btn--sm" data-lib-sp-add="${esc(sp.name)}" data-lv="${sp.level}">+ ${t('spells.learn')}</button>`}
+            ? `<button class="btn btn--sm btn--danger" data-lib-sp-rm="${escapeHtml(sp.name)}">${t('app.remove')}</button>`
+            : `<button class="btn btn--sm" data-lib-sp-add="${escapeHtml(sp.name)}" data-lv="${sp.level}">+ ${t('spells.learn')}</button>`}
         </div>
         <div class="lib-entry__meta">${sp.school ? t('spells.school_' + sp.school) + ' · ' : ''}${sp.castTime} · ${sp.range} · ${sp.duration} · ${sp.components}</div>
         <div class="lib-entry__desc">${sp.description ?? ''}</div>
@@ -385,7 +387,7 @@ function renderLibrary(s) {
 
 async function castSpell(name, stats) {
   const lib = repo.findSpell(name);
-  const st  = statsForSpell(name, stats);
+  const st  = statsForSpell(lib, stats);
   const box = document.getElementById('castResult');
   if (!box) return;
 
@@ -549,8 +551,4 @@ function bindEvents(el, s, stats) {
     hbOverlay.style.display = 'none';
     bus.emit(EV.TOAST, { message: `✓ ${name} (HB)` });
   };
-}
-
-function esc(str) {
-  return String(str ?? '').replace(/"/g, '&quot;');
 }
