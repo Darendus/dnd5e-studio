@@ -167,15 +167,30 @@ function render() {
     }
   });
 
-  // abilities: save "quietly" (no re-render, so focus & arrow keys
-  // are preserved). A manual re-render of the derived displays
-  // happens when the field loses focus (blur).
+  // abilities: save "quietly" (no full re-render, so focus & cursor are
+  // preserved while typing / using the spinner arrows). The score's own
+  // modifier (and boosted-score display) is refreshed LIVE via a surgical
+  // DOM update; the cross-panel re-derive (HP from CON, saves, skills, …)
+  // happens once the field loses focus (blur).
   el.querySelectorAll('[data-attr]').forEach(inp => {
+    const attr = inp.dataset.attr;
     inp.oninput = () => {
-      const val = Math.max(1, Math.min(30, +inp.value || 10));
-      store.quietUpdate({ [inp.dataset.attr]: val });
+      const raw = inp.value.trim();
+      if (raw === '') return;              // mid-edit empty: commit/restore on blur
+      let val = Math.floor(+raw);
+      if (!Number.isFinite(val)) return;
+      // error handling: clamp out-of-range input (too high / negative)
+      // straight in the field so it can never store an invalid score
+      if (val > 30)     { val = 30; inp.value = '30'; }
+      else if (val < 1) { val = 1;  inp.value = '1'; }
+      store.quietUpdate({ [attr]: val });
+      updateAbilityDisplay(inp, attr);     // live modifier + boosted score
     };
-    inp.onblur = () => bus.emit(EV.CHAR_CHANGED, { changed: [inp.dataset.attr] });
+    inp.onblur = () => {
+      // restore a valid value if the user left the field empty/invalid
+      if (!Number.isFinite(+inp.value) || inp.value.trim() === '') inp.value = store.field(attr);
+      bus.emit(EV.CHAR_CHANGED, { changed: [attr] });
+    };
   });
   el.querySelectorAll('[data-save]').forEach(cb => {
     cb.onchange = () => {
@@ -216,6 +231,19 @@ function render() {
     el.querySelector('#featSearch').value = featLibSearch;
     renderFeatLibrary();
   }
+}
+
+/** Live-refresh one ability block's modifier (and boosted effective
+ *  score) after its input changes, without a full panel re-render so the
+ *  input keeps focus/cursor while typing or clicking the spinner arrows. */
+function updateAbilityDisplay(inp, attr) {
+  const { scores, sources } = effectiveAbilities(store.get());
+  const block = inp.closest('.ability-block');
+  if (!block) return;
+  const modEl = block.querySelector('.ability-mod');
+  if (modEl) modEl.textContent = fmtMod(calcMod(scores[attr]));
+  const boostEl = block.querySelector('.ability-boost');
+  if (boostEl && sources[attr]?.length) boostEl.textContent = `→ ${scores[attr]}`;
 }
 
 /** Adjust max HP after a feat change (Tough, Boon of Fortitude …).

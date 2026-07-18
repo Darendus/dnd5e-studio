@@ -37,18 +37,18 @@ bus.on(EV.TOAST, ({ message }) => {
   await repo.load();          // load packs/seed/homebrew
 
   mountShell();               // tabs + IO bar
-  mountHeader();               // character header
+  mountHeader();
   mountCore();                // abilities & saving throws
   mountClasses();              // multiclass editor
   mountCombat();               // HP / AC / attacks
   mountWildshape();            // wild shape (only visible for druids)
-  mountSkills();                // skills
+  mountSkills();
   mountSpells();                // spells + library + casting
   mountInventory();            // items + library
   mountDescription();          // character image (DropZone) + free-text blocks
-  mountSections();              // free sections
-  mountDiceBot();               // dice bot
-  mountGenerator();             // character generator
+  mountSections();
+  mountDiceBot();
+  mountGenerator();
   mountSettings();              // language, sources, update, homebrew
 
   document.title = t('app.title');
